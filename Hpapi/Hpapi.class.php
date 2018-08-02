@@ -500,7 +500,7 @@ class Hpapi {
         $this->userUUID                                                     = $m_args[0]['userUUID'];
         $this->remoteAddrPattern                                            = $m_args[0]['remoteAddrPattern'];
         $method                                                             = new \stdClass ();
-        $method->label                                                      = $m_args[0]['label'];
+        $method->name                                                      = $m_args[0]['name'];
         $method->notes                                                      = $m_args[0]['notes'];
         $method->arguments                                                  = array ();
         if ($m_args[0]['argument']) {

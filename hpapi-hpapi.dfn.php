@@ -97,6 +97,6 @@ define ( 'HPAPI_STR_VALID_VMAX',            '116 Must have value no more than'  
 define ( 'HPAPI_DIAGNOSTIC_ONLY',           '201 Method only returns data as diagnostic'                                            );
 define ( 'HPAPI_STR_2D_ARRAY',              '202 \Hpapi\Utility::parse2D(): a 2-D array was not given'                              );
 
-require_once HPAPI_DIR_CONFIG.'/Hpapi.cfg.php';
+require_once HPAPI_DIR_CONFIG.'/hpapi-hpapi.cfg.php';
 
 ?>
