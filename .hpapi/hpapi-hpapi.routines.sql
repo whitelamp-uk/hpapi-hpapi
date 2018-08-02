@@ -72,8 +72,9 @@ BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS `hpapiGrantCall`$$
-CREATE PROCEDURE `hpapiGrantRun`(
-  IN        `spr` varchar(64) CHARSET ascii
+CREATE PROCEDURE `hpapiGrantCall`(
+  IN        `model` varchar(64) CHARSET ascii
+ ,IN        `spr` varchar(64) CHARSET ascii
  ,IN        `vendor` varchar(64) CHARSET ascii
  ,IN        `package` varchar(64) CHARSET ascii
  ,IN        `class` varchar(64) CHARSET ascii
@@ -82,7 +83,8 @@ CREATE PROCEDURE `hpapiGrantRun`(
 BEGIN
   INSERT INTO `hpapi_call`
   SET
-    `call_Spr`=spr
+    `call_Model`=model
+   ,`call_Spr`=spr
    ,`call_Vendor`=vendor
    ,`call_Package`=package
    ,`call_Class`=class
@@ -92,7 +94,8 @@ END$$
 
 DROP PROCEDURE IF EXISTS `hpapiRevokeCall`$$
 CREATE PROCEDURE `hpapiRevokeCall`(
-  IN        `spr` varchar(64) CHARSET ascii
+  IN        `model` varchar(64) CHARSET ascii
+ ,IN        `spr` varchar(64) CHARSET ascii
  ,IN        `vendor` varchar(64) CHARSET ascii
  ,IN        `package` varchar(64) CHARSET ascii
  ,IN        `class` varchar(64) CHARSET ascii
@@ -100,7 +103,8 @@ CREATE PROCEDURE `hpapiRevokeCall`(
 )
 BEGIN
   DELETE FROM `hpapi_call`
-  WHERE `call_Spr`=spr
+  WHERE `call_Model`=model
+    AND `call_Spr`=spr
     AND `call_Vendor`=vendor
     AND `call_Package`=package
     AND `call_Class`=class
@@ -278,7 +282,8 @@ CREATE PROCEDURE `hpapiSprargs`(
 )
 BEGIN
   SELECT
-    `spr_Spr` AS `spr`
+    `spr_Model` AS `model`
+   ,`spr_Spr` AS `spr`
    ,`spr_Notes` AS `notes`
    ,`sprarg_Argument` AS `argument`
    ,`sprarg_Name` AS `name`
@@ -302,17 +307,19 @@ BEGIN
     AND `call_Method`=`method_Method`
     AND `call_Method`=methodMethod
   LEFT JOIN `hpapi_spr`
-         ON `spr_Spr`=`call_Spr`
+         ON `spr_Model`=`call_Model`
+        AND `spr_Spr`=`call_Spr`
   LEFT JOIN `hpapi_sprarg`
-         ON `sprarg_Spr`=`spr_Spr`
+         ON `sprarg_Model`=`spr_Model`
+        AND `sprarg_Spr`=`spr_Spr`
   LEFT JOIN `hpapi_pattern`
          ON `pattern_Pattern`=`sprarg_Pattern`
   WHERE `method_Vendor`=methodVendor
     AND `method_Package`=methodPackage
     AND `method_Class`=methodClass
     AND `method_Method`=methodMethod
-  GROUP BY `spr_Spr`,`sprarg_Argument`
-  ORDER BY `spr_Spr`,`sprarg_Argument`
+  GROUP BY `spr_Model`,`spr_Spr`,`sprarg_Argument`
+  ORDER BY `spr_Model`,`spr_Spr`,`sprarg_Argument`
   ;
 END$$
 
