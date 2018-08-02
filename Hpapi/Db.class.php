@@ -12,12 +12,14 @@ class Db {
     public  $inputs;
     public  $notices        = array ();
     private $PDO;
+    private $sprCmd; // eg. CALL (), SELECT () OR EXEC () keyword
     private $type;
     private $types          = array ('dblib','mysql','pgsql');
 
-    public function __construct (\Hpapi\Hpapi $hpapi,$dsn,$usr,$pwd) {
+    public function __construct (\Hpapi\Hpapi $hpapi,$dsn,$sprCmd,$usr,$pwd) {
         $this->hpapi        = $hpapi;
         $this->DSN          = $dsn;
+        $this->sprCmd       = $sprCmd;
         $this->connect ($dsn,$usr,$pwd);
         return true;
     }
@@ -40,12 +42,7 @@ class Db {
             array_push ($phs,'?');
         }
         // Construct query, safely bind arguments, execute query and return results
-        if ($this->type=='pgsql') {
-            $query          = 'SELECT '.$spr.'(';
-        }
-        else {
-            $query          = HPAPI_DB_SP_CMD.' '.$spr.'('.implode(',',$phs).')';
-        }
+        $query              = $this->sprCmd.' '.$spr.'('.implode(',',$phs).')';
         try {
             $stmt           = $this->PDO->prepare ($query);
         }

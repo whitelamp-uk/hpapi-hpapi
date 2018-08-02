@@ -73,19 +73,21 @@ define ( 'HPAPI_STR_AUTH',                  '059 Not allowed'                   
 
 define ( 'HPAPI_STR_DB_MTD_ARGS',           '071 Incorrect argument count for method'                                               );
 define ( 'HPAPI_STR_DB_MTD_ARG_VAL',        '072 Invalid method argument'                                                           );
-define ( 'HPAPI_STR_METHOD_EXCEPTION',      '073 Method threw an exception'                                                         );
-define ( 'HPAPI_STR_DB_SPR_Z',              '074 First argument zero length'                                                        );
-define ( 'HPAPI_STR_DB_MTD_ACCESS',         '075 Method is not available'                                                           );
-define ( 'HPAPI_STR_DB_MTD_LOCN',           '076 Method is not available for client location'                                       );
+define ( 'HPAPI_STR_DB_SPR_MODEL',          '073 No database for data model'                                                        );
+define ( 'HPAPI_STR_METHOD_EXCEPTION',      '074 Method threw an exception'                                                         );
+define ( 'HPAPI_STR_DB_SPR_Z',              '075 First argument zero length'                                                        );
+define ( 'HPAPI_STR_DB_MTD_ACCESS',         '076 Method is not available'                                                           );
+define ( 'HPAPI_STR_DB_MTD_LOCN',           '077 Method is not available for client location'                                       );
 
-define ( 'HPAPI_STR_DB_SPR_ACCESS',         '091 Stored procedure is not available'                                                 );
-define ( 'HPAPI_STR_DB_SPR_ARGS',           '092 Incorrect argument count for stored procedure'                                     );
-define ( 'HPAPI_STR_DB_SPR_ARG_VAL',        '093 Invalid stored procedure argument'                                                 );
-define ( 'HPAPI_STR_DB_SPR_ARG_TYPE',       '094 Illegal data type for stored procedure argument'                                   );
-define ( 'HPAPI_STR_DB_SPR_PREP',           '095 Query preparation failed'                                                          );
-define ( 'HPAPI_STR_DB_SPR_BIND',           '096 Query binding failed'                                                              );
-define ( 'HPAPI_STR_DB_SPR_EXEC',           '097 Query execution failed'                                                            );
-define ( 'HPAPI_STR_ERROR_DB',              '098 Data retrieval error'                                                              );
+define ( 'HPAPI_STR_DB_SPR_MISSING',        '092 Stored procedure not identified'                                                   );
+define ( 'HPAPI_STR_DB_SPR_ACCESS',         '093 Stored procedure is not available'                                                 );
+define ( 'HPAPI_STR_DB_SPR_ARGS',           '094 Incorrect argument count for stored procedure'                                     );
+define ( 'HPAPI_STR_DB_SPR_ARG_VAL',        '095 Invalid stored procedure argument'                                                 );
+define ( 'HPAPI_STR_DB_SPR_ARG_TYPE',       '096 Illegal data type for stored procedure argument'                                   );
+define ( 'HPAPI_STR_DB_SPR_PREP',           '097 Query preparation failed'                                                          );
+define ( 'HPAPI_STR_DB_SPR_BIND',           '098 Query binding failed'                                                              );
+define ( 'HPAPI_STR_DB_SPR_EXEC',           '099 Query execution failed'                                                            );
+define ( 'HPAPI_STR_ERROR_DB',              '100 Data retrieval error'                                                              );
 
 define ( 'HPAPI_STR_VALID_EXPRESSION',      '111 Must match regular expression'                                                     );
 define ( 'HPAPI_STR_VALID_PHP_FILTER',      '112 Must pass validation filter'                                                       );

@@ -275,14 +275,20 @@ END$$
 
 DROP PROCEDURE IF EXISTS `hpapiSprargs`$$
 CREATE PROCEDURE `hpapiSprargs`(
-  IN        `methodVendor` VARCHAR(64) CHARSET ascii
+  IN        `databaseNode` VARCHAR(64) CHARSET ascii
+ ,IN        `methodVendor` VARCHAR(64) CHARSET ascii
  ,IN        `methodPackage` VARCHAR(64) CHARSET ascii
  ,IN        `methodClass` VARCHAR(64) CHARSET ascii
  ,IN        `methodMethod` VARCHAR(64) CHARSET ascii
 )
 BEGIN
   SELECT
-    `spr_Model` AS `model`
+    `database_DSN` AS `DSN`
+   ,`database_Spr_Cmd` AS `sprCmd`
+   ,`database_Dir_Export` AS `dirExport`
+   ,`database_Dir_Import` AS `dirImport`
+   ,`database_Notes` AS `databaseNotes`
+   ,`spr_Model` AS `model`
    ,`spr_Spr` AS `spr`
    ,`spr_Notes` AS `notes`
    ,`sprarg_Argument` AS `argument`
@@ -309,6 +315,9 @@ BEGIN
   LEFT JOIN `hpapi_spr`
          ON `spr_Model`=`call_Model`
         AND `spr_Spr`=`call_Spr`
+  LEFT JOIN `hpapi_database`
+         ON `database_Node`=databaseNode
+        AND `database_Model`=`spr_Model`
   LEFT JOIN `hpapi_sprarg`
          ON `sprarg_Model`=`spr_Model`
         AND `sprarg_Spr`=`spr_Spr`

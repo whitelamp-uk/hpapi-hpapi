@@ -82,7 +82,7 @@ class Hpapi {
             $this->end ();
         }
         try {
-            $this->db                               = new \Hpapi\Db ($this,HPAPI_DB_DSN,HPAPI_DB_USR,HPAPI_DB_PWD);
+            $this->db                               = new \Hpapi\Db ($this,HPAPI_DB_DSN,HPAPI_DB_SP_CMD,HPAPI_DB_USR,HPAPI_DB_PWD);
         }
         catch (\Exception $e) {
             $this->object->response->notice         = $e->getMessage ();
@@ -90,6 +90,7 @@ class Hpapi {
             $this->end ();
         }
         $this->authenticate ();
+        $this->db->close ();
         $this->object->response->returnValue        = $this->executeMethod ($this->object->method);
         $this->end ();
     }
@@ -193,6 +194,7 @@ class Hpapi {
         try {
             $spr_args                               = $this->db->call (
                 'hpapiSprargs'
+               ,HPAPI_NODE
                ,$this->object->method->vendor
                ,$this->object->method->package
                ,$this->object->method->class
@@ -241,13 +243,26 @@ class Hpapi {
             }
             $count++;
         }
+        if (!strlen($this->sprs[$spr]->DSN)) {
+            throw new \Exception (HPAPI_STR_DB_SPR_MODEL.' "'.$this->sprs[$spr]->model.'"');
+            return false;
+        }
         try {
-            $return         = $this->db->call ($spr,...$arguments);
+            $db             = new \Hpapi\Db ($this,$this->sprs[$spr]->DSN,$this->sprs[$spr]->sprCmd,HPAPI_DB_USR,HPAPI_DB_PWD);
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage());
             return false;
         }
+        try {
+            $return         = $db->call ($spr,...$arguments);
+            $db->close ();
+        }
+        catch (\Exception $e) {
+            throw new \Exception ($e->getMessage());
+            return false;
+        }
+        $db->close ();
         return $return;
     }
 
@@ -527,7 +542,13 @@ class Hpapi {
         foreach ($spr_args as $spr_arg) {
             if (!array_key_exists($spr_arg['spr'],$sprs)) {
                 $sprs[$spr_arg['spr']]                                      = new \stdClass ();
-                $sprs[$spr_arg['spr']]->notes                                = $spr_arg['notes'];
+                $sprs[$spr_arg['spr']]->model                               = $spr_arg['model'];
+                $sprs[$spr_arg['spr']]->DSN                                 = $spr_arg['DSN'];
+                $sprs[$spr_arg['spr']]->sprCmd                              = $spr_arg['sprCmd'];
+                $sprs[$spr_arg['spr']]->dirExport                           = $spr_arg['dirExport'];
+                $sprs[$spr_arg['spr']]->dirImport                           = $spr_arg['dirImport'];
+                $sprs[$spr_arg['spr']]->databaseNotes                       = $spr_arg['databaseNotes'];
+                $sprs[$spr_arg['spr']]->notes                               = $spr_arg['notes'];
                 $sprs[$spr_arg['spr']]->arguments                           = array ();
             }
             if (!$spr_arg['argument']) {
@@ -536,11 +557,12 @@ class Hpapi {
             if (!array_key_exists($spr_arg['argument']-1,$sprs[$spr_arg['spr']]->arguments)) {
                 $sprs[$spr_arg['spr']]->arguments[$spr_arg['argument']-1]   = new \stdClass ();
             }
+            $ignore = array ('model','DSN','sprCommand','dirExport','dirImport','databaseNotes','notes');
+            foreach ($ignore as $k) {
+                unset ($spr_arg[$k]);
+            }
             foreach ($spr_arg as $k=>$v) {
                 if ($k=='spr') {
-                    continue;
-                }
-                if ($k=='notes') {
                     continue;
                 }
                 $sprs[$spr_arg['spr']]->arguments[$spr_arg['argument']-1]->$k = $v;
