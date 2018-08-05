@@ -1,0 +1,60 @@
+<?php
+
+
+// REDIRECTION (LEAVE EMPTY TO NOT REDIRECT)
+define ( 'HPAPI_URL_HTML_HEADER',           './web.html'                                                                            );
+define ( 'HPAPI_URL_OTHER_HEADER',          ''                                                                                      );
+
+
+// INFORMATIONAL
+define ( 'HPAPI_META_DESCRIPTION',          'HTTP POST API for My Organisation'                                                     );
+
+
+// THIS NODE
+define ( 'HPAPI_SYSTEM_CFG_JSON',           HPAPI_DIR_CONFIG.'/hpapi-hpapi-me.cfg.json'                                             );
+define ( 'HPAPI_SYSTEM_DB_DFN_JSON',        HPAPI_DIR_CONFIG.'/hpapi-hpapi-db.dfn.json'                                             );
+define ( 'HPAPI_SYSTEM_DB_CFG_JSON',        HPAPI_DIR_CONFIG.'/hpapi-hpapi-db.cfg.json'                                             );
+define ( 'HPAPI_SYSTEM_DB_USR',             'my-hpapi-db-user'                                                                      );
+define ( 'HPAPI_SYSTEM_DB_PWD',             'my-hpapi-db-pass'                                                                      );
+
+
+// CODE ERROR REPORTING
+define ( 'HPAPI_PHP_ERROR_LEVEL',           E_NONE                                                                                  );
+
+
+// SSL ENFORCEMENT
+define ( 'HPAPI_SSL_ENFORCE',               true                                                                                    );
+
+
+// REQUEST SIZE
+define ( 'HPAPI_POST_BYTES_MAX',            1024                                                                                    );
+
+
+// ANONYMITY:    (STRICT) HPAPI_ANON_LEVEL_NONE  |  HPAPI_ANON_LEVEL_EMAIL  |  HPAPI_ANON_LEVEL_USER  |  HPAPI_ANON_LEVEL_KEY (LOOSE)
+define ( 'HPAPI_ANON_LEVEL',                HPAPI_ANON_LEVEL_NONE                                                                   );
+
+
+// DIAGNOSTIC KEYS
+define ( 'HPAPI_DIAGNOSTIC_KEYS_CSV',       ''                                                                                      );
+
+
+// PASSWORD MANAGEMENT
+define ( 'HPAPI_HASH_COST',                 12                                                                                      );
+define ( 'HPAPI_HASH_ALGO',                 PASSWORD_BCRYPT                                                                         );
+
+
+// JSON DEPTH AND ENCODING OPTIONS (JSON_PRETTY_PRINT is handy for development)
+define ( 'HPAPI_JSON_DEPTH',                512                                                                                     );
+define ( 'HPAPI_JSON_OPTIONS',              JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_NUMERIC_CHECK                        );
+
+
+// APPLICATION CLASSES
+require_once HPAPI_DIR_HPAPI.'/whitelamp/hpapi-hpapi/Hpapi/Hpapi.class.php';
+require_once HPAPI_DIR_HPAPI.'/whitelamp/hpapi-hpapi/Hpapi/Db.class.php';
+
+
+// HPAPI SERVER HTTP HEADERS
+require_once HPAPI_DIR_CONFIG.'/hpapi-server.hdr.php';
+
+
+?>

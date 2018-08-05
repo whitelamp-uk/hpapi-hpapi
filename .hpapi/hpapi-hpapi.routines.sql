@@ -283,11 +283,7 @@ CREATE PROCEDURE `hpapiSprargs`(
 )
 BEGIN
   SELECT
-    `database_DSN` AS `DSN`
-   ,`database_Spr_Cmd` AS `sprCmd`
-   ,`database_Dir_Export` AS `dirExport`
-   ,`database_Dir_Import` AS `dirImport`
-   ,`database_Notes` AS `databaseNotes`
+    `database_Notes` AS `databaseNotes`
    ,`spr_Model` AS `model`
    ,`spr_Spr` AS `spr`
    ,`spr_Notes` AS `notes`

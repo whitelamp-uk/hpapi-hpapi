@@ -5,7 +5,6 @@ namespace Hpapi;
 class Hpapi {
 
     public  $auth;                       // Object having successful authentication data for requested method
-    public  $authenticationfunction;     // Object describing vendor/package/class/method for authentication
     public  $contentTypeRequested;       // Client declaration of content type
     public  $contentType;                // Interpretation of client contentheader for interpreting raw POST data
     private $db;                         // Database object \Hpapi\HpapiDb
@@ -14,6 +13,7 @@ class Hpapi {
     public  $datetime;                   // DateTime constructed from current server time
     public  $sprs;                       // Stored procedures available for the requested method
     public  $userUUID;                   // User identifier established by the authentication process
+    private $config;                     // User identifier established by the authentication process
 
     public function __construct ( ) {
         if (count(func_get_args())) {
@@ -44,18 +44,25 @@ class Hpapi {
         $this->object->response->splash             = array ();
         $this->object->response->error              = null;
         $this->object->response->warning            = null;
+        if (!$this->isHTTPS()) {
+            $this->object->response->warning        = HPAPI_STR_PLAIN;
+        }
         $this->object->response->notice             = null;
         $this->object->response->remoteAddr         = $_SERVER['REMOTE_ADDR'];
         $this->object->response->serverAddr         = $_SERVER['SERVER_ADDR'];
         $this->object->response->datetime           = $this->datetime->format (\DateTime::ATOM);
-        if (strlen(HPAPI_DIAGNOSTIC_KEYS)) {
-            $this->diagnosticKeys                   = explode (',',HPAPI_DIAGNOSTIC_KEYS);
+        if (strlen(HPAPI_DIAGNOSTIC_KEYS_CSV)) {
+            $this->diagnosticKeys                   = explode (',',HPAPI_DIAGNOSTIC_KEYS_CSV);
         }
         else {
             $this->diagnosticKeys                   = array ();
         }
         if (in_array($this->object->key,$this->diagnosticKeys)) {
                 $this->object->diagnostic           = '';
+        }
+        if (!property_exists($this->object,'datetime')) {
+            $this->object->response->error          = HPAPI_STR_DATETIME;
+            $this->end ();
         }
         if (!property_exists($this->object,'key')) {
             $this->object->response->error          = HPAPI_STR_KEY;
@@ -69,10 +76,6 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_PASSWORD;
             $this->end ();
         }
-        if (!property_exists($this->object,'datetime')) {
-            $this->object->response->error          = HPAPI_STR_DATETIME;
-            $this->end ();
-        }
         if (!property_exists($this->object,'method')) {
             $this->object->response->error          = HPAPI_STR_METHOD;
             $this->end ();
@@ -81,8 +84,34 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_METHOD_OBJ;
             $this->end ();
         }
+        if (!property_exists($this->object->method,'vendor') || !strlen($this->object->method->vendor)) {
+            $this->object->response->error          = HPAPI_STR_METHOD_VENDOR;
+            $this->end ();
+        }
+        if (!property_exists($this->object->method,'package') || !strlen($this->object->method->package)) {
+            $this->object->response->error          = HPAPI_STR_METHOD_PACKAGE;
+            $this->end ();
+        }
+        if (!property_exists($this->object->method,'class') || !strlen($this->object->method->class)) {
+            $this->object->response->error          = HPAPI_STR_METHOD_CLASS;
+            $this->end ();
+        }
+        if (!property_exists($this->object->method,'method') || !strlen($this->object->method->method)) {
+            $this->object->response->error          = HPAPI_STR_METHOD_METHOD;
+            $this->end ();
+        }
         try {
-            $this->db                               = new \Hpapi\Db ($this,HPAPI_DB_DSN,HPAPI_DB_SP_CMD,HPAPI_DB_USR,HPAPI_DB_PWD);
+            $cfg                                    = file_get_contents (HPAPI_SYSTEM_CFG_JSON);
+            $this->config                           = $this->jsonDecode ($cfg,false,HPAPI_JSON_DEPTH);
+        }
+        catch (\Exception $e) {
+            $this->object->response->notice         = $e->getMessage ();
+            $this->object->response->error          = HPAPI_STR_DB_OBJ;
+            $this->end ();
+        }
+
+        try {
+            $this->db                               = new \Hpapi\Db ($this,$this->config->node,$this->config->model);
         }
         catch (\Exception $e) {
             $this->object->response->notice         = $e->getMessage ();
@@ -194,7 +223,7 @@ class Hpapi {
         try {
             $spr_args                               = $this->db->call (
                 'hpapiSprargs'
-               ,HPAPI_NODE
+               ,$this->config->node
                ,$this->object->method->vendor
                ,$this->object->method->package
                ,$this->object->method->class
@@ -219,13 +248,15 @@ class Hpapi {
 
     public function dbCall ( ) {
         $arguments          = func_get_args ();
-        $spr                = (string) array_shift ($arguments);
-        if (!strlen($spr)) {
-            throw new \Exception (HPAPI_STR_DB_SPR_MISSING);
-            return false;
+        try {
+            $spr            = (string) array_shift ($arguments);
+            if(!strlen($spr)) {
+                throw new \Exception (HPAPI_STR_DB_SPR_NO_SPR);
+                return false;
+            }
         }
-        if (!array_key_exists($spr,$this->sprs)) {
-            throw new \Exception (HPAPI_STR_DB_SPR_ACCESS);
+        catch (\Exception $e) {
+            throw new \Exception (HPAPI_STR_DB_SPR_NO_SPR);
             return false;
         }
         if (count($arguments)!=count($this->sprs[$spr]->arguments)) {
@@ -243,12 +274,8 @@ class Hpapi {
             }
             $count++;
         }
-        if (!strlen($this->sprs[$spr]->DSN)) {
-            throw new \Exception (HPAPI_STR_DB_SPR_MODEL.' "'.$this->sprs[$spr]->model.'"');
-            return false;
-        }
         try {
-            $db             = new \Hpapi\Db ($this,$this->sprs[$spr]->DSN,$this->sprs[$spr]->sprCmd,HPAPI_DB_USR,HPAPI_DB_PWD);
+            $db             = new \Hpapi\Db ($this,$this->config->node,$this->sprs[$spr]->model);
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage());
@@ -269,30 +296,21 @@ class Hpapi {
     public function decodePost ( ) {
         $post           = file_get_contents ('php://input');
         if (strlen($post)>HPAPI_POST_BYTES_MAX) {
-            throw new \Exception (HPAPI_DECODE_LENGTH.' ( >'.HPAPI_POST_BYTES_MAX.'B )');
+            throw new \Exception (HPAPI_STR_DECODE_LENGTH.' ( >'.HPAPI_POST_BYTES_MAX.'B )');
             return false;
         }
         if ($this->contentType==HPAPI_CONTENT_TYPE_JSON) {
             try {
-                $json   = json_decode ($post,false,HPAPI_JSON_DEPTH);
+                $json   = $this->jsonDecode ($post,false,HPAPI_JSON_DEPTH);
             }
             catch (\Exception $e) {
-                throw new \Exception (HPAPI_STR_JSON_DECODE);
+                throw new \Exception (HPAPI_STR_JSON_DECODE.': '.$e);
                 return false;
             }
             return $json;
         }
-        if ($this->contentType==HPAPI_CONTENT_TYPE_HTML) {
-            try {
-                $html   = $this->htmlDecode ($post);
-            }
-            catch (\Exception $e) {
-                throw new \Exception (HPAPI_STR_HTML_DECODE.' ('.$e->getMessage().')');
-            }
-            return $html;
-        }
         else {
-            throw new \Exception (HPAPI_STR_DECODE_TYPE.' '.$this->contentTypeRequested);
+            throw new \Exception (HPAPI_STR_CONTENT_TYPE.' '.$this->contentTypeRequested);
             return false;
         }
     }
@@ -309,6 +327,12 @@ class Hpapi {
     }
 
     public function end ( ) {
+        if (property_exists($this->object,'error') && strlen($this->object->error)>0) {
+             if (preg_match('<^[0-9]*\s*([0-9]*)\s>',$this->object->error,$m)) {
+                $this->object->httpErrorCode = $m[0];
+                http_response_code ($m[0]);
+            }
+        }
         if (property_exists($this->object,'key')) {
             unset ($this->object->key);
         }
@@ -319,12 +343,7 @@ class Hpapi {
             unset ($this->object->password);
         }
         if ($this->contentType==HPAPI_CONTENT_TYPE_JSON) {
-            echo json_encode ($this->object,HPAPI_JSON_OPTIONS,HPAPI_JSON_DEPTH);
-            echo "\n";
-            exit;
-        }
-        if ($this->object->contentType==HPAPI_CONTENT_TYPE_HTML) {
-            echo $this->htmlEncode ($this->object);
+            echo $this->jsonEncode ($this->object,HPAPI_JSON_OPTIONS,HPAPI_JSON_DEPTH);
             echo "\n";
             exit;
         }
@@ -451,18 +470,6 @@ class Hpapi {
         return $return_value;
     }
 
-    public function htmlDecode ($post) {
-        throw new \Exception (HPAPI_DECODE_HTML_SUPPORT);
-        return false;
-    }
-
-    public function htmlEncode ( ) {
-        // HTML is not yet supported
-        $output     = "/* HTML not yet supported */\n";
-        $output    .= var_export ($this->object,true);
-        return $output;
-    }
-
     public function isHTTPS ( ) {
         if (!array_key_exists('HTTPS',$_SERVER)) {
             return false;
@@ -474,6 +481,24 @@ class Hpapi {
             return false;
         }
         return true;
+    }
+
+    public function jsonDecode ($json,$assoc=false,$depth=512) {
+        $var = json_decode ($json,$assoc,$depth);
+        if (($e=json_last_error())!=JSON_ERROR_NONE) {
+            throw new \Exception ($e.' '.json_last_error_msg());
+            return false;
+        }
+        return $var;
+    }
+
+    public function jsonEncode ($json,$options=0,$depth=512) {
+        $str = json_encode ($json,$options,$depth);
+        if (($e=json_last_error())!=JSON_ERROR_NONE) {
+            throw new \Exception ($e.' '.json_last_error_msg());
+            return false;
+        }
+        return $str;
     }
 
     public function packagePath ($method) {
@@ -543,11 +568,7 @@ class Hpapi {
             if (!array_key_exists($spr_arg['spr'],$sprs)) {
                 $sprs[$spr_arg['spr']]                                      = new \stdClass ();
                 $sprs[$spr_arg['spr']]->model                               = $spr_arg['model'];
-                $sprs[$spr_arg['spr']]->DSN                                 = $spr_arg['DSN'];
-                $sprs[$spr_arg['spr']]->sprCmd                              = $spr_arg['sprCmd'];
-                $sprs[$spr_arg['spr']]->dirExport                           = $spr_arg['dirExport'];
-                $sprs[$spr_arg['spr']]->dirImport                           = $spr_arg['dirImport'];
-                $sprs[$spr_arg['spr']]->databaseNotes                       = $spr_arg['databaseNotes'];
+                 $sprs[$spr_arg['spr']]->databaseNotes                       = $spr_arg['databaseNotes'];
                 $sprs[$spr_arg['spr']]->notes                               = $spr_arg['notes'];
                 $sprs[$spr_arg['spr']]->arguments                           = array ();
             }
@@ -557,7 +578,7 @@ class Hpapi {
             if (!array_key_exists($spr_arg['argument']-1,$sprs[$spr_arg['spr']]->arguments)) {
                 $sprs[$spr_arg['spr']]->arguments[$spr_arg['argument']-1]   = new \stdClass ();
             }
-            $ignore = array ('model','DSN','sprCommand','dirExport','dirImport','databaseNotes','notes');
+            $ignore = array ('model','databaseNotes','notes');
             foreach ($ignore as $k) {
                 unset ($spr_arg[$k]);
             }
@@ -572,11 +593,37 @@ class Hpapi {
     }
 
     public function parseContentType ( ) {
+
+
+// REDIRECTION (LEAVE EMPTY TO NOT REDIRECT)
+define ( 'HPAPI_URL_HTML_HEADER',           './web.html'                                                                            );
+define ( 'HPAPI_URL_OTHER_HEADER',          ''                                                                                      );
+
+
+
+
+        // Without Content-Type header
         if (!array_key_exists('CONTENT_TYPE',$_SERVER)) {
+            $pattern = '<[^A-z]'.HPAPI_CONTENT_TYPE_HTML.'[^A-z]>/i';
+            if (array_key_exists('HTTP_ACCEPT',$_SERVER) && preg_match($pattern,$_SERVER['HTTP_ACCEPT'])) {
+                if (strlen(HPAPI_URL_HTML_HEADER)) {
+                    header ('Location: '.HPAPI_URL_HTML_HEADER);
+                    exit;
+                }
+            }
+            if (strlen(HPAPI_URL_OTHER_HEADER)) {
+                header ('Location: '.HPAPI_URL_OTHER_HEADER);
+                exit;
+            }
             $this->contentTypeRequested = HPAPI_CONTENT_TYPE_UNKNOWN;
             return HPAPI_CONTENT_TYPE_TEXT;
         }
-        $type = strtolower ($_SERVER['CONTENT_TYPE']);
+        // With Content-Type header
+        $type = explode (';',strtolower($_SERVER['CONTENT_TYPE']));
+        if (strlen(HPAPI_URL_HTML_HEADER) && trim($type[0])==HPAPI_CONTENT_TYPE_HTML) {
+            header ('Location: '.HPAPI_URL_HTML_HEADER);
+            exit;
+        }
         $type = explode (';',$type);
         $type = array_shift ($type);
         $this->contentTypeRequested = $type;
@@ -585,8 +632,9 @@ class Hpapi {
         if ($type=='json') {
             return HPAPI_CONTENT_TYPE_JSON;
         }
-        if ($type=='html') {
-            return HPAPI_CONTENT_TYPE_HTML;
+        if (HPAPI_URL_OTHER_HEADER) {
+            header ('Location: '.HPAPI_URL_OTHER_HEADER);
+            exit;
         }
         return HPAPI_CONTENT_TYPE_TEXT;
     }
