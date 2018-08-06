@@ -24,6 +24,7 @@ class Hpapi {
         $this->datetime                             = new \DateTime ();
         if (HPAPI_SSL_ENFORCE && !$this->isHTTPS()) {
             header ('Content-Type: '.HPAPI_CONTENT_TYPE_TEXT);
+            $this->logLast (HPAPI_STR_SSL."\n");
             echo HPAPI_STR_SSL."\n";
             exit;
         }
@@ -33,6 +34,7 @@ class Hpapi {
         }
         catch (\Exception $e) {
             header ('Content-Type: '.HPAPI_CONTENT_TYPE_TEXT);
+            $this->logLast ($e->getMessage()."\n");
             echo $e->getMessage()."\n";
             exit;
         }
@@ -342,6 +344,14 @@ class Hpapi {
         if (property_exists($this->object,'password')) {
             unset ($this->object->password);
         }
+        try {
+            $this->logLast (var_export($this->object,true));
+        }
+        catch (\Exception $e) {
+            if (in_array($this->object->key,$this->diagnosticKeys)) {
+                $this->hpapi->object->diagnostic .= $e->getMessage()."\n";
+            }            
+        }
         if ($this->contentType==HPAPI_CONTENT_TYPE_JSON) {
             echo $this->jsonEncode ($this->object,HPAPI_JSON_OPTIONS,HPAPI_JSON_DEPTH);
             echo "\n";
@@ -501,6 +511,23 @@ class Hpapi {
         return $str;
     }
 
+    public function logLast ($output) {
+        if (!HPAPI_LOG_LAST_OUTPUT) {
+            return true;
+        }
+        try {
+            $str    = '_SERVER = '.print_r($_SERVER,true)."\n";
+            $str   .= ' OUTPUT = '.$output;
+            $fp     = fopen (HPAPI_LOG_LAST_FILE,'w');
+            fwrite ($fp,$str);
+            fclose ($fp);
+        }
+        catch (\Exception $e) {
+            throw new \Exception ($e->getMessage);
+            return false;
+        }
+    }
+
     public function packagePath ($method) {
         $path   = HPAPI_DIR_HPAPI;
         $path  .= '/'.$method->vendor;
@@ -593,46 +620,37 @@ class Hpapi {
     }
 
     public function parseContentType ( ) {
-
-
-// REDIRECTION (LEAVE EMPTY TO NOT REDIRECT)
-define ( 'HPAPI_URL_HTML_HEADER',           './web.html'                                                                            );
-define ( 'HPAPI_URL_OTHER_HEADER',          ''                                                                                      );
-
-
-
-
         // Without Content-Type header
         if (!array_key_exists('CONTENT_TYPE',$_SERVER)) {
-            $pattern = '<[^A-z]'.HPAPI_CONTENT_TYPE_HTML.'[^A-z]>/i';
-            if (array_key_exists('HTTP_ACCEPT',$_SERVER) && preg_match($pattern,$_SERVER['HTTP_ACCEPT'])) {
+            $pattern = '<[^A-z]'.HPAPI_CONTENT_TYPE_HTML.'[^A-z]>i';
+            if (array_key_exists('HTTP_ACCEPT',$_SERVER) && preg_match($pattern,' '.$_SERVER['HTTP_ACCEPT'].' ')) {
                 if (strlen(HPAPI_URL_HTML_HEADER)) {
+                    $this->logLast (HPAPI_URL_HTML_HEADER."\n");
                     header ('Location: '.HPAPI_URL_HTML_HEADER);
                     exit;
                 }
             }
             if (strlen(HPAPI_URL_OTHER_HEADER)) {
+                $this->logLast (HPAPI_URL_OTHER_HEADER."\n");
                 header ('Location: '.HPAPI_URL_OTHER_HEADER);
                 exit;
             }
             $this->contentTypeRequested = HPAPI_CONTENT_TYPE_UNKNOWN;
             return HPAPI_CONTENT_TYPE_TEXT;
         }
-        // With Content-Type header
-        $type = explode (';',strtolower($_SERVER['CONTENT_TYPE']));
-        if (strlen(HPAPI_URL_HTML_HEADER) && trim($type[0])==HPAPI_CONTENT_TYPE_HTML) {
+        $type = explode (';',$_SERVER['CONTENT_TYPE']);
+        if (strlen(HPAPI_URL_HTML_HEADER) && ($type=trim($type[0]))==HPAPI_CONTENT_TYPE_HTML) {
+            $this->logLast (HPAPI_URL_HTML_HEADER."\n");
             header ('Location: '.HPAPI_URL_HTML_HEADER);
             exit;
         }
-        $type = explode (';',$type);
-        $type = array_shift ($type);
         $this->contentTypeRequested = $type;
         $type = explode ('/',$type);
-        $type = array_pop ($type);
-        if ($type=='json') {
+        if ($type[1]=='json') {
             return HPAPI_CONTENT_TYPE_JSON;
         }
         if (HPAPI_URL_OTHER_HEADER) {
+            $this->logLast (HPAPI_URL_OTHER_HEADER."\n");
             header ('Location: '.HPAPI_URL_OTHER_HEADER);
             exit;
         }

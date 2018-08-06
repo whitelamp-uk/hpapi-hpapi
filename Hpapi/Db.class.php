@@ -81,7 +81,13 @@ class Db {
             throw new \Exception (HPAPI_STR_DB_DFN.' [3]');
             return false;
         }
-        $this->connect ();
+        try {
+            $this->connect ();
+        }
+        catch (\Exception $e) {
+            throw new \Exception ($e->getMessage());
+            return false;
+        }
         return true;
     }
 
@@ -188,7 +194,7 @@ class Db {
             );
         }
         catch (\PDOException $e) {
-            throw new \Exception ('HPAPI_STR_DB_CONN');
+            throw new \Exception (HPAPI_STR_DB_CONN);
             return false;
         }
         return true;

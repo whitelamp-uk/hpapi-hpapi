@@ -2,7 +2,7 @@
 
 
 // REDIRECTION (LEAVE EMPTY TO NOT REDIRECT)
-define ( 'HPAPI_URL_HTML_HEADER',           './web.html'                                                                            );
+define ( 'HPAPI_URL_HTML_HEADER',           './web.php'                                                                             );
 define ( 'HPAPI_URL_OTHER_HEADER',          ''                                                                                      );
 
 
@@ -34,8 +34,10 @@ define ( 'HPAPI_POST_BYTES_MAX',            1024                                
 define ( 'HPAPI_ANON_LEVEL',                HPAPI_ANON_LEVEL_NONE                                                                   );
 
 
-// DIAGNOSTIC KEYS
+// DIAGNOSTIC
 define ( 'HPAPI_DIAGNOSTIC_KEYS_CSV',       ''                                                                                      );
+define ( 'HPAPI_LOG_LAST_OUTPUT',           true                                                                                    );
+define ( 'HPAPI_LOG_LAST_FILE',             HPAPI_DIR_LOG.'/hpapi-last-output.log'                                                  );
 
 
 // PASSWORD MANAGEMENT
