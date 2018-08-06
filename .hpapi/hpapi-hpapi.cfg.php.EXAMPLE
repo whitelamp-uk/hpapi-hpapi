@@ -36,7 +36,7 @@ define ( 'HPAPI_ANON_LEVEL',                HPAPI_ANON_LEVEL_NONE               
 
 // DIAGNOSTIC
 define ( 'HPAPI_DIAGNOSTIC_KEYS_CSV',       ''                                                                                      );
-define ( 'HPAPI_LOG_LAST_OUTPUT',           true                                                                                    );
+define ( 'HPAPI_LOG_LAST_OUTPUT',           false                                                                                   );
 define ( 'HPAPI_LOG_LAST_FILE',             HPAPI_DIR_LOG.'/hpapi-last-output.log'                                                  );
 
 
