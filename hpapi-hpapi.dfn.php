@@ -28,82 +28,86 @@ define ( 'HPAPI_PATTERN_DESC_VARCHAR_255',  'must have no more than 255 characte
 define ( 'HPAPI_PATTERN_DESC_VARCHAR_64',   'must have no more than 64 characters of any type'                                      );
 
 // Initiating response
-define ( 'HPAPI_STR_INIT',                  '005 500 \Hpapi\Hpapi could not be initialised'                                         );
-define ( 'HPAPI_STR_SSL',                   '006 400 SSL required but not used'                                                     );
-define ( 'HPAPI_STR_CONTENT_TYPE',          '007 400 Client header indicates wrong content type'                                    );
-define ( 'HPAPI_STR_JSON_DECODE',           '008 400 Cannot decode request'                                                         );
-define ( 'HPAPI_STR_SYS_CFG',               '009 500 Could not load system configuration'                                           );
-define ( 'HPAPI_STR_AUTH_DENIED',           '010 403 Access denied'                                                                 );
-define ( 'HPAPI_STR_PLAIN',                 '011 WARNING - UNENCRYPTED CONNECTION'                                                  );
+define ( 'HPAPI_STR_INIT',                  '021 500 \Hpapi\Hpapi could not be initialised'                                         );
+define ( 'HPAPI_STR_SSL',                   '022 400 SSL required but not used'                                                     );
+define ( 'HPAPI_STR_CONTENT_TYPE',          '023 400 Client header indicates wrong content type'                                    );
+define ( 'HPAPI_STR_JSON_DECODE',           '024 400 Cannot decode request'                                                         );
+define ( 'HPAPI_STR_SYS_CFG',               '025 500 Could not load system configuration'                                           );
+define ( 'HPAPI_STR_AUTH_DENIED',           '026 403 Access denied'                                                                 );
 
 // Validating posted object properties
-define ( 'HPAPI_STR_DATETIME',              '021 400 Property "datetime" does not exist'                                            );
-define ( 'HPAPI_STR_KEY',                   '022 400 Property "key" does not exist'                                                 );
-define ( 'HPAPI_STR_EMAIL',                 '023 400 Property "email" does not exist'                                               );
-define ( 'HPAPI_STR_PASSWORD',              '024 400 Property "password" does not exist'                                            );
-define ( 'HPAPI_STR_METHOD',                '025 400 Property "method" does not exist'                                              );
-define ( 'HPAPI_STR_METHOD_OBJ',            '026 400 Property "method" is not an object'                                            );
-define ( 'HPAPI_STR_METHOD_VENDOR',         '027 400 Method property "vendor" was not given'                                        );
-define ( 'HPAPI_STR_METHOD_PACKAGE',        '028 400 Method property "package" was not given'                                       );
-define ( 'HPAPI_STR_METHOD_CLASS',          '029 400 Method property "class" was not given'                                         );
-define ( 'HPAPI_STR_METHOD_METHOD',         '030 400 Method property "method" was not given'                                        );
-define ( 'HPAPI_STR_DB_CFG',                '031 500 DB configuration error - could not load database configuration'                );
-define ( 'HPAPI_STR_DB_DFN',                '032 500 DB configuration error - could not load database definition'                   );
-define ( 'HPAPI_STR_DB_OBJ',                '033 500 Could not construct database object'                                           );
-define ( 'HPAPI_STR_DB_CONN',               '034 500 Could not connect to database'                                                 );
+define ( 'HPAPI_STR_DATETIME',              '031 400 Property "datetime" does not exist'                                            );
+define ( 'HPAPI_STR_KEY',                   '032 400 Property "key" does not exist'                                                 );
+define ( 'HPAPI_STR_EMAIL',                 '033 400 Property "email" does not exist'                                               );
+define ( 'HPAPI_STR_PASSWORD',              '034 400 Property "password" does not exist'                                            );
+define ( 'HPAPI_STR_METHOD',                '035 400 Property "method" does not exist'                                              );
+define ( 'HPAPI_STR_METHOD_OBJ',            '036 400 Property "method" is not an object'                                            );
+define ( 'HPAPI_STR_METHOD_VENDOR',         '037 400 Method property "vendor" was not given'                                        );
+define ( 'HPAPI_STR_METHOD_PACKAGE',        '038 400 Method property "package" was not given'                                       );
+define ( 'HPAPI_STR_METHOD_CLASS',          '039 400 Method property "class" was not given'                                         );
+define ( 'HPAPI_STR_METHOD_METHOD',         '040 400 Method property "method" was not given'                                        );
+define ( 'HPAPI_STR_DB_CFG',                '041 500 DB configuration error - could not load database configuration'                );
+define ( 'HPAPI_STR_DB_DFN',                '042 500 DB configuration error - could not load database definition'                   );
+define ( 'HPAPI_STR_DB_OBJ',                '043 500 Could not construct database object'                                           );
+define ( 'HPAPI_STR_DB_CONN',               '044 500 Could not connect to database'                                                 );
 
 // Evaluating authentication status
-define ( 'HPAPI_STR_AUTH_RECOG',            '041 Anonymous access (user not recognised)'                                            );
-define ( 'HPAPI_STR_AUTH_ACTIVE',           '042 Anonymous access (user not active)'                                                );
-define ( 'HPAPI_STR_AUTH_EMAIL',            '043 Anonymous access (email not recognised)'                                           );
-define ( 'HPAPI_STR_AUTH_VERIFY',           '044 Anonymous access (email not verified)'                                             );
-define ( 'HPAPI_STR_AUTH_PWD',              '045 Anonymous access (email not authenticated)'                                        );
-define ( 'HPAPI_STR_AUTH_OK',               '046 Access allowed (fully authenticated)'                                              );
+define ( 'HPAPI_STR_AUTH_RECOG',            '051 Anonymous access (user not recognised)'                                            );
+define ( 'HPAPI_STR_AUTH_ACTIVE',           '052 Anonymous access (user not active)'                                                );
+define ( 'HPAPI_STR_AUTH_EMAIL',            '053 Anonymous access (email not recognised)'                                           );
+define ( 'HPAPI_STR_AUTH_VERIFY',           '054 Anonymous access (email not verified)'                                             );
+define ( 'HPAPI_STR_AUTH_PWD',              '055 Anonymous access (email not authenticated)'                                        );
+define ( 'HPAPI_STR_AUTH_OK',               '056 Access allowed (fully authenticated)'                                              );
 
 // Validating posted object->method
-define ( 'HPAPI_STR_METHOD_VDR',            '051 400 Method property "vendor" does not exist'                                       );
-define ( 'HPAPI_STR_METHOD_VDR_STR',        '052 400 Method property "vendor" is not a string'                                      );
-define ( 'HPAPI_STR_METHOD_VDR_PTH',        '053 400 Method vendor directory not found'                                             );
-define ( 'HPAPI_STR_METHOD_PKG',            '054 400 Method property "package" does not exist'                                      );
-define ( 'HPAPI_STR_METHOD_PKG_STR',        '055 400 Method property "package" is not a string'                                     );
-define ( 'HPAPI_STR_METHOD_PKG_PTH',        '056 400 Method package directory not found'                                            );
-define ( 'HPAPI_STR_METHOD_CLS',            '057 400 Method property "class" does not exist'                                        );
-define ( 'HPAPI_STR_METHOD_CLS_STR',        '058 400 Method property "class" is not a string'                                       );
-define ( 'HPAPI_STR_METHOD_CLS_PTH',        '059 400 Method package does not contain class file'                                    );
-define ( 'HPAPI_STR_METHOD_MTD',            '060 400 Method property "method" does not exist'                                       );
-define ( 'HPAPI_STR_METHOD_MTD_STR',        '061 400 Method property "method" is not a string'                                      );
-define ( 'HPAPI_STR_METHOD_ARGS',           '062 400 Method property "arguments" does not exist'                                    );
-define ( 'HPAPI_STR_METHOD_ARGS_ARR',       '063 400 Method property "arguments" is not an array'                                   );
-define ( 'HPAPI_STR_METHOD_DFN_INC',        '064 500 Could not include definition file'                                             );
-define ( 'HPAPI_STR_METHOD_CLS_INC',        '065 500 Could not include class file'                                                  );
-define ( 'HPAPI_STR_METHOD_CLS_GOT',        '066 500 Class file included but class does not exist'                                  );
-define ( 'HPAPI_STR_METHOD_CLS_NEW',        '067 500 Class exists but could not be instantiated'                                    );
-define ( 'HPAPI_STR_METHOD_MTD_GOT',        '068 500 Method not in instantiated class'                                              );
-define ( 'HPAPI_STR_AUTH',                  '069 403 Not allowed'                                                                   );
+define ( 'HPAPI_STR_METHOD_VDR',            '061 400 Method property "vendor" does not exist'                                       );
+define ( 'HPAPI_STR_METHOD_VDR_STR',        '062 400 Method property "vendor" is not a string'                                      );
+define ( 'HPAPI_STR_METHOD_VDR_PTH',        '063 400 Method vendor directory not found'                                             );
+define ( 'HPAPI_STR_METHOD_PKG',            '064 400 Method property "package" does not exist'                                      );
+define ( 'HPAPI_STR_METHOD_PKG_STR',        '065 400 Method property "package" is not a string'                                     );
+define ( 'HPAPI_STR_METHOD_PKG_PTH',        '066 400 Method package directory not found'                                            );
+define ( 'HPAPI_STR_METHOD_CLS',            '067 400 Method property "class" does not exist'                                        );
+define ( 'HPAPI_STR_METHOD_CLS_STR',        '068 400 Method property "class" is not a string'                                       );
+define ( 'HPAPI_STR_METHOD_CLS_PTH',        '069 400 Method package does not contain class file'                                    );
+define ( 'HPAPI_STR_METHOD_MTD',            '070 400 Method property "method" does not exist'                                       );
+define ( 'HPAPI_STR_METHOD_MTD_STR',        '071 400 Method property "method" is not a string'                                      );
+define ( 'HPAPI_STR_METHOD_ARGS',           '072 400 Method property "arguments" does not exist'                                    );
+define ( 'HPAPI_STR_METHOD_ARGS_ARR',       '073 400 Method property "arguments" is not an array'                                   );
+define ( 'HPAPI_STR_METHOD_DFN_INC',        '074 500 Could not include definition file'                                             );
+define ( 'HPAPI_STR_METHOD_CLS_INC',        '075 500 Could not include class file'                                                  );
+define ( 'HPAPI_STR_METHOD_CLS_GOT',        '076 500 Class file included but class does not exist'                                  );
+define ( 'HPAPI_STR_METHOD_CLS_NEW',        '077 500 Class exists but could not be instantiated'                                    );
+define ( 'HPAPI_STR_METHOD_MTD_GOT',        '078 500 Method not in instantiated class'                                              );
+define ( 'HPAPI_STR_AUTH',                  '079 403 Not allowed'                                                                   );
 
 // Running method
-define ( 'HPAPI_STR_DB_MTD_ARGS',           '081 400 Incorrect argument count for method'                                           );
-define ( 'HPAPI_STR_DB_MTD_ARG_VAL',        '082 400 Invalid method argument'                                                       );
-define ( 'HPAPI_STR_DB_SPR_MODEL',          '083 500 No database for data model'                                                    );
-define ( 'HPAPI_STR_METHOD_EXCEPTION',      '084 Method threw an exception'                                                         );
-define ( 'HPAPI_STR_DB_Z',                  '085 Empty arguments to database function'                                              );
-define ( 'HPAPI_STR_DB_MTD_ACCESS',         '086 Method is not available'                                                           );
-define ( 'HPAPI_STR_DB_MTD_LOCN',           '087 Method is not available for client location'                                       );
+define ( 'HPAPI_STR_DB_MTD_ARGS',           '101 400 Incorrect argument count for method'                                           );
+define ( 'HPAPI_STR_DB_MTD_ARG_VAL',        '102 400 Invalid method argument'                                                       );
+define ( 'HPAPI_STR_DB_SPR_MODEL',          '103 500 No database for data model'                                                    );
+define ( 'HPAPI_STR_METHOD_EXCEPTION',      '104 Method threw an exception'                                                         );
+define ( 'HPAPI_STR_DB_Z',                  '105 Empty arguments to database function'                                              );
+define ( 'HPAPI_STR_DB_MTD_ACCESS',         '106 Method is not available'                                                           );
+define ( 'HPAPI_STR_DB_MTD_LOCN',           '107 Method is not available for client location'                                       );
 
 // Calling stored procedures
-define ( 'HPAPI_STR_DB_SPR_ARGS',           '101 500 Incorrect argument count for stored procedure'                                 );
-define ( 'HPAPI_STR_DB_SPR_ARG_VAL',        '102 500 Invalid stored procedure argument'                                             );
-define ( 'HPAPI_STR_DB_SPR_ARG_TYPE',       '103 500 Illegal data type for stored procedure argument'                               );
-define ( 'HPAPI_STR_DB_SPR_PREP',           '104 Query preparation failed'                                                          );
-define ( 'HPAPI_STR_DB_SPR_BIND',           '105 Query binding failed'                                                              );
-define ( 'HPAPI_STR_DB_SPR_EXEC',           '106 Query execution failed'                                                            );
-define ( 'HPAPI_STR_ERROR_DB',              '107 500 Data retrieval error'                                                          );
+define ( 'HPAPI_STR_DB_SPR_ARGS',           '201 500 Incorrect argument count for stored procedure'                                 );
+define ( 'HPAPI_STR_DB_SPR_ARG_VAL',        '202 500 Invalid stored procedure argument'                                             );
+define ( 'HPAPI_STR_DB_SPR_ARG_TYPE',       '203 500 Illegal data type for stored procedure argument'                               );
+define ( 'HPAPI_STR_ERROR_DB',              '204 500 Data retrieval error'                                                          );
+
+// SSL notice
+define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'                                                      );
 
 // Method notices
 define ( 'HPAPI_STR_DECODE_LENGTH',         '\Hpapi\Hpapi::decodePost(): posted data is too long'                                   );
 define ( 'HPAPI_STR_DB_EMPTY',              '\Hpapi\Db::call(): empty argument(s)'                                                  );
 define ( 'HPAPI_STR_DIAGNOSTIC_ONLY',       '\Hpapi\Utility::sprs(): only returns data as diagnostic'                               );
 define ( 'HPAPI_STR_2D_ARRAY',              '\Hpapi\Utility::parse2D(): a 2-D array was not given'                                  );
+
+// Database notices
+define ( 'HPAPI_STR_DB_SPR_PREP',           'Query preparation failed'                                                              );
+define ( 'HPAPI_STR_DB_SPR_BIND',           'Query binding failed'                                                                  );
+define ( 'HPAPI_STR_DB_SPR_EXEC',           'Query execution failed'                                                                );
 
 // Validation strings
 define ( 'HPAPI_STR_VALID_EXPRESSION',      'must match regular expression'                                                         );
