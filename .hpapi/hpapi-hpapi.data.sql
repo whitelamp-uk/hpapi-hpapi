@@ -115,10 +115,10 @@ INSERT IGNORE INTO `hpapi_sprarg` (`sprarg_Model`, `sprarg_Spr`, `sprarg_Argumen
 ('HpapiModel',	'hpapiUUID',	1,	'Date (yyyymmdd)',	0,	'yyyymmdd'),
 ('HpapiModel',	'hpapiUUID',	2,	'Time (hhmmss)',	0,	'hhmmss');
 
-INSERT IGNORE INTO `hpapi_user` (`user_Active`, `user_UUID`, `user_Notes`, `user_Give_Diagnostic`, `user_Name`, `user_Password_Hash`) VALUES
-(1,	'20180720000000::2d38515c-8ff9-11e8-902b-001f16148bc1',	'Single Typhoid Mary user representing any API request identified by its membership of the \"anon\" user group and having no key or email address.',	0,	'User, Unauthenticated',	''),
-(1,	'20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1',	'Slow, but the penny usually drops eventually.',	1,	'Administrator, System',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
-(1,	'20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1',	'Test user 1',	0,	'User, Test 1',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
+INSERT IGNORE INTO `hpapi_user` (`user_Active`, `user_UUID`, `user_Notes`, `user_Name`, `user_Password_Hash`) VALUES
+(1,	'20180720000000::2d38515c-8ff9-11e8-902b-001f16148bc1',	'Single Typhoid Mary user representing any API request identified by its membership of the \"anon\" user group and having no key or email address.',	'User, Unauthenticated',	''),
+(1,	'20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1',	'Slow, but the penny usually drops eventually.',	'Administrator, System',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
+(1,	'20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1',	'Test user 1', 'User, Test 1',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
 
 INSERT IGNORE INTO `hpapi_usergroup` (`usergroup_Usergroup`, `usergroup_Level`, `usergroup_Name`, `usergroup_Notes`) VALUES
 ('admin',	1,	'Administrators',	'Users performing high level administration of business data within the model.'),

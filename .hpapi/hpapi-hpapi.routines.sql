@@ -1,4 +1,4 @@
--- Adminer 4.6.2 MySQL dump
+
 
 SET NAMES utf8;
 SET time_zone = '+00:00';
@@ -6,111 +6,7 @@ SET time_zone = '+00:00';
 
 DELIMITER $$
 
-
-
-DROP PROCEDURE IF EXISTS `hpapiGrantMembership`$$
-CREATE PROCEDURE `hpapiGrantMembership`(
-  IN        `userUUID` CHAR(52) CHARSET ascii
- ,IN        `usergroup` varchar(64) CHARSET ascii
-)
-BEGIN
-  INSERT INTO `hpapi_membership`
-  SET
-    `membership_UserUUID`=userUUID
-   ,`membership_Usergroup`=usergroup
-  ;
-END$$
-
-DROP PROCEDURE IF EXISTS `hpapiRevokeMembership`$$
-CREATE PROCEDURE `hpapiRevokeMembership`(
-  IN        `userUUID` CHAR(52) CHARSET ascii
- ,IN        `usergroup` varchar(64) CHARSET ascii
-)
-BEGIN
-  DELETE FROM `hpapi_membership`
-  WHERE `membership_UserUUID`=userUUID
-    AND `membership_Usergroup`=usergroup
-    AND CHAR_LENGTH(`membership_UserUUID`)>0
-  ;
-END$$
-
-DROP PROCEDURE IF EXISTS `hpapiGrantRun`$$
-CREATE PROCEDURE `hpapiGrantRun`(
-  IN        `usergroup` varchar(64) CHARSET ascii
- ,IN        `vendor` varchar(64) CHARSET ascii
- ,IN        `package` varchar(64) CHARSET ascii
- ,IN        `class` varchar(64) CHARSET ascii
- ,IN        `method` varchar(64) CHARSET ascii
-)
-BEGIN
-  INSERT INTO `hpapi_run`
-  SET
-    `run_Usergroup`=usergroup
-   ,`run_Vendor`=vendor
-   ,`run_Package`=package
-   ,`run_Class`=class
-   ,`run_Method`=method
-  ;
-END$$
-
-DROP PROCEDURE IF EXISTS `hpapiRevokeRun`$$
-CREATE PROCEDURE `hpapiRevokeRun`(
-  IN        `usergroup` varchar(64) CHARSET ascii
- ,IN        `vendor` varchar(64) CHARSET ascii
- ,IN        `package` varchar(64) CHARSET ascii
- ,IN        `class` varchar(64) CHARSET ascii
- ,IN        `method` varchar(64) CHARSET ascii
-)
-BEGIN
-  DELETE FROM `hpapi_run`
-  WHERE `run_Usergroup`=usergroup
-    AND `run_Vendor`=vendor
-    AND `run_Package`=package
-    AND `run_Class`=class
-    AND `run_Method`=method
-  ;
-END$$
-
-DROP PROCEDURE IF EXISTS `hpapiGrantCall`$$
-CREATE PROCEDURE `hpapiGrantCall`(
-  IN        `model` varchar(64) CHARSET ascii
- ,IN        `spr` varchar(64) CHARSET ascii
- ,IN        `vendor` varchar(64) CHARSET ascii
- ,IN        `package` varchar(64) CHARSET ascii
- ,IN        `class` varchar(64) CHARSET ascii
- ,IN        `method` varchar(64) CHARSET ascii
-)
-BEGIN
-  INSERT INTO `hpapi_call`
-  SET
-    `call_Model`=model
-   ,`call_Spr`=spr
-   ,`call_Vendor`=vendor
-   ,`call_Package`=package
-   ,`call_Class`=class
-   ,`call_Method`=method
-  ;
-END$$
-
-DROP PROCEDURE IF EXISTS `hpapiRevokeCall`$$
-CREATE PROCEDURE `hpapiRevokeCall`(
-  IN        `model` varchar(64) CHARSET ascii
- ,IN        `spr` varchar(64) CHARSET ascii
- ,IN        `vendor` varchar(64) CHARSET ascii
- ,IN        `package` varchar(64) CHARSET ascii
- ,IN        `class` varchar(64) CHARSET ascii
- ,IN        `method` varchar(64) CHARSET ascii
-)
-BEGIN
-  DELETE FROM `hpapi_call`
-  WHERE `call_Model`=model
-    AND `call_Spr`=spr
-    AND `call_Vendor`=vendor
-    AND `call_Package`=package
-    AND `call_Class`=class
-    AND `call_Method`=method
-  ;
-END$$
+-- SOME PROCEDURES MOVED TO hpapi-dba
 
 DROP PROCEDURE IF EXISTS `hpapiMethods`$$
 CREATE PROCEDURE `hpapiMethods`(
@@ -147,35 +43,6 @@ BEGIN
   ;
 END$$
 
-
-
-DROP PROCEDURE IF EXISTS `hpapiUsergroups`$$
-CREATE PROCEDURE `hpapiUsergroups`(
-  IN        `userUUID` CHAR(52) CHARSET ascii
- ,IN        `authenticated` INT(1) UNSIGNED
-)
-BEGIN
-  SELECT
-    `usergroup_Usergroup` AS `usergroup`
-   ,`usergroup_Name` AS `name` 
-   ,`level_Name` AS `securityLevel`
-   ,`level_Notes` AS `securityNotes`
-  FROM `hpapi_usergroup`
-  LEFT JOIN `hpapi_membership`
-         ON `membership_Usergroup`=`usergroup_Usergroup`
-        AND (
-             `membership_Usergroup`='anon'
-          OR (
-               authenticated>'0'
-           AND `membership_User_UUID`=userUUID
-          )
-        )
-  LEFT JOIN `hpapi_level`
-         ON `level_Level`=`usergroup_Level`
-  WHERE `membership_Usergroup` IS NOT NULL
-  ORDER BY `level_Level`
-  ;
-END$$
 
 
 DROP PROCEDURE IF EXISTS `hpapiAuthDetails`$$

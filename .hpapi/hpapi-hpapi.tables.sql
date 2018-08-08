@@ -355,7 +355,6 @@ CREATE TABLE IF NOT EXISTS `hpapi_user` (
   `user_Active` int(1) unsigned NOT NULL DEFAULT '1',
   `user_UUID` varchar(64) CHARACTER SET ascii NOT NULL,
   `user_Notes` text NOT NULL,
-  `user_Give_Diagnostic` int(1) unsigned NOT NULL,
   `user_Name` varchar(64) NOT NULL,
   `user_Password_Hash` varchar(255) CHARACTER SET ascii NOT NULL DEFAULT '',
   PRIMARY KEY (`user_UUID`)
