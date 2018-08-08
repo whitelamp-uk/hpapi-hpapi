@@ -1,0 +1,48 @@
+[
+    {
+        "node" : "mynode",
+        "url" : "https://mynetworknode/api/",
+        "dbUsr" : "mynetdbusr",
+        "dbPwd" : "mynetdbpwd",
+        "models" : [
+            {
+                "model" : "HpapiModel",
+                "dsn" : "mysql:host=localhost;dbname=hpapi;port=3306;charset=utf8",
+                "export" : "me@mynode:~/hpapi/export/HpapiModel",
+                "notes" : "HpapiModel-mynode export (all), no imports"
+            },
+            {
+                "model" : "MyModel",
+                "dsn" : "mysql:host=localhost;dbname=babdev_model;port=3306;charset=utf8",
+                "export" : "me@mynode:~/hpapi/export/MyModel",
+                "imports" : [
+                    "me@mynode:~/hpapi/import/MyModel/mynode"
+                ],
+                "notes" : "MyModel-mynode:  export (settings), import (sales & marketing from live001)"
+            }
+        ]
+    },
+    {
+        "node" : "live001",
+        "url" : "https://live001.my.domain/",
+        "dbUsr" : "mylivedbuser",
+        "dbPwd" : "mylivedbpwd",
+        "models" : [
+            {
+                "model" : "HpapiModel",
+                "imports" : [
+                    "hpapi@live001:~/import/HpapiModel/mynode"
+                ],
+                "notes" : "HpapiModel-live001: no exports, imports (all from mynode)"
+            },
+            {
+                "model" : "MyModel",
+                "export" : "hpapi@live001:~/export/MyModel",
+                "imports" : [
+                    "hpapi@live001:~/import/MyModel/mynode"
+                ],
+                "notes" : "MyModel-live001: export (sales & marketing), import (settings from mynode)"
+            }
+        ]
+    }
+]

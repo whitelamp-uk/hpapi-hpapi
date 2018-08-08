@@ -1,0 +1,7 @@
+{
+    "node" : "mynode",
+    "model" : "MyModel",
+    "clientKey" : "20180804:162604:12345678-9abc-def0-0fed-cba987654321",
+    "clientEmail" : "mysystem@mynode",
+    "clientPassword" : "mySysPwd"
+}
