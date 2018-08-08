@@ -6,7 +6,6 @@ SET time_zone = '+00:00';
 
 DELIMITER $$
 
--- SOME PROCEDURES MOVED TO hpapi-dba
 
 DROP PROCEDURE IF EXISTS `hpapiMethods`$$
 CREATE PROCEDURE `hpapiMethods`(
