@@ -535,12 +535,17 @@ class Hpapi {
         return $path;
     }
 
-    public function parse2d ($data) {
+    public function parse2d ($data,$keyField=null) {
         if (!is_array($data)) {
             throw new \Exception (HPAPI_STR_2D_ARRAY);
             return false;
         }
-        $ol = array ();
+        if ($keyField!==null) {
+            $ol = new \stdClass ();
+        }
+        else {
+            $ol = array ();
+        }
         foreach ($data as $row) {
             if (!is_array($row)) {
                 throw new \Exception (HPAPI_STR_2D_ARRAY);
@@ -550,7 +555,12 @@ class Hpapi {
             foreach ($row as $k=>$v) {
                 $item->$k = $v;
             }
-            array_push ($ol,$item);
+            if (is_array($ol)) {
+                array_push ($ol,$item);
+            }
+            elseif (array_key_exists($keyField,$item)) {
+                $ol->{$item->$keyField} = $item;
+            }
         }
         return $ol;
     }
