@@ -19,16 +19,16 @@ INSERT IGNORE INTO `hpapi_key` (`key_Expired`, `key_Key`, `key_Remote_Addr_Patte
 (0,	'20180725104327::0e0f4ce8-8fee-11e8-902b-001f16148bc1',	'^127\\.0\\.0\\.[0-9]*$',	'20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1',	'whitelamp',	'hpapi-utility'),
 (0,	'20180720110427::89c56ad8-8ff3-11e8-902b-001f16148bc1',	'^127\\.0\\.0\\.[0-9]*$',	'20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1',	'whitelamp',	'hpapi-utility');
 
-INSERT IGNORE INTO `hpapi_level` (`level_Level`, `level_Name`, `level_Notes`) VALUES
-(0,	'System',	'Background processes with god-like powers.'),
-(1,	'Administration',	'Unrestricted access to the data assets of the organisation but should not have the ability to manipulate the system via its configuration data.'),
-(2,	'System administration',	'Potentially god-like but ethical constraints say they are not. Full access to configuration and support of a system but no access to the data assets of the organisation.'),
+INSERT INTO `hpapi_level` (`level_Level`, `level_Name`, `level_Notes`) VALUES
+(0,	'System',	'Background processes with god-like powers'),
+(1,	'Business Administration',	'Unrestricted access to this organisation\'s data assets but should not have the ability to manipulate this system via its configuration data.'),
+(2,	'System administration',	'Potentially god-like - but ethical constraints say not. Full access to configuration for and support of this system but having no right of access to the data assets of this organisation.'),
 (10,	'Management',	'Staff with access to more-than-usual data and/or methods.'),
 (100,	'Staff',	'Staff with access to general office administration data and methods.'),
-(1000,	'Agent (internal)',	'Agent for the internal organisation having a set of data and methods to support activities from the outside of the organisation.'),
-(10000,	'Agent (external)',	'Agent acting on behalf of an external organisation having data management policies and GDPR obligations.'),
-(1000000,	'Public',	'Public registered customer or web site user having personal agency only.'),
-(10000000,	'Anonymous',	'Unidentified user with a valid API key but passing no other authentication');
+(1000,	'Field',	'Staff typically accessing data from networks not controlled by this organisation.'),
+(10000,	'Agent',	'Agent acting on behalf of an organisation having data management policies and GDPR obligations.'),
+(1000000,	'Public',	'Public registered customer or web site user.'),
+(10000000,	'Anonymous',	'Users unidentified except for the use of a valid API key.');
 
 INSERT IGNORE INTO `hpapi_membership` (`membership_User_UUID`, `membership_Usergroup`) VALUES
 ('20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1',	'admin'),
@@ -120,9 +120,11 @@ INSERT IGNORE INTO `hpapi_user` (`user_Active`, `user_UUID`, `user_Notes`, `user
 (1,	'20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1',	'Slow, but the penny usually drops eventually.',	'Administrator, System',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
 (1,	'20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1',	'Test user 1', 'User, Test 1',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
 
-INSERT IGNORE INTO `hpapi_usergroup` (`usergroup_Usergroup`, `usergroup_Level`, `usergroup_Name`, `usergroup_Notes`) VALUES
+INSERT INTO `hpapi_usergroup` (`usergroup_Usergroup`, `usergroup_Level`, `usergroup_Name`, `usergroup_Notes`) VALUES
 ('admin',	1,	'Administrators',	'Users performing high level administration of business data within the model.'),
+('agent',	10000,	'Client Agents',	'Custom user group for users acting on behalf of a company client. They may or may not be operating via a third party agency organsiation (eg. a lottery provider).'),
 ('anon',	10000000,	'Unknown Users',	'Users having no identity.'),
+('field',	1000,	'Field staff',	'Staff at off-site locations'),
+('manager',	10,	'Managers',	'Admin users with relatively high privileges'),
+('staff',	100,	'Office staff',	'Admin users with limited privileges'),
 ('sysadmin',	2,	'System Administrators',	'Users performing high level administration of configuration data within the model.');
-
--- 2018-08-05 22:40:00

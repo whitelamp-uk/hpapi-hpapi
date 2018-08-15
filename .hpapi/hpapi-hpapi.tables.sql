@@ -4,17 +4,6 @@ SET NAMES utf8;
 SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 
-CREATE TABLE IF NOT EXISTS `hpapi_access` (
-  `access_Node` varchar(64) CHARACTER SET ascii NOT NULL,
-  `access_Model` varchar(64) CHARACTER SET ascii NOT NULL,
-  `access_Usergroup` varchar(64) CHARACTER SET ascii NOT NULL,
-  PRIMARY KEY (`access_Node`,`access_Model`),
-  KEY `access_Usergroup` (`access_Usergroup`),
-  CONSTRAINT `hpapi_access_ibfk_1` FOREIGN KEY (`access_Node`, `access_Model`) REFERENCES `hpapi_database` (`database_Node`, `database_Model`),
-  CONSTRAINT `hpapi_access_ibfk_2` FOREIGN KEY (`access_Usergroup`) REFERENCES `hpapi_usergroup` (`usergroup_Usergroup`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 CREATE TABLE IF NOT EXISTS `hpapi_call` (
   `call_Model` varchar(64) CHARACTER SET ascii NOT NULL,
   `call_Spr` varchar(64) CHARACTER SET ascii NOT NULL,
@@ -27,40 +16,6 @@ CREATE TABLE IF NOT EXISTS `hpapi_call` (
   CONSTRAINT `hpapi_call_ibfk_5` FOREIGN KEY (`call_Vendor`, `call_Package`, `call_Class`, `call_Method`) REFERENCES `hpapi_method` (`method_Vendor`, `method_Package`, `method_Class`, `method_Method`),
   CONSTRAINT `hpapi_call_ibfk_6` FOREIGN KEY (`call_Model`, `call_Spr`) REFERENCES `hpapi_spr` (`spr_Model`, `spr_Spr`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-CREATE TABLE IF NOT EXISTS `hpapi_column` (
-  `column_Model` varchar(64) CHARACTER SET ascii NOT NULL,
-  `column_Table` varchar(64) CHARACTER SET ascii NOT NULL,
-  `column_Column` varchar(64) CHARACTER SET ascii NOT NULL,
-  `column_Heading` varchar(64) NOT NULL,
-  `column_Hint` varchar(255) NOT NULL,
-  `column_Is_UUID` int(1) unsigned NOT NULL,
-  `column_Means_Is_Readable` int(1) unsigned NOT NULL,
-  `column_Means_Is_Trashed` int(1) unsigned NOT NULL,
-  `column_Means_Edit_Datetime` int(1) unsigned NOT NULL,
-  `column_Means_Editor` int(1) unsigned NOT NULL,
-  PRIMARY KEY (`column_Model`,`column_Table`,`column_Column`),
-  CONSTRAINT `hpapi_column_ibfk_1` FOREIGN KEY (`column_Model`, `column_Table`) REFERENCES `hpapi_table` (`table_Model`, `table_Table`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='column_Ignore = do not include in the model';
-
-
-CREATE TABLE IF NOT EXISTS `hpapi_columnevent` (
-  `columnevent_Node` varchar(64) CHARACTER SET ascii NOT NULL,
-  `columnevent_Model` varchar(64) CHARACTER SET ascii NOT NULL,
-  `columnevent_Table` varchar(64) CHARACTER SET ascii NOT NULL,
-  `columnevent_Column` varchar(64) CHARACTER SET ascii NOT NULL,
-  `columnevent_Transport` varchar(64) CHARACTER SET ascii NOT NULL,
-  `columnevent_Export_On_Insert` int(1) unsigned NOT NULL,
-  `columnevent_Export_On_Update` int(1) unsigned NOT NULL,
-  PRIMARY KEY (`columnevent_Node`,`columnevent_Model`,`columnevent_Table`,`columnevent_Column`,`columnevent_Transport`),
-  KEY `columnevent_Model` (`columnevent_Model`,`columnevent_Table`,`columnevent_Column`),
-  KEY `columnevent_Transport` (`columnevent_Transport`),
-  CONSTRAINT `hpapi_columnevent_ibfk_3` FOREIGN KEY (`columnevent_Model`, `columnevent_Table`, `columnevent_Column`) REFERENCES `hpapi_column` (`column_Model`, `column_Table`, `column_Column`),
-  CONSTRAINT `hpapi_columnevent_ibfk_4` FOREIGN KEY (`columnevent_Transport`) REFERENCES `hpapi_transport` (`transport_Transport`),
-  CONSTRAINT `hpapi_columnevent_ibfk_5` FOREIGN KEY (`columnevent_Node`, `columnevent_Model`) REFERENCES `hpapi_database` (`database_Node`, `database_Model`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 CREATE TABLE IF NOT EXISTS `hpapi_database` (
   `database_Node` varchar(64) CHARACTER SET ascii NOT NULL DEFAULT '',

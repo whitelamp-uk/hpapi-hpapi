@@ -109,6 +109,9 @@ define ( 'HPAPI_STR_DB_SPR_PREP',           'Query preparation failed'          
 define ( 'HPAPI_STR_DB_SPR_BIND',           'Query binding failed'                                                                  );
 define ( 'HPAPI_STR_DB_SPR_EXEC',           'Query execution failed'                                                                );
 
+// DBA
+define ( 'HPAPI_STR_DBA_GRANT_ALLOW',       'Grant denied'                                                                          );
+
 // Validation strings
 define ( 'HPAPI_STR_VALID_EXPRESSION',      'must match regular expression'                                                         );
 define ( 'HPAPI_STR_VALID_PHP_FILTER',      'must pass validation filter'                                                           );
