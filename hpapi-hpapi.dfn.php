@@ -90,10 +90,12 @@ define ( 'HPAPI_STR_DB_MTD_ACCESS',         '106 Method is not available'       
 define ( 'HPAPI_STR_DB_MTD_LOCN',           '107 Method is not available for client location'                                       );
 
 // Calling stored procedures
-define ( 'HPAPI_STR_DB_SPR_ARGS',           '201 500 Incorrect argument count for stored procedure'                                 );
-define ( 'HPAPI_STR_DB_SPR_ARG_VAL',        '202 500 Invalid stored procedure argument'                                             );
-define ( 'HPAPI_STR_DB_SPR_ARG_TYPE',       '203 500 Illegal data type for stored procedure argument'                               );
-define ( 'HPAPI_STR_ERROR_DB',              '204 500 Data retrieval error'                                                          );
+define ( 'HPAPI_STR_DB_SPR_NO_SPR',         '201 500 Method did not give stored procedure'                                          );
+define ( 'HPAPI_STR_DB_SPR_AVAIL',          '202 403 Stored procedure not available'                                                );
+define ( 'HPAPI_STR_DB_SPR_ARGS',           '203 500 Incorrect argument count for stored procedure'                                 );
+define ( 'HPAPI_STR_DB_SPR_ARG_VAL',        '204 500 Invalid stored procedure argument'                                             );
+define ( 'HPAPI_STR_DB_SPR_ARG_TYPE',       '205 500 Illegal data type for stored procedure argument'                               );
+define ( 'HPAPI_STR_ERROR_DB',              '206 500 Data retrieval error'                                                          );
 
 // SSL notice
 define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'                                                      );

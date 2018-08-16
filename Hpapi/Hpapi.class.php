@@ -261,6 +261,10 @@ class Hpapi {
             throw new \Exception (HPAPI_STR_DB_SPR_NO_SPR);
             return false;
         }
+        if (!in_array($spr,$this->sprs)) {
+            throw new \Exception (HPAPI_STR_DB_SPR_AVAIL.': `'.$spr.'`');
+            return false;
+        }
         if (count($arguments)!=count($this->sprs[$spr]->arguments)) {
             throw new \Exception (HPAPI_STR_DB_SPR_ARGS);
             return false;
