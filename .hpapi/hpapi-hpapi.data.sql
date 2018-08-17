@@ -74,6 +74,7 @@ INSERT IGNORE INTO `hpapi_pattern` (`pattern_Pattern`, `pattern_Constraints`, `p
 ('varchar-255',	'HPAPI_PATTERN_DESC_VARCHAR_255',	'',	'text',	'',	1,	255,	'',	''),
 ('varchar-64',	'HPAPI_PATTERN_DESC_VARCHAR_64',	'',	'text',	'',	1,	64,	'',	''),
 ('vendor',	'HPAPI_PATTERN_DESC_VENDOR',	'^[a-z][a-z\\-]*[a-z]$',	'text',	'',	2,	64,	'',	''),
+('yyyy-mm-dd',	'HPAPI_PATTERN_DESC_YYYY_MM_DD',	'^[0-9]{4}-[0-9]{2}-[0-9]{2}$',	'date',	'',	10,	10,	'2000-01-01',	'2100-12-31'),
 ('yyyymmdd',	'HPAPI_PATTERN_DESC_INT_YYYYMMDD',	'',	'text',	'FILTER_VALIDATE_INT',	8,	8,	'20000101',	'99991231');
 
 INSERT IGNORE INTO `hpapi_run` (`run_Usergroup`, `run_Vendor`, `run_Package`, `run_Class`, `run_Method`) VALUES

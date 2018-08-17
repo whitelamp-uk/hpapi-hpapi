@@ -35,6 +35,8 @@ define ( 'HPAPI_ANON_LEVEL',                HPAPI_ANON_LEVEL_NONE               
 
 
 // DIAGNOSTIC
+// Under normal circumstances this should be null. It is an argument to new \DateTime() to fake the response time eg. '@1534487400'
+define ( 'HPAPI_DIAGNOSTIC_FAKE_NOW',       null                                                                                    );
 define ( 'HPAPI_DIAGNOSTIC_KEYS_CSV',       ''                                                                                      );
 define ( 'HPAPI_LOG_LAST_OUTPUT',           false                                                                                   );
 define ( 'HPAPI_LOG_LAST_FILE',             HPAPI_DIR_LOG.'/hpapi-last-output.log'                                                  );

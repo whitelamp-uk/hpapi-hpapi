@@ -17,10 +17,12 @@ define ( 'HPAPI_CONTENT_TYPE_UNKNOWN',      'unknown/unknown'                   
 
 // Definitions for `hpapi_pattern`.`pattern_Constraints` for hpapi (and supporting class) methods and stored procedures
 define ( 'HPAPI_PATTERN_DESC_CLASS',        'must be a valid PHP class name'                                                        );
+define ( 'HPAPI_PATTERN_DESC_DATETIME',     'must be universal datetime format yyyy-mm-ddThh:mm:ss+hh:mm'                           );
 define ( 'HPAPI_PATTERN_DESC_DB_BOOL',      'must be 0 or 1'                                                                        );
 define ( 'HPAPI_PATTERN_DESC_INT_HHMMSS',   'must be 6 digits representing a time - HHMMSS'                                         );
 define ( 'HPAPI_PATTERN_DESC_INT_YYYYMMDD', 'must be 8 digits representing a date - YYYYMMDD'                                       );
-define ( 'HPAPI_PATTERN_DESC_MEDIA_URI',    'must be linux-friendly media request URI'                                              );
+define ( 'HPAPI_PATTERN_DESC_YYYY_MM_DD',   'must be a standard formatted date - YYYY-MM-DD'                                        );
+define ( 'HPAPI_PATTERN_DESC_URI',          'must be a Linux-friendly request URI'                                                  );
 define ( 'HPAPI_PATTERN_DESC_IPV4',         'must be valid IPv4 address'                                                            );
 define ( 'HPAPI_PATTERN_DESC_PASSWORD_1',   'must have at least 8 characters with at least one: big letter, small letter, number'   );
 define ( 'HPAPI_PATTERN_DESC_ALPHA_LC',     'must have only small letters (up to 64 characters)'                                    );

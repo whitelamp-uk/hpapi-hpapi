@@ -21,7 +21,10 @@ class Hpapi {
             return false;
         }
         error_reporting (HPAPI_PHP_ERROR_LEVEL);
-        $this->datetime                             = new \DateTime ();
+        if (!defined('HPAPI_DIAGNOSTIC_FAKE_NOW')) {
+            define ('HPAPI_DIAGNOSTIC_FAKE_NOW',null);
+        }
+        $this->datetime                             = new \DateTime (HPAPI_DIAGNOSTIC_FAKE_NOW);
         if (HPAPI_SSL_ENFORCE && !$this->isHTTPS()) {
             header ('Content-Type: '.HPAPI_CONTENT_TYPE_TEXT);
             $this->logLast (HPAPI_STR_SSL."\n");
@@ -261,12 +264,12 @@ class Hpapi {
             throw new \Exception (HPAPI_STR_DB_SPR_NO_SPR);
             return false;
         }
-        if (!in_array($spr,$this->sprs)) {
+        if (!array_key_exists($spr,$this->sprs)) {
             throw new \Exception (HPAPI_STR_DB_SPR_AVAIL.': `'.$spr.'`');
             return false;
         }
         if (count($arguments)!=count($this->sprs[$spr]->arguments)) {
-            throw new \Exception (HPAPI_STR_DB_SPR_ARGS);
+            throw new \Exception (HPAPI_STR_DB_SPR_ARGS.': `'.$spr.'`');
             return false;
         }
         $count = 0;
