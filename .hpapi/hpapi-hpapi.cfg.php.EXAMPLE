@@ -53,8 +53,8 @@ define ( 'HPAPI_JSON_OPTIONS',              JSON_UNESCAPED_SLASHES|JSON_UNESCAPE
 
 
 // APPLICATION CLASSES
-require_once HPAPI_DIR_HPAPI.'/whitelamp/hpapi-hpapi/Hpapi/Hpapi.class.php';
-require_once HPAPI_DIR_HPAPI.'/whitelamp/hpapi-hpapi/Hpapi/Db.class.php';
+require_once HPAPI_DIR_HPAPI.'/whitelamp-uk/hpapi-hpapi/Hpapi/Hpapi.class.php';
+require_once HPAPI_DIR_HPAPI.'/whitelamp-uk/hpapi-hpapi/Hpapi/Db.class.php';
 
 
 // HPAPI SERVER HTTP HEADERS
