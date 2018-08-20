@@ -17,17 +17,6 @@ CREATE TABLE IF NOT EXISTS `hpapi_call` (
   CONSTRAINT `hpapi_call_ibfk_6` FOREIGN KEY (`call_Model`, `call_Spr`) REFERENCES `hpapi_spr` (`spr_Model`, `spr_Spr`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `hpapi_database` (
-  `database_Node` varchar(64) CHARACTER SET ascii NOT NULL DEFAULT '',
-  `database_Model` varchar(64) CHARACTER SET ascii NOT NULL,
-  `database_Notes` text NOT NULL,
-  PRIMARY KEY (`database_Node`,`database_Model`),
-  KEY `database_Model` (`database_Model`),
-  CONSTRAINT `hpapi_database_ibfk_1` FOREIGN KEY (`database_Node`) REFERENCES `hpapi_node` (`node_Node`),
-  CONSTRAINT `hpapi_database_ibfk_2` FOREIGN KEY (`database_Model`) REFERENCES `hpapi_model` (`model_Model`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 CREATE TABLE IF NOT EXISTS `hpapi_email` (
   `email_Verified` int(1) unsigned NOT NULL DEFAULT '0',
   `email_Email` varchar(255) NOT NULL,
@@ -105,13 +94,6 @@ CREATE TABLE IF NOT EXISTS `hpapi_model` (
   `model_Usr` varchar(255) NOT NULL,
   `model_Pwd` varchar(255) NOT NULL,
   PRIMARY KEY (`model_Model`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-CREATE TABLE IF NOT EXISTS `hpapi_node` (
-  `node_Node` varchar(64) CHARACTER SET ascii NOT NULL,
-  `node_Name` varchar(64) NOT NULL,
-  PRIMARY KEY (`node_Node`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
