@@ -303,7 +303,11 @@ class Hpapi {
     }
 
     public function decodePost ( ) {
-        $post           = file_get_contents ('php://input');
+        $post           = trim (file_get_contents('php://input'));
+        if (strlen($post)==0) {
+            throw new \Exception (HPAPI_STR_DECODE_NOTHING);
+            return false;
+        }
         if (strlen($post)>HPAPI_POST_BYTES_MAX) {
             throw new \Exception (HPAPI_STR_DECODE_LENGTH.' ( >'.HPAPI_POST_BYTES_MAX.'B )');
             return false;

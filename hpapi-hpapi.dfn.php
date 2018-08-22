@@ -103,6 +103,7 @@ define ( 'HPAPI_STR_ERROR_DB',              '206 500 Data retrieval error'      
 define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'                                                      );
 
 // Method notices
+define ( 'HPAPI_STR_DECODE_NOTHING',        '\Hpapi\Hpapi::decodePost(): nothing was posted'                                        );
 define ( 'HPAPI_STR_DECODE_LENGTH',         '\Hpapi\Hpapi::decodePost(): posted data is too long'                                   );
 define ( 'HPAPI_STR_DB_EMPTY',              '\Hpapi\Db::call(): empty argument(s)'                                                  );
 define ( 'HPAPI_STR_DIAGNOSTIC_ONLY',       '\Hpapi\Utility::sprs(): only returns data as diagnostic'                               );
