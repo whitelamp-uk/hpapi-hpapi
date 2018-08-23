@@ -153,7 +153,7 @@ class Db {
             if (in_array($this->hpapi->object->key,$this->hpapi->diagnosticKeys)) {
                 $this->hpapi->object->diagnostic   .= HPAPI_STR_DB_SPR_EXEC.' - '.$spr.' ('.$e->getMessage().')'."\n";
             }
-            throw new \Exception (HPAPI_STR_ERROR_DB);
+            throw new \Exception ($e->getMessage());
             return false;
         }
         try {

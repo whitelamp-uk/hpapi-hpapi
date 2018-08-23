@@ -6,13 +6,13 @@ SET time_zone = '+00:00';
 
 DELIMITER $$
 
-
 DROP PROCEDURE IF EXISTS `hpapiLogRequest`$$
 CREATE PROCEDURE `hpapiLogRequest`(
   IN        `dt` VARCHAR(32) CHARSET ascii
  ,IN        `ky` VARCHAR(64) CHARSET ascii
  ,IN        `email` VARCHAR(254) CHARSET utf8
  ,IN        `remoteAddr` VARCHAR(64) CHARSET ascii
+ ,IN        `userAgent` VARCHAR(255) CHARSET ascii
  ,IN        `vendor` VARCHAR(64) CHARSET ascii
  ,IN        `package` VARCHAR(64) CHARSET ascii
  ,IN        `class` VARCHAR(64) CHARSET ascii
@@ -27,6 +27,7 @@ BEGIN
    ,`log_Key`=ky
    ,`log_Email`=email
    ,`log_Remote_Addr`=remoteAddr
+   ,`log_User_Agent`=userAgent
    ,`log_Vendor`=vendor
    ,`log_Package`=package
    ,`log_Class`=class

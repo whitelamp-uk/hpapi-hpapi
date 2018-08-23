@@ -50,23 +50,24 @@ CREATE TABLE IF NOT EXISTS `hpapi_level` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE IF NOT EXISTS `hpapi_log` (
+CREATE TABLE `hpapi_log` (
   `log_Datetime` varchar(32) CHARACTER SET ascii NOT NULL,
   `log_Key` varchar(64) CHARACTER SET ascii NOT NULL,
   `log_Email` varchar(254) CHARACTER SET ascii NOT NULL,
   `log_Remote_Addr` varchar(64) CHARACTER SET ascii NOT NULL,
+  `log_User_Agent` varchar(255) CHARACTER SET ascii NOT NULL,
   `log_Vendor` varchar(64) CHARACTER SET ascii NOT NULL,
   `log_Package` varchar(64) CHARACTER SET ascii NOT NULL,
   `log_Class` varchar(64) CHARACTER SET ascii NOT NULL,
   `log_Method` varchar(64) CHARACTER SET ascii NOT NULL,
-  `log_Status` varchar(64) NOT NULL,
+  `log_Error` varchar(64) NOT NULL,
+  `log_Notice` varchar(64) NOT NULL,
   PRIMARY KEY (`log_Datetime`,`log_Key`),
   KEY `log_Key` (`log_Key`),
   KEY `log_Email` (`log_Email`),
-  KEY `log_Vendor` (`log_Vendor`,`log_Package`,`log_Class`,`log_Method`),
-  CONSTRAINT `hpapi_log_ibfk_1` FOREIGN KEY (`log_Key`) REFERENCES `hpapi_key` (`key_Key`),
-  CONSTRAINT `hpapi_log_ibfk_2` FOREIGN KEY (`log_Email`) REFERENCES `hpapi_email` (`email_Email`),
-  CONSTRAINT `hpapi_log_ibfk_5` FOREIGN KEY (`log_Vendor`, `log_Package`, `log_Class`, `log_Method`) REFERENCES `hpapi_method` (`method_Vendor`, `method_Package`, `method_Class`, `method_Method`)
+  KEY `log_Remote_Addr` (`log_Remote_Addr`),
+  KEY `log_Vendor_log_Package_log_Class_log_Method` (`log_Vendor`,`log_Package`,`log_Class`,`log_Method`),
+  KEY `log_Error` (`log_Error`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

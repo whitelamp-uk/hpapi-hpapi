@@ -345,7 +345,12 @@ class Hpapi {
                 http_response_code ($m[0]);
             }
         }
-        $this->log ();
+        try {
+            $this->log ();
+        }
+        catch (\Exception $e) {
+             $this->object->response->notice = $e->getMessage ();
+        }
         if (property_exists($this->object,'key')) {
             unset ($this->object->key);
         }
@@ -533,6 +538,7 @@ class Hpapi {
                ,$this->object->key
                ,$this->object->email
                ,$_SERVER['REMOTE_ADDR']
+               ,$_SERVER['HTTP_USER_AGENT']
                ,$this->object->method->vendor
                ,$this->object->method->package
                ,$this->object->method->class
@@ -542,6 +548,7 @@ class Hpapi {
             );
         }
         catch (\Exception $e) {
+            throw new \Exception ($e);
             return false;
         }
         return true;
