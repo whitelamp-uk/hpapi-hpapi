@@ -7,6 +7,36 @@ SET time_zone = '+00:00';
 DELIMITER $$
 
 
+DROP PROCEDURE IF EXISTS `hpapiLogRequest`$$
+CREATE PROCEDURE `hpapiLogRequest`(
+  IN        `dt` VARCHAR(32) CHARSET ascii
+ ,IN        `ky` VARCHAR(64) CHARSET ascii
+ ,IN        `email` VARCHAR(254) CHARSET utf8
+ ,IN        `remoteAddr` VARCHAR(64) CHARSET ascii
+ ,IN        `vendor` VARCHAR(64) CHARSET ascii
+ ,IN        `package` VARCHAR(64) CHARSET ascii
+ ,IN        `class` VARCHAR(64) CHARSET ascii
+ ,IN        `method` VARCHAR(64) CHARSET ascii
+ ,IN        `err` VARCHAR(64) CHARSET utf8
+ ,IN        `ntc` VARCHAR(64) CHARSET utf8
+)
+BEGIN
+  INSERT INTO `hpapi_log`
+  SET
+    `log_Datetime`=dt
+   ,`log_Key`=ky
+   ,`log_Email`=email
+   ,`log_Remote_Addr`=remoteAddr
+   ,`log_Vendor`=vendor
+   ,`log_Package`=package
+   ,`log_Class`=class
+   ,`log_Method`=method
+   ,`log_Error`=err
+   ,`log_Notice`=ntc
+  ;
+END $$
+
+
 DROP PROCEDURE IF EXISTS `hpapiMethods`$$
 CREATE PROCEDURE `hpapiMethods`(
   IN        `userUUID` CHAR(52) CHARSET ascii
@@ -41,7 +71,6 @@ BEGIN
   ORDER BY `vendor`,`package`,`class`,`method`
   ;
 END$$
-
 
 
 DROP PROCEDURE IF EXISTS `hpapiAuthDetails`$$

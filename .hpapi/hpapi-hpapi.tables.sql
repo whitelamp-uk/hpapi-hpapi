@@ -50,6 +50,26 @@ CREATE TABLE IF NOT EXISTS `hpapi_level` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE IF NOT EXISTS `hpapi_log` (
+  `log_Datetime` varchar(32) CHARACTER SET ascii NOT NULL,
+  `log_Key` varchar(64) CHARACTER SET ascii NOT NULL,
+  `log_Email` varchar(254) CHARACTER SET ascii NOT NULL,
+  `log_Remote_Addr` varchar(64) CHARACTER SET ascii NOT NULL,
+  `log_Vendor` varchar(64) CHARACTER SET ascii NOT NULL,
+  `log_Package` varchar(64) CHARACTER SET ascii NOT NULL,
+  `log_Class` varchar(64) CHARACTER SET ascii NOT NULL,
+  `log_Method` varchar(64) CHARACTER SET ascii NOT NULL,
+  `log_Status` varchar(64) NOT NULL,
+  PRIMARY KEY (`log_Datetime`,`log_Key`),
+  KEY `log_Key` (`log_Key`),
+  KEY `log_Email` (`log_Email`),
+  KEY `log_Vendor` (`log_Vendor`,`log_Package`,`log_Class`,`log_Method`),
+  CONSTRAINT `hpapi_log_ibfk_1` FOREIGN KEY (`log_Key`) REFERENCES `hpapi_key` (`key_Key`),
+  CONSTRAINT `hpapi_log_ibfk_2` FOREIGN KEY (`log_Email`) REFERENCES `hpapi_email` (`email_Email`),
+  CONSTRAINT `hpapi_log_ibfk_5` FOREIGN KEY (`log_Vendor`, `log_Package`, `log_Class`, `log_Method`) REFERENCES `hpapi_method` (`method_Vendor`, `method_Package`, `method_Class`, `method_Method`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 CREATE TABLE IF NOT EXISTS `hpapi_membership` (
   `membership_User_UUID` varchar(64) CHARACTER SET ascii NOT NULL DEFAULT '',
   `membership_Usergroup` varchar(64) CHARACTER SET ascii NOT NULL DEFAULT '0',

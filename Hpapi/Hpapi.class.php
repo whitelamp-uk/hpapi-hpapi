@@ -111,10 +111,9 @@ class Hpapi {
         }
         catch (\Exception $e) {
             $this->object->response->notice         = $e->getMessage ();
-            $this->object->response->error          = HPAPI_STR_DB_OBJ;
+            $this->object->response->error          = HPAPI_STR_DB_DFN;
             $this->end ();
         }
-
         try {
             $this->db                               = new \Hpapi\Db ($this,$this->config->node,$this->config->model);
         }
@@ -346,6 +345,7 @@ class Hpapi {
                 http_response_code ($m[0]);
             }
         }
+        $this->log ();
         if (property_exists($this->object,'key')) {
             unset ($this->object->key);
         }
@@ -356,7 +356,7 @@ class Hpapi {
             unset ($this->object->password);
         }
         try {
-            $this->logLast (var_export($this->object,true));
+            $this->logLast (trim(file_get_contents('php://input'))."\n".var_export($this->object,true));
         }
         catch (\Exception $e) {
             if (in_array($this->object->key,$this->diagnosticKeys)) {
@@ -520,6 +520,31 @@ class Hpapi {
             return false;
         }
         return $str;
+    }
+
+    public function log ( ) {
+        if (!$this->db) {
+            return false;
+        }
+        try {
+            $this->db->call (
+                'hpapiLogRequest'
+               ,$this->object->response->datetime
+               ,$this->object->key
+               ,$this->object->email
+               ,$_SERVER['REMOTE_ADDR']
+               ,$this->object->method->vendor
+               ,$this->object->method->package
+               ,$this->object->method->class
+               ,$this->object->method->method
+               ,$this->object->response->error.''
+               ,$this->object->response->notice.''
+            );
+        }
+        catch (\Exception $e) {
+            return false;
+        }
+        return true;
     }
 
     public function logLast ($output) {

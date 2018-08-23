@@ -1,0 +1,14 @@
+[
+    {
+        "driver" : "mysql"
+       ,"query" : {
+            "spr" : "CALL `<spr/>`(<csv-bindings/>)"
+        }
+    }
+   ,{
+        "driver" : "pgsql"
+       ,"query" : {
+            "spr" : "SELECT <spr/>(<csv-bindings/>)"
+        }
+    }
+]

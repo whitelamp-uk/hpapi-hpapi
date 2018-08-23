@@ -17,35 +17,35 @@ class Db {
 
     public function __construct (\Hpapi\Hpapi $hpapi,$node,$model) {
         $this->hpapi        = $hpapi;
+        $this->node         = $node;
         try {
-            $this->node     = $node;
             $cfgs           = file_get_contents (HPAPI_SYSTEM_DB_CFG_JSON);
             $cfgs           = $hpapi->jsonDecode ($cfgs,false,HPAPI_JSON_DEPTH);
-            foreach  ($cfgs as $cfg) {
-                if ($cfg->node!=$this->node) {
-                    continue;
-                }
-                $this->cfg  = $cfg;
-                foreach  ($cfg->models as $m) {
-                    if ($m->model!=$model) {
-                        continue;
-                    }
-                    $this->model = $m;
-                    break;
-                }
-                if (!$this->model) {
-                    throw new \Exception (HPAPI_STR_DB_CFG.' [3]');
-                    return false;
-                }
-                break;
-            }
-            if (!$this->cfg) {
-                throw new \Exception (HPAPI_STR_DB_CFG.' [2]');
-                return false;
-            }
         }
         catch (\Exception $e) {
-            throw new \Exception (HPAPI_STR_DB_CFG.' [1]');
+            throw new \Exception (HPAPI_STR_DB_CFG.' [1] ('.HPAPI_SYSTEM_DB_CFG_JSON.')');
+            return false;
+        }
+        foreach  ($cfgs as $cfg) {
+            if ($cfg->node!=$this->node) {
+                continue;
+            }
+            $this->cfg      = $cfg;
+            foreach  ($cfg->models as $m) {
+                if ($m->model!=$model) {
+                    continue;
+                }
+                $this->model = $m;
+                break;
+            }
+            if (!$this->model) {
+                throw new \Exception (HPAPI_STR_DB_CFG.' [2] ('.HPAPI_SYSTEM_DB_CFG_JSON.')');
+                return false;
+            }
+            break;
+        }
+        if (!$this->cfg) {
+            throw new \Exception (HPAPI_STR_DB_CFG.' [3] ('.HPAPI_SYSTEM_DB_CFG_JSON.')');
             return false;
         }
         try {

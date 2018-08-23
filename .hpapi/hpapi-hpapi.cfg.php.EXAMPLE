@@ -14,12 +14,10 @@ define ( 'HPAPI_META_DESCRIPTION',          'HTTP POST API for My Organisation' 
 define ( 'HPAPI_SYSTEM_CFG_JSON',           HPAPI_DIR_CONFIG.'/hpapi-hpapi-me.cfg.json'                                             );
 define ( 'HPAPI_SYSTEM_DB_DFN_JSON',        HPAPI_DIR_CONFIG.'/hpapi-hpapi-db.dfn.json'                                             );
 define ( 'HPAPI_SYSTEM_DB_CFG_JSON',        HPAPI_DIR_CONFIG.'/hpapi-hpapi-db.cfg.json'                                             );
-define ( 'HPAPI_SYSTEM_DB_USR',             'my-hpapi-db-user'                                                                      );
-define ( 'HPAPI_SYSTEM_DB_PWD',             'my-hpapi-db-pass'                                                                      );
 
 
 // CODE ERROR REPORTING
-define ( 'HPAPI_PHP_ERROR_LEVEL',           E_NONE                                                                                  );
+define ( 'HPAPI_PHP_ERROR_LEVEL',           E_ALL                                                                                   );
 
 
 // SSL ENFORCEMENT
