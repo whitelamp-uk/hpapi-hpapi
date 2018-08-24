@@ -28,8 +28,8 @@ define ( 'HPAPI_SSL_ENFORCE',               true                                
 define ( 'HPAPI_POST_BYTES_MAX',            1024                                                                                    );
 
 
-// ANONYMITY:    (STRICT) HPAPI_ANON_LEVEL_NONE  |  HPAPI_ANON_LEVEL_EMAIL  |  HPAPI_ANON_LEVEL_USER  |  HPAPI_ANON_LEVEL_KEY (LOOSE)
-define ( 'HPAPI_ANON_LEVEL',                HPAPI_ANON_LEVEL_NONE                                                                   );
+// ANONYMOUS ACCESS TO METHODS FOR USERGROUP ANON
+define ( 'HPAPI_ANON_ACCESS',               true                                                                                    );
 
 
 // DIAGNOSTIC

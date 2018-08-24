@@ -44,7 +44,7 @@ class Hpapi {
         header ('Content-Type: '.$this->contentType);
         $this->object->response                     = new \stdClass ();
         $this->object->response->datetime           = null;
-        $this->object->response->authStatus         = HPAPI_STR_AUTH_DENIED;
+        $this->object->response->authStatus         = null;
         $this->object->response->description        = HPAPI_META_DESCRIPTION;
         $this->object->response->splash             = array ();
         $this->object->response->error              = null;
@@ -115,15 +115,28 @@ class Hpapi {
             $this->end ();
         }
         try {
-            $this->db                               = new \Hpapi\Db ($this,$this->config->node,$this->config->model);
+            $this->db                               = new \Hpapi\Db ($this,$this->config->model,$this->config->node);
         }
         catch (\Exception $e) {
             $this->object->response->notice         = $e->getMessage ();
             $this->object->response->error          = HPAPI_STR_DB_OBJ;
             $this->end ();
         }
+        // Tidy old key releases
+        try {
+            $this->db->call (
+                'hpapiKeyreleaseRevoke'
+                ,$this->object->response->datetime
+                ,$this->object->key
+            );
+        }
+        catch (\Exception $e) {
+            $this->object->response->notice         = $e->getMessage ();
+            $this->object->response->error          = HPAPI_STR_ERROR_DB;
+            $this->end ();
+        }
         $this->authenticate ();
-        $this->db->close ();
+        $this->access ();
         $this->object->response->returnValue        = $this->executeMethod ($this->object->method);
         $this->end ();
     }
@@ -135,76 +148,11 @@ class Hpapi {
         array_push ($this->object->response->splash,$message);
     }
 
-    public function accessControl ( ) {
-        try {
-            $auth                                   = $this->db->call (
-                'hpapiAuthDetails'
-                ,$this->object->key
-                ,$this->object->email
-            );
-        }
-        catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
-            $this->object->response->error          = HPAPI_STR_ERROR_DB;
-            $this->end ();
-        }
-        if (!count($auth)) {
-            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
-            $this->end ();
-        }
-        $auth                                       = $auth[0];
-        if (!$auth['userFound']) {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_RECOG;
-            if (HPAPI_ANON_LEVEL<=HPAPI_ANON_LEVEL_USER) {
-                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
-                $this->end ();
-            }
-            $this->object->email                    = '';
-        }
-        elseif (!$auth['userActive']) {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_ACTIVE;
-            if (HPAPI_ANON_LEVEL<=HPAPI_ANON_LEVEL_USER) {
-                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
-                $this->end ();
-            }
-            $this->object->email                    = '';
-        }
-        if (!$auth['emailFound']) {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_EMAIL;
-            if (HPAPI_ANON_LEVEL<=HPAPI_ANON_LEVEL_EMAIL) {
-                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
-                $this->end ();
-            }
-            $this->object->email                    = '';
-        }
-        elseif (!$auth['emailVerified']) {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_VERIFY;
-            if (HPAPI_ANON_LEVEL<=HPAPI_ANON_LEVEL_EMAIL) {
-                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
-                $this->end ();
-            }
-            $this->object->email                    = '';
-        }
-        if (strlen($this->object->email) && password_verify($this->object->password,$auth['passwordHash'])) {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
-        }
-        else {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_PWD;
-            if (HPAPI_ANON_LEVEL<=HPAPI_ANON_LEVEL_NONE) {
-                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
-                $this->end ();
-            }
-            $this->object->email                    = '';
-        }
-    }
-
-    public function authenticate ( ) {
-        $this->accessControl ();
+    public function access ( ) {
         try {
             $method_args                            = $this->db->call (
                 'hpapiMethodargs'
-               ,$this->object->key
-               ,$this->object->email
+               ,$this->userUUID
                ,$this->object->method->vendor
                ,$this->object->method->package
                ,$this->object->method->class
@@ -227,7 +175,6 @@ class Hpapi {
         try {
             $spr_args                               = $this->db->call (
                 'hpapiSprargs'
-               ,$this->config->node
                ,$this->object->method->vendor
                ,$this->object->method->package
                ,$this->object->method->class
@@ -241,6 +188,78 @@ class Hpapi {
         }
         $this->sprs                                 = $this->parseAuthSprs ($spr_args);
         return true;
+    }
+
+    public function authenticate ( ) {
+        // Authentication data
+        try {
+            $auth                                   = $this->db->call (
+                'hpapiAuthDetails'
+                ,$this->object->response->datetime
+                ,$this->object->key
+                ,$this->object->email
+            );
+        }
+        catch (\Exception $e) {
+            $this->object->response->notice         = $e->getMessage ();
+            $this->object->response->error          = HPAPI_STR_ERROR_DB;
+            $this->end ();
+        }
+        if (!count($auth)) {
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_ID;
+            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
+            $this->end ();
+        }
+        $auth                                       = $auth[0];
+        // Authentication checks
+        if (!preg_match('<'.$auth['remoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_REMOTE_ADDR;
+            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
+            $this->end ();
+        }
+        if (!$auth['userUUID']) {
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_RECOG;
+            if (!HPAPI_ANON_ACCESS) {
+                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
+                $this->end ();
+            }
+            $this->object->email                    = '';
+        }
+        elseif (!$auth['userActive']) {
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_ACTIVE;
+            if (!HPAPI_ANON_ACCESS) {
+                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
+                $this->end ();
+            }
+            $this->object->email                    = '';
+        }
+        if (strlen($this->object->email) && password_verify($this->object->password,$auth['passwordHash'])) {
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
+        }
+        else {
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_PWD;
+            if (!HPAPI_ANON_ACCESS) {
+                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
+                $this->end ();
+            }
+            $this->object->email                    = '';
+        }
+        if (!$auth['emailVerified']) {
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_VERIFY;
+            if (!HPAPI_ANON_ACCESS) {
+                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
+                $this->end ();
+            }
+            $this->object->email                    = '';
+        }
+        // Define current user
+        $this->userUUID                             = $auth['userUUID'];
+        if ($auth['newKey']) {
+            // Adopt the key for this transaction
+            $this->object->key                      = $auth['newKey'];
+            // Return released key to client
+            $this->object->response->newKey         = $auth['newKey'];
+        }
     }
 
     public function classPath ($method) {
@@ -283,7 +302,7 @@ class Hpapi {
             $count++;
         }
         try {
-            $db             = new \Hpapi\Db ($this,$this->config->node,$this->sprs[$spr]->model);
+            $db             = new \Hpapi\Db ($this,$this->sprs[$spr]->model,$this->config->node);
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage());
@@ -351,6 +370,7 @@ class Hpapi {
         catch (\Exception $e) {
              $this->object->response->notice = $e->getMessage ();
         }
+        $this->db->close ();
         if (property_exists($this->object,'key')) {
             unset ($this->object->key);
         }
@@ -613,19 +633,12 @@ class Hpapi {
             throw new \Exception (HPAPI_STR_DB_MTD_ACCESS);
             return false;
         }
-        if (!preg_match('<'.$m_args[0]['remoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
-            throw new \Exception (HPAPI_STR_DB_MTD_LOCN);
-            return false;
-        }
-        $this->userUUID                                                     = $m_args[0]['userUUID'];
-        $this->remoteAddrPattern                                            = $m_args[0]['remoteAddrPattern'];
         $method                                                             = new \stdClass ();
         $method->name                                                      = $m_args[0]['name'];
         $method->notes                                                      = $m_args[0]['notes'];
         $method->arguments                                                  = array ();
         if ($m_args[0]['argument']) {
             foreach ($m_args as $m_arg) {
-                unset ($m_arg['remoteAddrPattern']);
                 unset ($m_arg['label']);
                 unset ($m_arg['notes']);
                 $arg                                                        = new \stdClass ();
@@ -648,7 +661,6 @@ class Hpapi {
             if (!array_key_exists($spr_arg['spr'],$sprs)) {
                 $sprs[$spr_arg['spr']]                                      = new \stdClass ();
                 $sprs[$spr_arg['spr']]->model                               = $spr_arg['model'];
-                 $sprs[$spr_arg['spr']]->databaseNotes                       = $spr_arg['databaseNotes'];
                 $sprs[$spr_arg['spr']]->notes                               = $spr_arg['notes'];
                 $sprs[$spr_arg['spr']]->arguments                           = array ();
             }
@@ -658,7 +670,7 @@ class Hpapi {
             if (!array_key_exists($spr_arg['argument']-1,$sprs[$spr_arg['spr']]->arguments)) {
                 $sprs[$spr_arg['spr']]->arguments[$spr_arg['argument']-1]   = new \stdClass ();
             }
-            $ignore = array ('model','databaseNotes','notes');
+            $ignore = array ('model','notes');
             foreach ($ignore as $k) {
                 unset ($spr_arg[$k]);
             }

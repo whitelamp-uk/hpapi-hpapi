@@ -6,6 +6,59 @@ SET time_zone = '+00:00';
 
 DELIMITER $$
 
+
+DROP PROCEDURE IF EXISTS `hpapiAuthDetails`$$
+CREATE PROCEDURE `hpapiAuthDetails`(
+  IN        `dt` VARCHAR(32) CHARSET ascii
+ ,IN        `keyKey` CHAR(52) CHARSET ascii
+ ,IN        `emailEmail` VARCHAR(254) CHARSET ascii
+)
+BEGIN
+  SELECT
+    `user_UUID` AS `userUUID` 
+   ,`user_Active` AS `userActive` 
+   ,`user_Password_Hash` AS `passwordHash` 
+   ,`email_User_UUID` IS NOT NULL AS `emailFound` 
+   ,`email_Verified` AS `emailVerified` 
+   ,`new_key`.`key_Key` AS `newKey` 
+   ,IFNULL(`new_key`.`key_Remote_Addr_Pattern`,`cur_key`.`key_Remote_Addr_Pattern`) AS `remoteAddrPattern`
+  FROM `hpapi_email`
+  LEFT JOIN `hpapi_user`
+         ON `user_UUID`=`email_User_UUID`
+  LEFT JOIN `hpapi_key` AS `cur_key`
+         ON `cur_key`.`key_Key`=keyKey
+        AND `cur_key`.`key_Expired`='0'
+  LEFT JOIN `hpapi_keyrelease`
+         ON `keyrelease_User_UUID`=`user_UUID`
+        AND `keyrelease_Expires_Date`>dt
+  LEFT JOIN `hpapi_key` AS `new_key`
+         ON `new_key`.`key_Key`=`keyrelease_Key`
+        AND `new_key`.`key_Expired`='0'
+  WHERE `email_Email`=emailEmail
+    AND `cur_key`.`key_Key`=`user_Key`
+    AND (
+         `cur_key`.`key_Key` IS NOT NULL
+      OR `new_key`.`key_Key` IS NOT NULL
+    )
+  LIMIT 0,1
+  ;
+END$$
+
+
+DROP PROCEDURE IF EXISTS `hpapiKeyreleaseRevoke`$$
+CREATE PROCEDURE `hpapiKeyreleaseRevoke`(
+  IN        `dt` VARCHAR(32) CHARSET ascii
+ ,IN        `ky` CHAR(52) CHARSET ascii
+)
+BEGIN
+  DELETE
+  FROM `hpapi_keyrelease`
+  WHERE `keyrelease_Expires_Date`<dt
+     OR `keyrelease_Key`=ky
+  ;
+END $$
+
+
 DROP PROCEDURE IF EXISTS `hpapiLogRequest`$$
 CREATE PROCEDURE `hpapiLogRequest`(
   IN        `dt` VARCHAR(32) CHARSET ascii
@@ -38,71 +91,9 @@ BEGIN
 END $$
 
 
-DROP PROCEDURE IF EXISTS `hpapiMethods`$$
-CREATE PROCEDURE `hpapiMethods`(
-  IN        `userUUID` CHAR(52) CHARSET ascii
- ,IN        `authenticated` INT(1) UNSIGNED
-)
-BEGIN
-  SELECT
-    GROUP_CONCAT(DISTINCT `membership_Usergroup` SEPARATOR ',') AS `usergroups`
-   ,`method_Vendor` AS `vendor`
-   ,`method_Package` AS `package` 
-   ,`method_Class` AS `class`
-   ,`method_Method` AS `method`
-   ,`method_Label` AS `label`
-   ,`method_Notes` AS `notes`
-  FROM `hpapi_method`
-  LEFT JOIN `hpapi_run`
-         ON `run_Vendor`=`method_Vendor`
-        AND `run_Package`=`method_Package`
-        AND `run_Class`=`method_Class`
-        AND `run_Method`=`method_Method`
-  LEFT JOIN `hpapi_membership`
-         ON `membership_Usergroup`=`run_Usergroup`
-        AND (
-             `membership_Usergroup`='anon'
-          OR (
-               authenticated>'0'
-           AND `membership_User_UUID`=userUUID
-          )
-        )
-  WHERE `membership_Usergroup` IS NOT NULL
-  GROUP BY `vendor`,`package`,`class`,`method`
-  ORDER BY `vendor`,`package`,`class`,`method`
-  ;
-END$$
-
-
-DROP PROCEDURE IF EXISTS `hpapiAuthDetails`$$
-CREATE PROCEDURE `hpapiAuthDetails`(
-  IN        `keyKey` CHAR(52) CHARSET ascii
- ,IN        `emailEmail` VARCHAR(254) CHARSET ascii
-)
-BEGIN
-  SELECT
-    `user_UUID` IS NOT NULL AS `userFound` 
-   ,`user_Active` AS `userActive` 
-   ,`user_Password_Hash` AS `passwordHash` 
-   ,`email_User_UUID` IS NOT NULL AS `emailFound` 
-   ,`email_Verified` AS `emailVerified` 
-  FROM `hpapi_key`
-  LEFT JOIN `hpapi_user`
-         ON `user_UUID`=`key_User_UUID`
-  LEFT JOIN `hpapi_email`
-         ON `email_User_UUID`=`user_UUID`
-        AND `email_Email`=emailEmail
-  WHERE `key_Key`=keyKey
-    AND `key_Expired`='0'
-  LIMIT 0,1
-  ;
-END$$
-
-
 DROP PROCEDURE IF EXISTS `hpapiMethodargs`$$
 CREATE PROCEDURE `hpapiMethodargs`(
-  IN        `keyKey` CHAR(52) CHARSET ascii
- ,IN        `emailEmail` CHAR(254) CHARSET ascii
+  IN        `userUUID` CHAR(52) CHARSET ascii
  ,IN        `methodVendor` VARCHAR(64) CHARSET ascii
  ,IN        `methodPackage` VARCHAR(64) CHARSET ascii
  ,IN        `methodClass` VARCHAR(64) CHARSET ascii
@@ -110,9 +101,7 @@ CREATE PROCEDURE `hpapiMethodargs`(
 )
 BEGIN
   SELECT
-    `key_Remote_Addr_Pattern` AS `remoteAddrPattern`
-   ,`key_User_UUID` AS `userUUID`
-   ,`method_Label` AS `label`
+    `method_Label` AS `label`
    ,`method_Notes` AS `notes`
    ,`methodarg_Argument` AS `argument`
    ,`methodarg_Name` AS `name`
@@ -137,32 +126,22 @@ BEGIN
         AND `methodarg_Method`=methodMethod
   LEFT JOIN `hpapi_pattern`
          ON `pattern_Pattern`=`methodarg_Pattern`
-  LEFT JOIN `hpapi_key`
-         ON `key_Key`=keyKey
-  LEFT JOIN `hpapi_user` AS `keycheck`
-         ON `keycheck`.`user_Active`='1'
-        AND `keycheck`.`user_UUID`=`key_User_UUID`
-  LEFT JOIN `hpapi_email`
-         ON `email_Email`=emailEmail
-  LEFT JOIN `hpapi_user` AS `usrcheck`
-         ON `usrcheck`.`user_UUID`=`email_User_UUID`
-  LEFT JOIN `hpapi_membership`
-         ON `membership_User_UUID`=`usrcheck`.`user_UUID`
   LEFT JOIN `hpapi_run`
-         ON (
-              `run_Usergroup`=`membership_Usergroup`
-           OR `run_Usergroup`='anon'
-            )
-        AND `run_Vendor`=methodVendor
+         ON `run_Vendor`=methodVendor
         AND `run_Package`=methodPackage
         AND `run_Class`=methodClass
         AND `run_Method`=methodMethod
-  WHERE `keycheck`.`user_UUID` IS NOT NULL
-    AND `run_Usergroup` IS NOT NULL
-    AND `method_Vendor`=methodVendor
+  LEFT JOIN `hpapi_membership`
+         ON `run_Usergroup`=`membership_Usergroup`
+        AND `membership_User_UUID`=userUUID
+  WHERE `method_Vendor`=methodVendor
     AND `method_Package`=methodPackage
     AND `method_Class`=methodClass
     AND `method_Method`=methodMethod
+    AND (
+        `membership_User_UUID` IS NOT NULL
+     OR `run_Usergroup`='anon'
+    )
   GROUP BY `method_Vendor`,`method_Package`,`method_Class`,`method_Method`,`methodarg_Argument`
   ORDER BY `methodarg_Argument`
   ;
@@ -171,16 +150,14 @@ END$$
 
 DROP PROCEDURE IF EXISTS `hpapiSprargs`$$
 CREATE PROCEDURE `hpapiSprargs`(
-  IN        `databaseNode` VARCHAR(64) CHARSET ascii
- ,IN        `methodVendor` VARCHAR(64) CHARSET ascii
+  IN        `methodVendor` VARCHAR(64) CHARSET ascii
  ,IN        `methodPackage` VARCHAR(64) CHARSET ascii
  ,IN        `methodClass` VARCHAR(64) CHARSET ascii
  ,IN        `methodMethod` VARCHAR(64) CHARSET ascii
 )
 BEGIN
   SELECT
-    `database_Notes` AS `databaseNotes`
-   ,`spr_Model` AS `model`
+    `spr_Model` AS `model`
    ,`spr_Spr` AS `spr`
    ,`spr_Notes` AS `notes`
    ,`sprarg_Argument` AS `argument`
@@ -207,9 +184,6 @@ BEGIN
   LEFT JOIN `hpapi_spr`
          ON `spr_Model`=`call_Model`
         AND `spr_Spr`=`call_Spr`
-  LEFT JOIN `hpapi_database`
-         ON `database_Node`=databaseNode
-        AND `database_Model`=`spr_Model`
   LEFT JOIN `hpapi_sprarg`
          ON `sprarg_Model`=`spr_Model`
         AND `sprarg_Spr`=`spr_Spr`

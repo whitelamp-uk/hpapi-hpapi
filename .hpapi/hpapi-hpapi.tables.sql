@@ -1,8 +1,8 @@
--- Adminer 4.6.2 MySQL dump
 
 SET NAMES utf8;
 SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
+
 
 CREATE TABLE IF NOT EXISTS `hpapi_call` (
   `call_Model` varchar(64) CHARACTER SET ascii NOT NULL,
@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_call` (
   CONSTRAINT `hpapi_call_ibfk_6` FOREIGN KEY (`call_Model`, `call_Spr`) REFERENCES `hpapi_spr` (`spr_Model`, `spr_Spr`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
 CREATE TABLE IF NOT EXISTS `hpapi_email` (
   `email_Verified` int(1) unsigned NOT NULL DEFAULT '0',
   `email_Email` varchar(255) NOT NULL,
@@ -28,17 +29,21 @@ CREATE TABLE IF NOT EXISTS `hpapi_email` (
 
 
 CREATE TABLE IF NOT EXISTS `hpapi_key` (
-  `key_Expired` int(1) unsigned NOT NULL DEFAULT '0',
   `key_Key` varchar(52) CHARACTER SET ascii NOT NULL,
+  `key_Expired` int(1) unsigned NOT NULL DEFAULT '0',
   `key_Remote_Addr_Pattern` varchar(64) CHARACTER SET ascii NOT NULL,
-  `key_User_UUID` varchar(52) CHARACTER SET ascii NOT NULL,
-  `key_Vendor` varchar(64) CHARACTER SET ascii NOT NULL,
-  `key_Package` varchar(64) CHARACTER SET ascii NOT NULL,
-  PRIMARY KEY (`key_User_UUID`,`key_Vendor`,`key_Package`,`key_Key`),
-  UNIQUE KEY `key_Key` (`key_Key`),
-  KEY `key_Vendor` (`key_Vendor`,`key_Package`),
-  CONSTRAINT `hpapi_key_ibfk_2` FOREIGN KEY (`key_User_UUID`) REFERENCES `hpapi_user` (`user_UUID`),
-  CONSTRAINT `hpapi_key_ibfk_3` FOREIGN KEY (`key_Vendor`, `key_Package`) REFERENCES `hpapi_package` (`package_Vendor`, `package_Package`)
+  PRIMARY KEY (`key_Key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `hpapi_keyrelease` (
+  `keyrelease_User_UUID` varchar(64) CHARACTER SET ascii NOT NULL,
+  `keyrelease_Key` varchar(64) CHARACTER SET ascii NOT NULL,
+  `keyrelease_Expires_Date` varchar(32) CHARACTER SET ascii NOT NULL,
+  PRIMARY KEY (`keyrelease_User_UUID`),
+  KEY `keyrelease_Key` (`keyrelease_Key`),
+  CONSTRAINT `hpapi_keyrelease_ibfk_1` FOREIGN KEY (`keyrelease_User_UUID`) REFERENCES `hpapi_user` (`user_UUID`),
+  CONSTRAINT `hpapi_keyrelease_ibfk_2` FOREIGN KEY (`keyrelease_Key`) REFERENCES `hpapi_key` (`key_Key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -50,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_level` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `hpapi_log` (
+CREATE TABLE IF NOT EXISTS `hpapi_log` (
   `log_Datetime` varchar(32) CHARACTER SET ascii NOT NULL,
   `log_Key` varchar(64) CHARACTER SET ascii NOT NULL,
   `log_Email` varchar(254) CHARACTER SET ascii NOT NULL,
@@ -176,21 +181,16 @@ CREATE TABLE IF NOT EXISTS `hpapi_sprarg` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE IF NOT EXISTS `hpapi_sql` (
-  `sql_Process` varchar(64) CHARACTER SET ascii NOT NULL,
-  `sql_Pdo_Driver` varchar(16) CHARACTER SET ascii NOT NULL,
-  `sql_Query` varchar(255) NOT NULL,
-  PRIMARY KEY (`sql_Process`,`sql_Pdo_Driver`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 CREATE TABLE IF NOT EXISTS `hpapi_user` (
   `user_Active` int(1) unsigned NOT NULL DEFAULT '1',
   `user_UUID` varchar(64) CHARACTER SET ascii NOT NULL,
   `user_Notes` text NOT NULL,
   `user_Name` varchar(64) NOT NULL,
+  `user_Key` varchar(64) CHARACTER SET ascii DEFAULT NULL,
   `user_Password_Hash` varchar(255) CHARACTER SET ascii NOT NULL DEFAULT '',
-  PRIMARY KEY (`user_UUID`)
+  PRIMARY KEY (`user_UUID`),
+  KEY `user_Key` (`user_Key`),
+  CONSTRAINT `hpapi_user_ibfk_1` FOREIGN KEY (`user_Key`) REFERENCES `hpapi_key` (`key_Key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -204,5 +204,3 @@ CREATE TABLE IF NOT EXISTS `hpapi_usergroup` (
   CONSTRAINT `hpapi_usergroup_ibfk_1` FOREIGN KEY (`usergroup_Level`) REFERENCES `hpapi_level` (`level_Level`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
--- 2018-08-05 22:47:53

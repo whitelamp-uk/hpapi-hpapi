@@ -1,10 +1,7 @@
 <?php
 
-// Level of identification for allowing a response 
-define ( 'HPAPI_ANON_LEVEL_NONE',           0                                                                                       );
-define ( 'HPAPI_ANON_LEVEL_EMAIL',          1                                                                                       );
-define ( 'HPAPI_ANON_LEVEL_USER',           2                                                                                       );
-define ( 'HPAPI_ANON_LEVEL_KEY',            3                                                                                       );
+// The hpapi model
+define ( 'HPAPI_MODEL_NAME',                'HpapiModel'                                                                            );
 
 // File suffix for PHP classes
 define ( 'HPAPI_CLASS_SUFFIX',              '.class.php'                                                                            );
@@ -35,7 +32,6 @@ define ( 'HPAPI_STR_SSL',                   '022 400 SSL required but not used' 
 define ( 'HPAPI_STR_CONTENT_TYPE',          '023 400 Client header indicates wrong content type'                                    );
 define ( 'HPAPI_STR_JSON_DECODE',           '024 400 Cannot decode request'                                                         );
 define ( 'HPAPI_STR_SYS_CFG',               '025 500 Could not load system configuration'                                           );
-define ( 'HPAPI_STR_AUTH_DENIED',           '026 403 Access denied'                                                                 );
 
 // Validating posted object properties
 define ( 'HPAPI_STR_DATETIME',              '031 400 Property "datetime" does not exist'                                            );
@@ -54,12 +50,14 @@ define ( 'HPAPI_STR_DB_OBJ',                '043 500 Could not construct databas
 define ( 'HPAPI_STR_DB_CONN',               '044 500 Could not connect to database'                                                 );
 
 // Evaluating authentication status
-define ( 'HPAPI_STR_AUTH_RECOG',            '051 Anonymous access (user not recognised)'                                            );
-define ( 'HPAPI_STR_AUTH_ACTIVE',           '052 Anonymous access (user not active)'                                                );
-define ( 'HPAPI_STR_AUTH_EMAIL',            '053 Anonymous access (email not recognised)'                                           );
-define ( 'HPAPI_STR_AUTH_VERIFY',           '054 Anonymous access (email not verified)'                                             );
-define ( 'HPAPI_STR_AUTH_PWD',              '055 Anonymous access (email not authenticated)'                                        );
-define ( 'HPAPI_STR_AUTH_OK',               '056 Access allowed (fully authenticated)'                                              );
+define ( 'HPAPI_STR_AUTH_DENIED',           '051 403 Access denied'                                                                 );
+define ( 'HPAPI_STR_AUTH_ID',               '052 Could not match credentials'                                                       );
+define ( 'HPAPI_STR_AUTH_REMOTE_ADDR',      '053 Access not allowed from client location'                                           );
+define ( 'HPAPI_STR_AUTH_RECOG',            '054 Anonymous access (user not recognised)'                                            );
+define ( 'HPAPI_STR_AUTH_ACTIVE',           '055 Anonymous access (user not active)'                                                );
+define ( 'HPAPI_STR_AUTH_PWD',              '056 Anonymous access (email not authenticated)'                                        );
+define ( 'HPAPI_STR_AUTH_VERIFY',           '057 Anonymous access (email not verified)'                                             );
+define ( 'HPAPI_STR_AUTH_OK',               '058 Access allowed (fully authenticated)'                                              );
 
 // Validating posted object->method
 define ( 'HPAPI_STR_METHOD_VDR',            '061 400 Method property "vendor" does not exist'                                       );
@@ -89,7 +87,6 @@ define ( 'HPAPI_STR_DB_SPR_MODEL',          '103 500 No database for data model'
 define ( 'HPAPI_STR_METHOD_EXCEPTION',      '104 Method threw an exception'                                                         );
 define ( 'HPAPI_STR_DB_Z',                  '105 Empty arguments to database function'                                              );
 define ( 'HPAPI_STR_DB_MTD_ACCESS',         '106 Method is not available'                                                           );
-define ( 'HPAPI_STR_DB_MTD_LOCN',           '107 Method is not available for client location'                                       );
 
 // Calling stored procedures
 define ( 'HPAPI_STR_DB_SPR_NO_SPR',         '201 500 Method did not give stored procedure'                                          );

@@ -15,7 +15,7 @@ class Db {
     private $PDO;
     private $sprCmd; // eg. CALL (), SELECT () OR EXEC () keyword
 
-    public function __construct (\Hpapi\Hpapi $hpapi,$node,$model) {
+    public function __construct (\Hpapi\Hpapi $hpapi,$model,$node) {
         $this->hpapi        = $hpapi;
         $this->node         = $node;
         try {
