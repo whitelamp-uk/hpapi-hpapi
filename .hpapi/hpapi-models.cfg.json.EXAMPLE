@@ -4,9 +4,9 @@
        ,"usr" : "hpapi"
        ,"pwd" : "pwda"
     }
-   ,"MyBiz" : {
-        "dsn" : "mysql:host=localhost;dbname=mybiz;port=3306;charset=utf8"
-       ,"usr" : "mybiz"
+   ,"ExampleVendor" : {
+        "dsn" : "mysql:host=localhost;dbname=egmodel;port=3306;charset=utf8"
+       ,"usr" : "hpapi"
        ,"pwd" : "pwdb"
     }
 }
