@@ -4,81 +4,33 @@ namespace Hpapi;
 
 class Db {
 
-    private $cfg;
     private $dfn;
-    private $DSN;
     private $filter;
     public  $hpapi;
     public  $inputs;
     public  $model;
-    private $node;
     private $PDO;
     private $sprCmd; // eg. CALL (), SELECT () OR EXEC () keyword
 
-    public function __construct (\Hpapi\Hpapi $hpapi,$model,$node) {
+    public function __construct (\Hpapi\Hpapi $hpapi,$model) {
         $this->hpapi        = $hpapi;
-        $this->node         = $node;
-        try {
-            $cfgs           = file_get_contents (HPAPI_SYSTEM_DB_CFG_JSON);
-            $cfgs           = $hpapi->jsonDecode ($cfgs,false,HPAPI_JSON_DEPTH);
-        }
-        catch (\Exception $e) {
-            throw new \Exception (HPAPI_STR_DB_CFG.' [1] ('.HPAPI_SYSTEM_DB_CFG_JSON.')');
-            return false;
-        }
-        foreach  ($cfgs as $cfg) {
-            if ($cfg->node!=$this->node) {
-                continue;
-            }
-            $this->cfg      = $cfg;
-            foreach  ($cfg->models as $m) {
-                if ($m->model!=$model) {
-                    continue;
-                }
-                $this->model = $m;
-                break;
-            }
-            if (!$this->model) {
-                throw new \Exception (HPAPI_STR_DB_CFG.' [2] ('.HPAPI_SYSTEM_DB_CFG_JSON.')');
-                return false;
-            }
-            break;
-        }
-        if (!$this->cfg) {
-            throw new \Exception (HPAPI_STR_DB_CFG.' [3] ('.HPAPI_SYSTEM_DB_CFG_JSON.')');
-            return false;
-        }
+        $this->model        = $model;
         try {
             $drv            = explode (':',$this->model->dsn);
-            $drv            = array_shift ($drv);
-            $dfns           = file_get_contents (HPAPI_SYSTEM_DB_DFN_JSON);
-        }
-        catch (\Exception $e) {
-            throw new \Exception (HPAPI_STR_DB_DFN.' [1]');
-            return false;
-        }
-        try {
-           $dfns           = $hpapi->jsonDecode ($dfns,false,HPAPI_JSON_DEPTH);
-        }
-        catch (\Exception $e) {
-            throw new \Exception (HPAPI_STR_DB_DFN.' [2]: '.$e->getMessage());
-            return false;
-        }
-        try {
-            foreach  ($dfns as $dfn) {
-                if ($dfn->driver!=$drv) {
-                    continue;
-                }
-                $this->dfn  = $dfn;
-                break;
-            }
-            if (!$this->dfn) {
-                throw new \Exception (HPAPI_STR_DB_DFN.' [4]');
+            $this->driver   = array_shift ($drv);
+            $dfns           = $hpapi->jsonDecode (
+                file_get_contents (HPAPI_MODELS_PDO_DFN)
+               ,false
+               ,HPAPI_JSON_DEPTH
+            );
+            if (!property_exists($dfns,$this->driver)) {
+                throw new \Exception (HPAPI_STR_DB_DFN_DRV);
                 return false;
             }
+            $this->dfn      = $dfns->{$this->driver};
         }
         catch (\Exception $e) {
-            throw new \Exception (HPAPI_STR_DB_DFN.' [3]');
+            throw new \Exception (HPAPI_STR_DB_DFN.': '.$e->getMessage());
             return false;
         }
         try {
@@ -111,7 +63,7 @@ class Db {
         }
         try {
             // Query for a stored procedure
-            $q              = $this->dfn->query->spr;
+            $q              = $this->dfn->sql->spr;
             $q              = str_replace ('<spr/>',$spr,$q);
             // Binding placeholders
             $b              = array ();
@@ -170,7 +122,7 @@ class Db {
     }
 
     public function close ( ) {
-        if ($this->dfn->driver=='pgsql') {
+        if ($this->driver=='pgsql') {
             try {
                 $this->PDO->query ('SELECT pg_terminate_backend(pg_backend_pid());');
             }
@@ -188,8 +140,8 @@ class Db {
         try {
             $this->PDO      = new \PDO (
                 $this->model->dsn
-               ,$this->cfg->dbUsr
-               ,$this->cfg->dbPwd
+               ,$this->model->usr
+               ,$this->model->pwd
                ,array (\PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION)
             );
         }

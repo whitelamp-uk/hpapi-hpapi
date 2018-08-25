@@ -106,8 +106,11 @@ class Hpapi {
             $this->end ();
         }
         try {
-            $cfg                                    = file_get_contents (HPAPI_SYSTEM_CFG_JSON);
-            $this->config                           = $this->jsonDecode ($cfg,false,HPAPI_JSON_DEPTH);
+            $this->models                           = $this->jsonDecode (
+                file_get_contents (HPAPI_MODELS_CFG)
+               ,false
+               ,HPAPI_JSON_DEPTH
+            );
         }
         catch (\Exception $e) {
             $this->object->response->notice         = $e->getMessage ();
@@ -115,7 +118,7 @@ class Hpapi {
             $this->end ();
         }
         try {
-            $this->db                               = new \Hpapi\Db ($this,$this->config->model,$this->config->node);
+            $this->db                               = new \Hpapi\Db ($this,$this->models->HpapiModel);
         }
         catch (\Exception $e) {
             $this->object->response->notice         = $e->getMessage ();
@@ -302,7 +305,7 @@ class Hpapi {
             $count++;
         }
         try {
-            $db             = new \Hpapi\Db ($this,$this->sprs[$spr]->model,$this->config->node);
+            $db             = new \Hpapi\Db ($this,$this->models->{$this->sprs[$spr]->model});
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage());

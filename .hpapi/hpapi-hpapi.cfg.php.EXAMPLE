@@ -10,10 +10,9 @@ define ( 'HPAPI_URL_OTHER_HEADER',          ''                                  
 define ( 'HPAPI_META_DESCRIPTION',          'HTTP POST API for My Organisation'                                                     );
 
 
-// THIS NODE
-define ( 'HPAPI_SYSTEM_CFG_JSON',           HPAPI_DIR_CONFIG.'/hpapi-hpapi-me.cfg.json'                                             );
-define ( 'HPAPI_SYSTEM_DB_DFN_JSON',        HPAPI_DIR_CONFIG.'/hpapi-hpapi-db.dfn.json'                                             );
-define ( 'HPAPI_SYSTEM_DB_CFG_JSON',        HPAPI_DIR_CONFIG.'/hpapi-hpapi-db.cfg.json'                                             );
+// DATABASE MODELS
+define ( 'HPAPI_MODELS_PDO_DFN',            HPAPI_DIR_CONFIG.'/hpapi-pdo.dfn.json'                                                  );
+define ( 'HPAPI_MODELS_CFG',                HPAPI_DIR_CONFIG.'/hpapi-models.cfg.json'                                               );
 
 
 // CODE ERROR REPORTING

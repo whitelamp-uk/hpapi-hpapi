@@ -45,9 +45,10 @@ define ( 'HPAPI_STR_METHOD_PACKAGE',        '038 400 Method property "package" w
 define ( 'HPAPI_STR_METHOD_CLASS',          '039 400 Method property "class" was not given'                                         );
 define ( 'HPAPI_STR_METHOD_METHOD',         '040 400 Method property "method" was not given'                                        );
 define ( 'HPAPI_STR_DB_CFG',                '041 500 DB configuration error - could not load database configuration'                );
-define ( 'HPAPI_STR_DB_DFN',                '042 500 DB configuration error - could not load database definition'                   );
-define ( 'HPAPI_STR_DB_OBJ',                '043 500 Could not construct database object'                                           );
-define ( 'HPAPI_STR_DB_CONN',               '044 500 Could not connect to database'                                                 );
+define ( 'HPAPI_STR_DB_DFN',                '042 500 DB configuration error - could not load PDO definition'                        );
+define ( 'HPAPI_STR_DB_DFN_DRV',            '043 500 DB configuration error - no PDO definition for driver specified by DSN'        );
+define ( 'HPAPI_STR_DB_OBJ',                '044 500 Could not construct database object'                                           );
+define ( 'HPAPI_STR_DB_CONN',               '045 500 Could not connect to database'                                                 );
 
 // Evaluating authentication status
 define ( 'HPAPI_STR_AUTH_DENIED',           '051 403 Access denied'                                                                 );

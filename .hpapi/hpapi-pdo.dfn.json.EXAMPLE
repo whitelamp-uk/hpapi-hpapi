@@ -1,14 +1,12 @@
-[
-    {
-        "driver" : "mysql"
-       ,"query" : {
+{
+    "mysql" : {
+        "sql" : {
             "spr" : "CALL `<spr/>`(<csv-bindings/>)"
         }
     }
-   ,{
-        "driver" : "pgsql"
-       ,"query" : {
+   ,"pgsql" : {
+        "sql" : {
             "spr" : "SELECT <spr/>(<csv-bindings/>)"
         }
     }
-]
+}
