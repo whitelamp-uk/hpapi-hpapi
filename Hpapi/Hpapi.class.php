@@ -729,6 +729,17 @@ class Hpapi {
         return password_hash ($plain,HPAPI_HASH_ALGO,array('cost'=>HPAPI_HASH_COST));
     }
 
+    public function pdoDbName ($dsn) {
+        $dbn = explode (';',$dbn);
+        $dbn = explode ('=',$dbn[1]);
+        return $dbn[1];
+    }
+
+    public function pdoDriver ($dsn) {
+        $drv = explode (':',$dsn);
+        return $drv[0];
+    }
+
     public function validation ($name,$argNum,$value,$defn) {
         if ($defn->emptyAllowed && !strlen($value)) {
             return true;

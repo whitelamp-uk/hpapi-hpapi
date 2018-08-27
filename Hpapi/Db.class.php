@@ -16,8 +16,7 @@ class Db {
         $this->hpapi        = $hpapi;
         $this->model        = $model;
         try {
-            $drv            = explode (':',$this->model->dsn);
-            $this->driver   = array_shift ($drv);
+            $this->driver   = $this->hpapi->pdoDriver ($this->model->dsn);
             $dfns           = $hpapi->jsonDecode (
                 file_get_contents (HPAPI_MODELS_PDO_DFN)
                ,false
