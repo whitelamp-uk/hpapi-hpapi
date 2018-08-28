@@ -9,8 +9,8 @@ INSERT IGNORE INTO `hpapi_email` (`email_Verified`, `email_Email`, `email_User_U
 (1,	'test.1@no.where',	'20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1');
 
 INSERT IGNORE INTO `hpapi_key` (`key_Key`, `key_Expired`, `key_Remote_Addr_Pattern`) VALUES
-('20180720110427::89c56ad8-8ff3-11e8-902b-001f16148bc1',	0,	'^127\\.0\\.0\\.[0-9]*$'),
-('20180725104327::0e0f4ce8-8fee-11e8-902b-001f16148bc1',	0,	'^127\\.0\\.0\\.[0-9]*$');
+('20180720110427::89c56ad8-8ff3-11e8-902b-001f16148bc1',	0,	'^.*$'),
+('20180725104327::0e0f4ce8-8fee-11e8-902b-001f16148bc1',	0,	'^.*$');
 
 INSERT IGNORE INTO `hpapi_level` (`level_Level`, `level_Name`, `level_Notes`) VALUES
 (0,	'This',	'The user group being tested and no other.'),
@@ -27,6 +27,20 @@ INSERT IGNORE INTO `hpapi_level` (`level_Level`, `level_Name`, `level_Notes`) VA
 INSERT IGNORE INTO `hpapi_membership` (`membership_User_UUID`, `membership_Usergroup`) VALUES
 ('20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1',	'sysadmin'),
 ('20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1',	'admin');
+
+INSERT INTO `hpapi_method` (`method_Vendor`, `method_Package`, `method_Class`, `method_Method`, `method_Label`, `method_Notes`) VALUES
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	'Method description',	'Method, argument and validation details'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'methods',	'My methods',	'Methods available to the current user.'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'usergroups',	'My user groups',	'User groups for the current user.'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid',	'Get UUID',	'Hpapi default UUID generating method.');
+
+INSERT INTO `hpapi_methodarg` (`methodarg_Vendor`, `methodarg_Package`, `methodarg_Class`, `methodarg_Method`, `methodarg_Argument`, `methodarg_Name`, `methodarg_Empty_Allowed`, `methodarg_Pattern`) VALUES
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	1,	'Vendor',	0,	'vendor'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	2,	'Package',	0,	'package'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	3,	'Class',	0,	'class'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	4,	'Method',	0,	'method'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid',	1,	'Date (yyyymmdd)',	1,	'yyyymmdd'),
+('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid',	2,	'Time (hhmmss)',	1,	'hhmmss');
 
 INSERT IGNORE INTO `hpapi_model` (`model_Model`, `model_Notes`, `model_DSN`, `model_Usr`, `model_Pwd`) VALUES
 ('HpapiModel',	'Model for the API itself. Consequently there are no dns/usr/pwd details for a blueprint.',	'',	'',	'');
@@ -52,6 +66,40 @@ INSERT IGNORE INTO `hpapi_pattern` (`pattern_Pattern`, `pattern_Constraints`, `p
 ('vendor',	'HPAPI_PATTERN_DESC_VENDOR',	'^[a-z][a-z\\-]*[a-z]$',	'text',	'',	2,	64,	'',	''),
 ('yyyy-mm-dd',	'HPAPI_PATTERN_DESC_YYYY_MM_DD',	'^[0-9]{4}-[0-9]{2}-[0-9]{2}$',	'date',	'',	10,	10,	'2000-01-01',	'2100-12-31'),
 ('yyyymmdd',	'HPAPI_PATTERN_DESC_INT_YYYYMMDD',	'',	'text',	'FILTER_VALIDATE_INT',	8,	8,	'20000101',	'99991231');
+
+INSERT INTO `hpapi_spr` (`spr_Model`, `spr_Spr`, `spr_Notes`) VALUES
+('HpapiModel',	'hpapiAuthenticate',	'Authenticate a given key/email/password/method.'),
+('HpapiModel',	'hpapiMethodargs',	'Used by \\Hpapi\\Hpapi::authenticate() on every request but registered here because it is also deployed by \\Hpapi\\Utility::describeMethod()'),
+('HpapiModel',	'hpapiMethods',	'List of methods for a user UUID (authenticated or not).'),
+('HpapiModel',	'hpapiSprargs',	'List of stored procedure arguments for a given method.'),
+('HpapiModel',	'hpapiUsergroups',	'Usergroups for a user UUID.'),
+('HpapiModel',	'hpapiUUID',	'Return UUID based on YYMMDD, HHMMSS and UUID v4.');
+
+
+INSERT INTO `hpapi_sprarg` (`sprarg_Model`, `sprarg_Spr`, `sprarg_Argument`, `sprarg_Name`, `sprarg_Empty_Allowed`, `sprarg_Pattern`) VALUES
+('HpapiModel',	'hpapiAuthenticate',	1,	'API key',	1,	'uuid-hpapi'),
+('HpapiModel',	'hpapiAuthenticate',	2,	'Email address',	1,	'email'),
+('HpapiModel',	'hpapiAuthenticate',	3,	'Hashed password',	1,	'varchar-255'),
+('HpapiModel',	'hpapiAuthenticate',	4,	'Vendor handle',	0,	'vendor'),
+('HpapiModel',	'hpapiAuthenticate',	5,	'Package handle',	0,	'package'),
+('HpapiModel',	'hpapiAuthenticate',	6,	'Class (including namespace)',	0,	'class'),
+('HpapiModel',	'hpapiAuthenticate',	7,	'Method',	0,	'method'),
+('HpapiModel',	'hpapiMethodargs',	1,	'API key',	0,	'uuid-hpapi'),
+('HpapiModel',	'hpapiMethodargs',	2,	'Email',	1,	'email'),
+('HpapiModel',	'hpapiMethodargs',	3,	'Vendor',	0,	'vendor'),
+('HpapiModel',	'hpapiMethodargs',	4,	'Package',	0,	'package'),
+('HpapiModel',	'hpapiMethodargs',	5,	'Class',	0,	'class'),
+('HpapiModel',	'hpapiMethodargs',	6,	'Method',	0,	'method'),
+('HpapiModel',	'hpapiMethods',	1,	'User UUID',	0,	'uuid-hpapi'),
+('HpapiModel',	'hpapiMethods',	2,	'Fully authenticated?',	0,	'db-boolean'),
+('HpapiModel',	'hpapiSprargs',	1,	'Vendor handle',	0,	'vendor'),
+('HpapiModel',	'hpapiSprargs',	2,	'Package handle',	0,	'package'),
+('HpapiModel',	'hpapiSprargs',	3,	'Class (including namespace)',	0,	'class'),
+('HpapiModel',	'hpapiSprargs',	4,	'Method',	0,	'method'),
+('HpapiModel',	'hpapiUsergroups',	1,	'User UUID',	0,	'uuid-hpapi'),
+('HpapiModel',	'hpapiUsergroups',	2,	'Fully authenticated?',	0,	'db-boolean'),
+('HpapiModel',	'hpapiUUID',	1,	'Date (yyyymmdd)',	0,	'yyyymmdd'),
+('HpapiModel',	'hpapiUUID',	2,	'Time (hhmmss)',	0,	'hhmmss');
 
 INSERT IGNORE INTO `hpapi_user` (`user_Active`, `user_UUID`, `user_Notes`, `user_Name`, `user_Key`, `user_Password_Hash`) VALUES
 (1,	'20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1',	'Slow, but the penny usually drops eventually.',	'Administrator, System',	'20180725104327::0e0f4ce8-8fee-11e8-902b-001f16148bc1',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),

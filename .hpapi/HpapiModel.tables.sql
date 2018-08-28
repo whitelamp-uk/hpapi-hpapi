@@ -77,8 +77,8 @@ CREATE TABLE IF NOT EXISTS `hpapi_log` (
 
 
 CREATE TABLE IF NOT EXISTS `hpapi_membership` (
-  `membership_User_UUID` varchar(64) CHARACTER SET ascii NOT NULL DEFAULT '',
-  `membership_Usergroup` varchar(64) CHARACTER SET ascii NOT NULL DEFAULT '0',
+  `membership_User_UUID` varchar(64) CHARACTER SET ascii NOT NULL,
+  `membership_Usergroup` varchar(64) CHARACTER SET ascii NOT NULL,
   PRIMARY KEY (`membership_User_UUID`,`membership_Usergroup`),
   KEY `membership_Usergroup` (`membership_Usergroup`),
   CONSTRAINT `hpapi_membership_ibfk_1` FOREIGN KEY (`membership_User_UUID`) REFERENCES `hpapi_user` (`user_UUID`),
