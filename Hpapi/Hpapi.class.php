@@ -373,7 +373,9 @@ class Hpapi {
         catch (\Exception $e) {
              $this->object->response->notice = $e->getMessage ();
         }
-        $this->db->close ();
+        if ($this->db) {
+            $this->db->close ();
+        }
         if (property_exists($this->object,'key')) {
             unset ($this->object->key);
         }
