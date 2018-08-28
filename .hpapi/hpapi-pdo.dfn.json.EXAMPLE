@@ -3,10 +3,16 @@
         "sql" : {
             "spr" : "CALL `<spr/>`(<csv-bindings/>)"
         }
+       ,"sqlState" : {
+            "duplicatePrimary" : "23000"
+        }
     }
    ,"pgsql" : {
         "sql" : {
             "spr" : "SELECT <spr/>(<csv-bindings/>)"
+        }
+       ,"sqlState" : {
+            "duplicatePrimary" : "23515"
         }
     }
 }
