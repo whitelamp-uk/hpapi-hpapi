@@ -10,6 +10,7 @@ class Hpapi {
     private $db;                         // Database object \Hpapi\HpapiDb
     public  $object;                     // The PHP object loaded from the input which is modified and returned
     public  $remoteAddrPattern;          // REMOTE_ADDR matching pattern for the current key
+    public  $email;                      // Email contained in request
     public  $datetime;                   // DateTime constructed from current server time
     public  $sprs;                       // Stored procedures available for the requested method
     public  $userUUID;                   // User identifier established by the authentication process
@@ -105,6 +106,7 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_METHOD_METHOD;
             $this->end ();
         }
+        $this->email                                = $this->object->email;
         try {
             $this->models                           = $this->jsonDecode (
                 file_get_contents (HPAPI_MODELS_CFG)
@@ -561,7 +563,7 @@ class Hpapi {
                 'hpapiLogRequest'
                ,$this->object->response->datetime
                ,$this->object->key
-               ,$this->object->email
+               ,$this->email
                ,$_SERVER['REMOTE_ADDR']
                ,$_SERVER['HTTP_USER_AGENT']
                ,$this->object->method->vendor
