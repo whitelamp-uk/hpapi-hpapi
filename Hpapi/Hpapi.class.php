@@ -11,8 +11,9 @@ class Hpapi {
     public  $object;                     // The PHP object loaded from the input which is modified and returned
     public  $remoteAddrPattern;          // REMOTE_ADDR matching pattern for the current key
     public  $email;                      // Email contained in request
-    public  $datetime;                   // DateTime constructed from current server time
-    public  $microtime;                  // Microtime at object construction
+    public  $datetime;                   // DateTime of response (can be faked for matching time-based test data)
+    public  $logtime;                    // DateTime of response for logging (never faked)
+    public  $microtime;                  // Microtime of response (decimal fraction of a second)
     public  $sprs;                       // Stored procedures available for the requested method
     public  $userUUID;                   // User identifier established by the authentication process
     private $config;                     // User identifier established by the authentication process
@@ -27,6 +28,7 @@ class Hpapi {
         if (defined('HPAPI_DIAGNOSTIC_FAKE_NOW') && strlen(HPAPI_DIAGNOSTIC_FAKE_NOW)) {
             $now                                    = HPAPI_DIAGNOSTIC_FAKE_NOW;
         }
+        $this->logtime                              = new \DateTime ();
         $this->datetime                             = new \DateTime ($now);
         $this->microtime                            = explode(' ',microtime())[0];
         if (HPAPI_SSL_ENFORCE && !$this->isHTTPS()) {
@@ -564,7 +566,7 @@ class Hpapi {
         try {
             $this->db->call (
                 'hpapiLogRequest'
-               ,$this->object->response->datetime
+               ,$this->logtime->format (\DateTime::ATOM)
                ,$this->microtime
                ,$this->object->key
                ,$this->email
