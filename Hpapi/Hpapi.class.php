@@ -12,6 +12,7 @@ class Hpapi {
     public  $remoteAddrPattern;          // REMOTE_ADDR matching pattern for the current key
     public  $email;                      // Email contained in request
     public  $datetime;                   // DateTime constructed from current server time
+    public  $microtime;                  // Microtime at object construction
     public  $sprs;                       // Stored procedures available for the requested method
     public  $userUUID;                   // User identifier established by the authentication process
     private $config;                     // User identifier established by the authentication process
@@ -22,10 +23,12 @@ class Hpapi {
             return false;
         }
         error_reporting (HPAPI_PHP_ERROR_LEVEL);
-        if (!defined('HPAPI_DIAGNOSTIC_FAKE_NOW')) {
-            define ('HPAPI_DIAGNOSTIC_FAKE_NOW',null);
+        $now                                        = null;
+        if (defined('HPAPI_DIAGNOSTIC_FAKE_NOW') && strlen(HPAPI_DIAGNOSTIC_FAKE_NOW)) {
+            $now                                    = HPAPI_DIAGNOSTIC_FAKE_NOW;
         }
-        $this->datetime                             = new \DateTime (HPAPI_DIAGNOSTIC_FAKE_NOW);
+        $this->datetime                             = new \DateTime ($now);
+        $this->microtime                            = explode(' ',microtime())[0];
         if (HPAPI_SSL_ENFORCE && !$this->isHTTPS()) {
             header ('Content-Type: '.HPAPI_CONTENT_TYPE_TEXT);
             $this->logLast (HPAPI_STR_SSL."\n");
@@ -562,6 +565,7 @@ class Hpapi {
             $this->db->call (
                 'hpapiLogRequest'
                ,$this->object->response->datetime
+               ,$this->microtime
                ,$this->object->key
                ,$this->email
                ,$_SERVER['REMOTE_ADDR']

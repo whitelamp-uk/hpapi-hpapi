@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_level` (
 
 CREATE TABLE IF NOT EXISTS `hpapi_log` (
   `log_Datetime` varchar(32) CHARACTER SET ascii NOT NULL,
+  `log_Microtime` decimal(9,8) UNSIGNED NOT NULL,
   `log_Key` varchar(64) CHARACTER SET ascii NOT NULL,
   `log_Email` varchar(254) CHARACTER SET ascii NOT NULL,
   `log_Remote_Addr` varchar(64) CHARACTER SET ascii NOT NULL,

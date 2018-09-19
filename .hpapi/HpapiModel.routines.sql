@@ -62,6 +62,7 @@ END $$
 DROP PROCEDURE IF EXISTS `hpapiLogRequest`$$
 CREATE PROCEDURE `hpapiLogRequest`(
   IN        `dt` VARCHAR(32) CHARSET ascii
+ ,IN        `mt` DECIMAL(9,8) UNSIGNED
  ,IN        `ky` VARCHAR(64) CHARSET ascii
  ,IN        `email` VARCHAR(254) CHARSET utf8
  ,IN        `remoteAddr` VARCHAR(64) CHARSET ascii
@@ -77,6 +78,7 @@ BEGIN
   INSERT INTO `hpapi_log`
   SET
     `log_Datetime`=dt
+   ,`log_Microtime`=mt
    ,`log_Key`=ky
    ,`log_Email`=email
    ,`log_Remote_Addr`=remoteAddr
