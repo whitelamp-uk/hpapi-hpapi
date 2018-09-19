@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_level` (
 
 CREATE TABLE IF NOT EXISTS `hpapi_log` (
   `log_Datetime` varchar(32) CHARACTER SET ascii NOT NULL,
-  `log_Microtime` decimal(9,8) UNSIGNED NOT NULL,
+  `log_Microtime` decimal(9,8) unsigned NOT NULL,
   `log_Key` varchar(64) CHARACTER SET ascii NOT NULL,
   `log_Email` varchar(254) CHARACTER SET ascii NOT NULL,
   `log_Remote_Addr` varchar(64) CHARACTER SET ascii NOT NULL,
@@ -68,14 +68,13 @@ CREATE TABLE IF NOT EXISTS `hpapi_log` (
   `log_Method` varchar(64) CHARACTER SET ascii NOT NULL,
   `log_Error` varchar(64) NOT NULL,
   `log_Notice` varchar(64) NOT NULL,
-  PRIMARY KEY (`log_Datetime`,`log_Key`),
+  PRIMARY KEY (`log_Datetime`,`log_Microtime`,`log_Key`),
   KEY `log_Key` (`log_Key`),
   KEY `log_Email` (`log_Email`),
   KEY `log_Remote_Addr` (`log_Remote_Addr`),
   KEY `log_Vendor_log_Package_log_Class_log_Method` (`log_Vendor`,`log_Package`,`log_Class`,`log_Method`),
   KEY `log_Error` (`log_Error`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 CREATE TABLE IF NOT EXISTS `hpapi_membership` (
   `membership_User_UUID` varchar(64) CHARACTER SET ascii NOT NULL,
