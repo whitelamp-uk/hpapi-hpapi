@@ -116,15 +116,12 @@ BEGIN
    ,`pattern_Length_Maximum` AS `lengthMaximum`
    ,`pattern_Value_Minimum` AS `valueMinimum`
    ,`pattern_Value_Maximum` AS `valueMaximum`
+   ,IFNULL(`ug`.`usergroup_Remote_Addr_Pattern`,`anon`.`usergroup_Remote_Addr_Pattern`) AS `remoteAddrPattern`
   FROM `hpapi_method`
   LEFT JOIN `hpapi_methodarg`
-         ON `methodarg_Vendor`=`method_Vendor`
-        AND `methodarg_Vendor`=methodVendor
-        AND `methodarg_Package`=`method_Package`
+         ON `methodarg_Vendor`=methodVendor
         AND `methodarg_Package`=methodPackage
-        AND `methodarg_Class`=`method_Class`
         AND `methodarg_Class`=methodClass
-        AND `methodarg_Method`=`method_Method`
         AND `methodarg_Method`=methodMethod
   LEFT JOIN `hpapi_pattern`
          ON `pattern_Pattern`=`methodarg_Pattern`
@@ -134,8 +131,12 @@ BEGIN
         AND `run_Class`=methodClass
         AND `run_Method`=methodMethod
   LEFT JOIN `hpapi_membership`
-         ON `run_Usergroup`=`membership_Usergroup`
+         ON `membership_Usergroup`=`run_Usergroup`
         AND `membership_User_UUID`=userUUID
+  LEFT JOIN `hpapi_usergroup` AS `ug`
+         ON `ug`.`usergroup_Usergroup`=`membership_Usergroup`
+  LEFT JOIN `hpapi_usergroup` AS `anon`
+         ON `anon`.`usergroup_Usergroup`='anon'
   WHERE `method_Vendor`=methodVendor
     AND `method_Package`=methodPackage
     AND `method_Class`=methodClass
@@ -144,7 +145,6 @@ BEGIN
         `membership_User_UUID` IS NOT NULL
      OR `run_Usergroup`='anon'
     )
-  GROUP BY `method_Vendor`,`method_Package`,`method_Class`,`method_Method`,`methodarg_Argument`
   ORDER BY `methodarg_Argument`
   ;
 END$$

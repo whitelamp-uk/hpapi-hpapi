@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_email` (
 CREATE TABLE IF NOT EXISTS `hpapi_key` (
   `key_Key` varchar(52) CHARACTER SET ascii NOT NULL,
   `key_Expired` int(1) unsigned NOT NULL DEFAULT '0',
-  `key_Remote_Addr_Pattern` varchar(64) CHARACTER SET ascii NOT NULL,
+  `key_Remote_Addr_Pattern` varchar(64) CHARACTER SET ascii NOT NULL DEFAULT '^.*$',
   PRIMARY KEY (`key_Key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -198,6 +198,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_usergroup` (
   `usergroup_Usergroup` varchar(64) CHARACTER SET ascii NOT NULL,
   `usergroup_Level` int(4) unsigned NOT NULL,
   `usergroup_Name` varchar(64) NOT NULL,
+  `usergroup_Remote_Addr_Pattern` varchar(64) CHARACTER SET ascii NOT NULL DEFAULT '^.*$',
   `usergroup_Notes` text NOT NULL,
   PRIMARY KEY (`usergroup_Usergroup`),
   KEY `usergroup_Level` (`usergroup_Level`),

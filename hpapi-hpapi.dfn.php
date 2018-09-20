@@ -16,8 +16,8 @@ define ( 'HPAPI_CONTENT_TYPE_UNKNOWN',      'unknown/unknown'                   
 define ( 'HPAPI_PATTERN_DESC_CLASS',        'must be a valid PHP class name'                                                        );
 define ( 'HPAPI_PATTERN_DESC_DATETIME',     'must be universal datetime format yyyy-mm-ddThh:mm:ss+hh:mm'                           );
 define ( 'HPAPI_PATTERN_DESC_DB_BOOL',      'must be 0 or 1'                                                                        );
-define ( 'HPAPI_PATTERN_DESC_INT_HHMMSS',   'must be 6 digits representing a time - HHMMSS'                                         );
-define ( 'HPAPI_PATTERN_DESC_INT_YYYYMMDD', 'must be 8 digits representing a date - YYYYMMDD'                                       );
+define ( 'HPAPI_PATTERN_DESC_HHMMSS',       'must be 6 digits representing a time - HHMMSS'                                         );
+define ( 'HPAPI_PATTERN_DESC_YYYYMMDD',     'must be 8 digits representing a date - YYYYMMDD'                                       );
 define ( 'HPAPI_PATTERN_DESC_YYYY_MM_DD',   'must be a standard formatted date - YYYY-MM-DD'                                        );
 define ( 'HPAPI_PATTERN_DESC_URI',          'must be a Linux-friendly request URI'                                                  );
 define ( 'HPAPI_PATTERN_DESC_IPV4',         'must be valid IPv4 address'                                                            );
@@ -85,9 +85,10 @@ define ( 'HPAPI_STR_AUTH',                  '079 403 Not allowed'               
 define ( 'HPAPI_STR_DB_MTD_ARGS',           '101 400 Incorrect argument count for method'                                           );
 define ( 'HPAPI_STR_DB_MTD_ARG_VAL',        '102 400 Invalid method argument'                                                       );
 define ( 'HPAPI_STR_DB_SPR_MODEL',          '103 500 No database for data model'                                                    );
-define ( 'HPAPI_STR_METHOD_EXCEPTION',      '104 Method threw an exception'                                                         );
-define ( 'HPAPI_STR_DB_Z',                  '105 Empty arguments to database function'                                              );
-define ( 'HPAPI_STR_DB_MTD_ACCESS',         '106 Method is not available'                                                           );
+define ( 'HPAPI_STR_METHOD_EXCEPTION',      '104 500 Method threw an exception'                                                     );
+define ( 'HPAPI_STR_DB_Z',                  '105 500 Empty arguments to database function'                                          );
+define ( 'HPAPI_STR_DB_MTD_ACCESS',         '106 403 Method is not available'                                                       );
+define ( 'HPAPI_STR_DB_MTD_REMOTE_ADDR',    '107 403 Remote address not allowed for user group(s)'                                  );
 
 // Calling stored procedures
 define ( 'HPAPI_STR_DB_SPR_NO_SPR',         '201 500 Method did not give stored procedure'                                          );

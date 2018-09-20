@@ -647,19 +647,36 @@ class Hpapi {
             return false;
         }
         $method                                                             = new \stdClass ();
-        $method->name                                                      = $m_args[0]['name'];
+        $method->name                                                       = $m_args[0]['name'];
         $method->notes                                                      = $m_args[0]['notes'];
         $method->arguments                                                  = array ();
-        if ($m_args[0]['argument']) {
-            foreach ($m_args as $m_arg) {
+        $allowed                                                            = false;
+        $tried                                                              = array ();
+        foreach ($m_args as $m_arg) {
+            if (in_array($m_arg['remoteAddrPattern'],$tried)) {
+                // Pattern already rejected
+                continue;
+            }
+            if (!preg_match('<'.$m_arg['remoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
+                // REMOTE_ADDR does not match pattern
+                array_push ($tried,$m_arg['remoteAddrPattern']);
+                continue;
+            }
+            // REMOTE_ADDR allowed
+            $allowed                                                        = true;
+            if ($m_args[0]['argument']) {
                 unset ($m_arg['label']);
                 unset ($m_arg['notes']);
                 $arg                                                        = new \stdClass ();
                 foreach ($m_arg as $k=>$v) {
                     $arg->$k                                                = $v;
                 }
-                array_push ($method->arguments,$arg);
+                $method->arguments[$arg->argument-1] = $arg;
             }
+        }
+        if (!$allowed) {
+            throw new \Exception (HPAPI_STR_DB_MTD_REMOTE_ADDR);
+            return false;            
         }
         return $method;
     }

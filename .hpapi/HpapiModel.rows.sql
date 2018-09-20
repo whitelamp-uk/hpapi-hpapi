@@ -48,12 +48,12 @@ INSERT IGNORE INTO `hpapi_model` (`model_Model`, `model_Notes`, `model_DSN`, `mo
 INSERT IGNORE INTO `hpapi_package` (`package_Vendor`, `package_Package`, `package_Notes`) VALUES
 ('whitelamp-uk',	'hpapi-utility',	'Hpapi utility class(es).');
 
-INSERT IGNORE INTO `hpapi_pattern` (`pattern_Pattern`, `pattern_Constraints`, `pattern_Expression`, `pattern_Input`, `pattern_Php_Filter`, `pattern_Length_Minimum`, `pattern_Length_Maximum`, `pattern_Value_Minimum`, `pattern_Value_Maximum`) VALUES
+INSERT INTO `hpapi_pattern` (`pattern_Pattern`, `pattern_Constraints`, `pattern_Expression`, `pattern_Input`, `pattern_Php_Filter`, `pattern_Length_Minimum`, `pattern_Length_Maximum`, `pattern_Value_Minimum`, `pattern_Value_Maximum`) VALUES
 ('alpha-lc-64',	'HPAPI_PATTERN_DESC_ALPHA_LC',	'^[a-z]*$',	'text',	'',	1,	64,	'',	''),
 ('class',	'HPAPI_PATTERN_DESC_CLASS',	'^\\\\[A-Z][A-z]*\\\\[A-Z][A-z]*$',	'text',	'',	4,	64,	'',	''),
 ('db-boolean',	'HPAPI_PATTERN_DESC_DB_BOOL',	'',	'checkbox',	'FILTER_VALIDATE_INT',	0,	0,	'0',	'1'),
 ('email',	'HPAPI_PATTERN_DESC_EMAIL',	'',	'email',	'FILTER_VALIDATE_EMAIL',	3,	254,	'',	''),
-('hhmmss',	'HPAPI_PATTERN_DESC_INT_HHMMSS',	'^[0-9]*$',	'text',	'',	6,	6,	'000000',	'235959'),
+('hhmmss',	'HPAPI_PATTERN_DESC_HHMMSS',	'^[0-9]{6}$',	'text',	'',	0,	0,	'000000',	'235959'),
 ('ipv4',	'HPAPI_PATTERN_DESC_IPV4',	'((^|\\.)((25[0-5])|(2[0-4]\\d)|(1\\d\\d)|([1-9]?\\d))){4}$',	'text',	' ',	7,	15,	'',	''),
 ('method',	'HPAPI_PATTERN_DESC_METHOD',	'^[a-z][A-Za-z0-9]*$',	'text',	'',	2,	64,	'',	''),
 ('package',	'HPAPI_PATTERN_DESC_PACKAGE',	'^[a-z][a-z\\-]*[a-z]$',	'text',	'',	2,	64,	'',	''),
@@ -65,7 +65,7 @@ INSERT IGNORE INTO `hpapi_pattern` (`pattern_Pattern`, `pattern_Constraints`, `p
 ('varchar-64',	'HPAPI_PATTERN_DESC_VARCHAR_64',	'',	'text',	'',	1,	64,	'',	''),
 ('vendor',	'HPAPI_PATTERN_DESC_VENDOR',	'^[a-z][a-z\\-]*[a-z]$',	'text',	'',	2,	64,	'',	''),
 ('yyyy-mm-dd',	'HPAPI_PATTERN_DESC_YYYY_MM_DD',	'^[0-9]{4}-[0-9]{2}-[0-9]{2}$',	'date',	'',	10,	10,	'2000-01-01',	'2100-12-31'),
-('yyyymmdd',	'HPAPI_PATTERN_DESC_INT_YYYYMMDD',	'',	'text',	'FILTER_VALIDATE_INT',	8,	8,	'20000101',	'99991231');
+('yyyymmdd',	'HPAPI_PATTERN_DESC_YYYYMMDD',	'^[0-9]{8}$',	'text',	'',	0,	0,	'20000101',	'99991231');
 
 INSERT INTO `hpapi_spr` (`spr_Model`, `spr_Spr`, `spr_Notes`) VALUES
 ('HpapiModel',	'hpapiAuthenticate',	'Authenticate a given key/email/password/method.'),
@@ -105,12 +105,14 @@ INSERT IGNORE INTO `hpapi_user` (`user_Active`, `user_UUID`, `user_Notes`, `user
 (1,	'20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1',	'Slow, but the penny usually drops eventually.',	'Administrator, System',	'20180725104327::0e0f4ce8-8fee-11e8-902b-001f16148bc1',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
 (1,	'20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1',	'Test user 1',	'User, Test 1',	'20180720110427::89c56ad8-8ff3-11e8-902b-001f16148bc1',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
 
-INSERT IGNORE INTO `hpapi_usergroup` (`usergroup_Usergroup`, `usergroup_Level`, `usergroup_Name`, `usergroup_Notes`) VALUES
-('admin',	2,	'Administrators',	'Users performing high level administration of business data within the model.'),
-('agent',	10000,	'Client Agents',	'Custom user group for users acting on behalf of a company client. They may or may not be operating via a third party agency organsiation (eg. a lottery provider).'),
-('anon',	10000000,	'Unknown Users',	'Users having no identity.'),
-('field',	1000,	'Field staff',	'Staff at off-site locations'),
-('manager',	10,	'Managers',	'Admin users with relatively high privileges'),
-('staff',	100,	'Office staff',	'Admin users with limited privileges'),
-('sysadmin',	3,	'System Administrators',	'Users performing high level administration of configuration data within the model.');
+INSERT INTO `hpapi_usergroup` (`usergroup_Usergroup`, `usergroup_Level`, `usergroup_Name`, `usergroup_Remote_Addr_Pattern`, `usergroup_Notes`) VALUES
+('admin',	2,	'Administrators',	'^.*$',	'Users performing high level administration of business data within the model.'),
+('agent',	10000,	'Client Agents',	'^.*$',	'Custom user group for users acting on behalf of a company client. They may or may not be operating via a third party agency organsiation (eg. a lottery provider).'),
+('anon',	10000000,	'Unknown Users',	'^.*$',	'Users having no identity.'),
+('canvasser',	1000,	'Field staff',	'^.*$',	'Staff at off-site locations using doorstepper.js'),
+('field',	1000,	'Field staff',	'^.*$',	'Staff at off-site locations'),
+('linemanager',	1000,	'Line managers',	'^.*$',	'Line managers at off-site locations using doorstepper.js'),
+('manager',	10,	'Managers',	'^.*$',	'Admin users with relatively high privileges'),
+('staff',	100,	'Office staff',	'^.*$',	'Admin users with limited privileges'),
+('sysadmin',	3,	'System Administrators',	'^.*$',	'Users performing high level administration of configuration data within the model.');
 
