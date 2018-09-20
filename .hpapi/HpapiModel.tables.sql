@@ -37,15 +37,11 @@ CREATE TABLE IF NOT EXISTS `hpapi_key` (
 
 
 CREATE TABLE IF NOT EXISTS `hpapi_keyrelease` (
-  `keyrelease_User_UUID` varchar(64) CHARACTER SET ascii NOT NULL,
   `keyrelease_Key` varchar(64) CHARACTER SET ascii NOT NULL,
-  `keyrelease_Expires_Date` varchar(32) CHARACTER SET ascii NOT NULL,
-  PRIMARY KEY (`keyrelease_User_UUID`),
-  KEY `keyrelease_Key` (`keyrelease_Key`),
-  CONSTRAINT `hpapi_keyrelease_ibfk_1` FOREIGN KEY (`keyrelease_User_UUID`) REFERENCES `hpapi_user` (`user_UUID`),
-  CONSTRAINT `hpapi_keyrelease_ibfk_2` FOREIGN KEY (`keyrelease_Key`) REFERENCES `hpapi_key` (`key_Key`)
+  `keyrelease_Expires_Datetime` varchar(32) CHARACTER SET ascii NOT NULL,
+  PRIMARY KEY (`keyrelease_Key`),
+  CONSTRAINT `hpapi_keyrelease_ibfk_1` FOREIGN KEY (`keyrelease_Key`) REFERENCES `hpapi_key` (`key_Key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 CREATE TABLE IF NOT EXISTS `hpapi_level` (
   `level_Level` int(11) unsigned NOT NULL,
