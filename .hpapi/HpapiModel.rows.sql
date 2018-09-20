@@ -4,14 +4,6 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
-INSERT IGNORE INTO `hpapi_email` (`email_Verified`, `email_Email`, `email_User_UUID`) VALUES
-(1,	'sysadmin@no.where',	'20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1'),
-(1,	'test.1@no.where',	'20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1');
-
-INSERT IGNORE INTO `hpapi_key` (`key_Key`, `key_Expired`, `key_Remote_Addr_Pattern`) VALUES
-('20180720110427::89c56ad8-8ff3-11e8-902b-001f16148bc1',	0,	'^.*$'),
-('20180725104327::0e0f4ce8-8fee-11e8-902b-001f16148bc1',	0,	'^.*$');
-
 INSERT IGNORE INTO `hpapi_level` (`level_Level`, `level_Name`, `level_Notes`) VALUES
 (0,	'This',	'The user group being tested and no other.'),
 (1,	'System',	'Background process user with unconstrained omnipotence.'),
@@ -23,10 +15,6 @@ INSERT IGNORE INTO `hpapi_level` (`level_Level`, `level_Name`, `level_Notes`) VA
 (10000,	'Agent',	'Agent acting on behalf of an organisation having data management policies and GDPR obligations.'),
 (100000,	'Public',	'Public registered customer or web site user.'),
 (10000000,	'Anonymous',	'Users unidentified except for the use of a valid API key.');
-
-INSERT IGNORE INTO `hpapi_membership` (`membership_User_UUID`, `membership_Usergroup`) VALUES
-('20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1',	'sysadmin'),
-('20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1',	'admin');
 
 INSERT INTO `hpapi_method` (`method_Vendor`, `method_Package`, `method_Class`, `method_Method`, `method_Label`, `method_Notes`) VALUES
 ('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	'Method description',	'Method, argument and validation details'),
@@ -100,10 +88,6 @@ INSERT INTO `hpapi_sprarg` (`sprarg_Model`, `sprarg_Spr`, `sprarg_Argument`, `sp
 ('HpapiModel',	'hpapiUsergroups',	2,	'Fully authenticated?',	0,	'db-boolean'),
 ('HpapiModel',	'hpapiUUID',	1,	'Date (yyyymmdd)',	0,	'yyyymmdd'),
 ('HpapiModel',	'hpapiUUID',	2,	'Time (hhmmss)',	0,	'hhmmss');
-
-INSERT IGNORE INTO `hpapi_user` (`user_Active`, `user_UUID`, `user_Notes`, `user_Name`, `user_Key`, `user_Password_Hash`) VALUES
-(1,	'20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1',	'Slow, but the penny usually drops eventually.',	'Administrator, System',	'20180725104327::0e0f4ce8-8fee-11e8-902b-001f16148bc1',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
-(1,	'20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1',	'Test user 1',	'User, Test 1',	'20180720110427::89c56ad8-8ff3-11e8-902b-001f16148bc1',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
 
 INSERT INTO `hpapi_usergroup` (`usergroup_Usergroup`, `usergroup_Level`, `usergroup_Name`, `usergroup_Remote_Addr_Pattern`, `usergroup_Notes`) VALUES
 ('admin',	2,	'Administrators',	'^.*$',	'Users performing high level administration of business data within the model.'),

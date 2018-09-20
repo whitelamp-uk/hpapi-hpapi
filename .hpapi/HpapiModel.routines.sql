@@ -201,6 +201,31 @@ BEGIN
 END$$
 
 
+DROP PROCEDURE IF EXISTS `hpapiInsertTestUsers`$$
+CREATE PROCEDURE `hpapiInsertTestUsers`(
+)
+BEGIN
+  IF ((SELECT COUNT(`user_UUID`) FROM `hpapi_user`) = 0) THEN
+    INSERT IGNORE INTO `hpapi_key` (`key_Key`, `key_Expired`, `key_Remote_Addr_Pattern`) VALUES
+    ('20180720110427::89c56ad8-8ff3-11e8-902b-001f16148bc1',  0,  '^.*$'),
+    ('20180725104327::0e0f4ce8-8fee-11e8-902b-001f16148bc1',  0,  '^.*$');
+    INSERT IGNORE INTO `hpapi_user` (`user_Active`, `user_UUID`, `user_Notes`, `user_Name`, `user_Key`, `user_Password_Hash`) VALUES
+    (1, '20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1', 'Temporary system administrator',  'Sysadmin Temp',  '20180725104327::0e0f4ce8-8fee-11e8-902b-001f16148bc1', '$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
+    (1, '20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1', 'Temporary organisation administrator',  'Admin Temp', '20180720110427::89c56ad8-8ff3-11e8-902b-001f16148bc1', '$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
+    INSERT IGNORE INTO `hpapi_email` (`email_Verified`, `email_Email`, `email_User_UUID`) VALUES
+    (1, 'sysadmin@no.where',  '20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1'),
+    (1, 'orgadmin@no.where',  '20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1');
+    INSERT IGNORE INTO `hpapi_membership` (`membership_User_UUID`, `membership_Usergroup`) VALUES
+    ('20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1',  'sysadmin'),
+    ('20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1',  'admin');
+    SELECT 'Inserted test users into hpapi_key, hpapi_user, hpapi_email and hpapi_membership' AS `Completed`;
+  ELSE
+    SELECT 'Refusing to add test users - rows found in hpapi_user' AS `Refused`;
+  END IF
+  ;
+END$$
+
 
 DELIMITER ;
+
 
