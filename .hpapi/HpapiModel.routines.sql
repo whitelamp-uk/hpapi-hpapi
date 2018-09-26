@@ -15,27 +15,27 @@ CREATE PROCEDURE `hpapiAuthDetails`(
 )
 BEGIN
   SELECT
-    `user_UUID` AS `userUUID` 
-   ,`user_Active` AS `userActive` 
-   ,`user_Password_Hash` AS `passwordHash` 
-   ,`email_User_UUID` IS NOT NULL AS `emailFound` 
-   ,`email_Verified` AS `emailVerified` 
-   ,`new_key`.`key_Key` AS `newKey` 
-   ,IFNULL(`new_key`.`key_Remote_Addr_Pattern`,`cur_key`.`key_Remote_Addr_Pattern`) AS `remoteAddrPattern`
+    `user_uuid` AS `userUUID` 
+   ,`user_active` AS `userActive` 
+   ,`user_password_hash` AS `passwordHash` 
+   ,`email_user_uuid` IS NOT NULL AS `emailFound` 
+   ,`email_verified` AS `emailVerified` 
+   ,`new_key`.`key_key` AS `newKey` 
+   ,IFNULL(`new_key`.`key_remote_addr_pattern`,`cur_key`.`key_remote_addr_pattern`) AS `remoteAddrPattern`
   FROM `hpapi_email`
   LEFT JOIN `hpapi_user`
-         ON `user_UUID`=`email_User_UUID`
+         ON `user_uuid`=`email_user_uuid`
   LEFT JOIN `hpapi_key` AS `cur_key`
-         ON `cur_key`.`key_Key`=keyKey
-        AND `cur_key`.`key_Expired`='0'
+         ON `cur_key`.`key_key`=keyKey
+        AND `cur_key`.`key_expired`='0'
   LEFT JOIN `hpapi_keyrelease`
-         ON `keyrelease_User_UUID`=`user_UUID`
-        AND `keyrelease_Expires_Date`>dt
+         ON `keyrelease_user_uuid`=`user_uuid`
+        AND `keyrelease_expires_date`>dt
   LEFT JOIN `hpapi_key` AS `new_key`
          ON `new_key`.`key_Key`=`keyrelease_Key`
-        AND `new_key`.`key_Expired`='0'
-  WHERE `email_Email`=emailEmail
-    AND `cur_key`.`key_Key`=`user_Key`
+        AND `new_key`.`key_expired`='0'
+  WHERE `email_email`=emailEmail
+    AND `cur_key`.`key_Key`=`user_key`
     AND (
          `cur_key`.`key_Key` IS NOT NULL
       OR `new_key`.`key_Key` IS NOT NULL
@@ -53,8 +53,8 @@ CREATE PROCEDURE `hpapiKeyreleaseRevoke`(
 BEGIN
   DELETE
   FROM `hpapi_keyrelease`
-  WHERE `keyrelease_Expires_Date`<dt
-     OR `keyrelease_Key`=ky
+  WHERE `keyrelease_expires_date`<dt
+     OR `keyrelease_key`=ky
   ;
 END $$
 
@@ -77,18 +77,18 @@ CREATE PROCEDURE `hpapiLogRequest`(
 BEGIN
   INSERT INTO `hpapi_log`
   SET
-    `log_Datetime`=dt
-   ,`log_Microtime`=mt
-   ,`log_Key`=ky
-   ,`log_Email`=email
-   ,`log_Remote_Addr`=remoteAddr
-   ,`log_User_Agent`=userAgent
-   ,`log_Vendor`=vendor
-   ,`log_Package`=package
-   ,`log_Class`=class
-   ,`log_Method`=method
-   ,`log_Error`=err
-   ,`log_Notice`=ntc
+    `log_datetime`=dt
+   ,`log_microtime`=mt
+   ,`log_key`=ky
+   ,`log_email`=email
+   ,`log_remote_addr`=remoteAddr
+   ,`log_user_agent`=userAgent
+   ,`log_vendor`=vendor
+   ,`log_package`=package
+   ,`log_class`=class
+   ,`log_method`=method
+   ,`log_error`=err
+   ,`log_notice`=ntc
   ;
 END $$
 
@@ -103,49 +103,49 @@ CREATE PROCEDURE `hpapiMethodargs`(
 )
 BEGIN
   SELECT
-    `method_Label` AS `label`
-   ,`method_Notes` AS `notes`
-   ,`methodarg_Argument` AS `argument`
-   ,`methodarg_Name` AS `name`
-   ,`methodarg_Empty_Allowed` AS `emptyAllowed`
-   ,`pattern_Pattern` AS `pattern`
-   ,`pattern_Constraints` AS `constraints`
-   ,`pattern_Expression` AS `expression`
-   ,`pattern_Php_Filter` AS `phpFilter`
-   ,`pattern_Length_Minimum` AS `lengthMinimum`
-   ,`pattern_Length_Maximum` AS `lengthMaximum`
-   ,`pattern_Value_Minimum` AS `valueMinimum`
-   ,`pattern_Value_Maximum` AS `valueMaximum`
-   ,IFNULL(`ug`.`usergroup_Remote_Addr_Pattern`,`anon`.`usergroup_Remote_Addr_Pattern`) AS `remoteAddrPattern`
+    `method_label` AS `label`
+   ,`method_notes` AS `notes`
+   ,`methodarg_argument` AS `argument`
+   ,`methodarg_name` AS `name`
+   ,`methodarg_empty_allowed` AS `emptyAllowed`
+   ,`pattern_pattern` AS `pattern`
+   ,`pattern_constraints` AS `constraints`
+   ,`pattern_expression` AS `expression`
+   ,`pattern_php_filter` AS `phpFilter`
+   ,`pattern_length_minimum` AS `lengthMinimum`
+   ,`pattern_length_maximum` AS `lengthMaximum`
+   ,`pattern_value_minimum` AS `valueMinimum`
+   ,`pattern_value_maximum` AS `valueMaximum`
+   ,IFNULL(`ug`.`usergroup_remote_addr_pattern`,`anon`.`usergroup_remote_addr_pattern`) AS `remoteAddrPattern`
   FROM `hpapi_method`
   LEFT JOIN `hpapi_methodarg`
-         ON `methodarg_Vendor`=methodVendor
-        AND `methodarg_Package`=methodPackage
-        AND `methodarg_Class`=methodClass
-        AND `methodarg_Method`=methodMethod
+         ON `methodarg_vendor`=methodVendor
+        AND `methodarg_package`=methodPackage
+        AND `methodarg_class`=methodClass
+        AND `methodarg_method`=methodMethod
   LEFT JOIN `hpapi_pattern`
-         ON `pattern_Pattern`=`methodarg_Pattern`
+         ON `pattern_pattern`=`methodarg_pattern`
   LEFT JOIN `hpapi_run`
-         ON `run_Vendor`=methodVendor
-        AND `run_Package`=methodPackage
-        AND `run_Class`=methodClass
-        AND `run_Method`=methodMethod
+         ON `run_vendor`=methodVendor
+        AND `run_package`=methodPackage
+        AND `run_class`=methodClass
+        AND `run_method`=methodMethod
   LEFT JOIN `hpapi_membership`
-         ON `membership_Usergroup`=`run_Usergroup`
-        AND `membership_User_UUID`=userUUID
+         ON `membership_usergroup`=`run_usergroup`
+        AND `membership_user_uuid`=userUUID
   LEFT JOIN `hpapi_usergroup` AS `ug`
-         ON `ug`.`usergroup_Usergroup`=`membership_Usergroup`
+         ON `ug`.`usergroup_usergroup`=`membership_usergroup`
   LEFT JOIN `hpapi_usergroup` AS `anon`
-         ON `anon`.`usergroup_Usergroup`='anon'
-  WHERE `method_Vendor`=methodVendor
-    AND `method_Package`=methodPackage
-    AND `method_Class`=methodClass
-    AND `method_Method`=methodMethod
+         ON `anon`.`usergroup_usergroup`='anon'
+  WHERE `method_vendor`=methodVendor
+    AND `method_package`=methodPackage
+    AND `method_class`=methodClass
+    AND `method_method`=methodMethod
     AND (
-        `membership_User_UUID` IS NOT NULL
-     OR `run_Usergroup`='anon'
+        `membership_user_uuid` IS NOT NULL
+     OR `run_usergroup`='anon'
     )
-  ORDER BY `methodarg_Argument`
+  ORDER BY `methodarg_argument`
   ;
 END$$
 
@@ -159,44 +159,44 @@ CREATE PROCEDURE `hpapiSprargs`(
 )
 BEGIN
   SELECT
-    `spr_Model` AS `model`
-   ,`spr_Spr` AS `spr`
-   ,`spr_Notes` AS `notes`
-   ,`sprarg_Argument` AS `argument`
-   ,`sprarg_Name` AS `name`
-   ,`sprarg_Empty_Allowed` AS `emptyAllowed`
-   ,`pattern_Pattern` AS `pattern`
-   ,`pattern_Constraints` AS `constraints`
-   ,`pattern_Expression` AS `expression`
-   ,`pattern_Php_Filter` AS `phpFilter`
-   ,`pattern_Length_Minimum` AS `lengthMinimum`
-   ,`pattern_Length_Maximum` AS `lengthMaximum`
-   ,`pattern_Value_Minimum` AS `valueMinimum`
-   ,`pattern_Value_Maximum` AS `valueMaximum`
+    `spr_model` AS `model`
+   ,`spr_spr` AS `spr`
+   ,`spr_notes` AS `notes`
+   ,`sprarg_argument` AS `argument`
+   ,`sprarg_name` AS `name`
+   ,`sprarg_empty_allowed` AS `emptyAllowed`
+   ,`pattern_pattern` AS `pattern`
+   ,`pattern_constraints` AS `constraints`
+   ,`pattern_expression` AS `expression`
+   ,`pattern_php_filter` AS `phpFilter`
+   ,`pattern_length_minimum` AS `lengthMinimum`
+   ,`pattern_length_maximum` AS `lengthMaximum`
+   ,`pattern_value_minimum` AS `valueMinimum`
+   ,`pattern_value_maximum` AS `valueMaximum`
   FROM `hpapi_method`
   LEFT JOIN `hpapi_call`
-     ON `call_Vendor`=`method_Vendor`
-    AND `call_Vendor`=methodVendor
-    AND `call_Package`=`method_Package`
-    AND `call_Package`=methodPackage
-    AND `call_Class`=`method_Class`
-    AND `call_Class`=methodClass
-    AND `call_Method`=`method_Method`
-    AND `call_Method`=methodMethod
+     ON `call_vendor`=`method_vendor`
+    AND `call_vendor`=methodVendor
+    AND `call_package`=`method_package`
+    AND `call_package`=methodPackage
+    AND `call_class`=`method_class`
+    AND `call_class`=methodClass
+    AND `call_method`=`method_method`
+    AND `call_method`=methodMethod
   LEFT JOIN `hpapi_spr`
-         ON `spr_Model`=`call_Model`
-        AND `spr_Spr`=`call_Spr`
+         ON `spr_model`=`call_model`
+        AND `spr_spr`=`call_spr`
   LEFT JOIN `hpapi_sprarg`
-         ON `sprarg_Model`=`spr_Model`
-        AND `sprarg_Spr`=`spr_Spr`
+         ON `sprarg_model`=`spr_model`
+        AND `sprarg_spr`=`spr_spr`
   LEFT JOIN `hpapi_pattern`
-         ON `pattern_Pattern`=`sprarg_Pattern`
-  WHERE `method_Vendor`=methodVendor
-    AND `method_Package`=methodPackage
-    AND `method_Class`=methodClass
-    AND `method_Method`=methodMethod
-  GROUP BY `spr_Model`,`spr_Spr`,`sprarg_Argument`
-  ORDER BY `spr_Model`,`spr_Spr`,`sprarg_Argument`
+         ON `pattern_pattern`=`sprarg_pattern`
+  WHERE `method_vendor`=methodVendor
+    AND `method_package`=methodPackage
+    AND `method_class`=methodClass
+    AND `method_method`=methodMethod
+  GROUP BY `spr_model`,`spr_spr`,`sprarg_argument`
+  ORDER BY `spr_model`,`spr_spr`,`sprarg_argument`
   ;
 END$$
 
@@ -205,8 +205,8 @@ DROP PROCEDURE IF EXISTS `hpapiInsertTestUsers`$$
 CREATE PROCEDURE `hpapiInsertTestUsers`(
 )
 BEGIN
-  IF ((SELECT COUNT(`user_UUID`) FROM `hpapi_user`) = 0) THEN
-    INSERT IGNORE INTO `hpapi_key` (`key_Key`, `key_Expired`, `key_Remote_Addr_Pattern`) VALUES
+  IF ((SELECT COUNT(`user_uuid`) FROM `hpapi_user`) = 0) THEN
+    INSERT IGNORE INTO `hpapi_key` (`key_key`, `key_expired`, `key_remote_addr_pattern`) VALUES
     ('20180720110427::89c56ad8-8ff3-11e8-902b-001f16148bc1',  0,  '^.*$'),
     ('20180725104327::0e0f4ce8-8fee-11e8-902b-001f16148bc1',  0,  '^.*$');
     INSERT IGNORE INTO `hpapi_user` (`user_Active`, `user_UUID`, `user_Notes`, `user_Name`, `user_Key`, `user_Password_Hash`) VALUES
