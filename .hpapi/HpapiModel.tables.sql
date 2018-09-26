@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_membership` (
   PRIMARY KEY (`membership_user_uuid`,`membership_usergroup`),
   KEY `membership_usergroup` (`membership_usergroup`),
   CONSTRAINT `hpapi_membership_ibfk_1` FOREIGN KEY (`membership_user_uuid`) REFERENCES `hpapi_user` (`user_uuid`),
-  CONSTRAINT `hpapi_membership_ibfk_2` FOREIGN KEY (`membership_usergroup`) REFERENCES `hpapi_usergroup` (`usergroup_sergroup`)
+  CONSTRAINT `hpapi_membership_ibfk_2` FOREIGN KEY (`membership_usergroup`) REFERENCES `hpapi_usergroup` (`usergroup_usergroup`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_user` (
 
 CREATE TABLE IF NOT EXISTS `hpapi_usergroup` (
   `usergroup_usergroup` varchar(64) CHARACTER SET ascii NOT NULL,
-  `usergroup_level` int(4) unsigned NOT NULL,
+  `usergroup_level` int(11) unsigned NOT NULL,
   `usergroup_name` varchar(64) NOT NULL,
   `usergroup_remote_addr_pattern` varchar(64) CHARACTER SET ascii NOT NULL DEFAULT '^.*$',
   `usergroup_notes` text NOT NULL,
