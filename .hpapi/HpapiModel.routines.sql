@@ -27,9 +27,6 @@ BEGIN
   LEFT JOIN `hpapi_keyrelease`
          ON `keyrelease_user_uuid`=`user_uuid`
   WHERE `email_email`=em
-    AND 
-    AND `cur_key`.`key_Key`=`user_key`
-
     AND (
          (`key`=ky AND `key_expired`='0')
       OR (`key_release`>0 AND `key_release_until`>ts)
@@ -162,10 +159,10 @@ DROP PROCEDURE IF EXISTS `hpapiInsertTestUsers`$$
 CREATE PROCEDURE `hpapiInsertTestUsers`(
 )
 BEGIN
-  IF ((SELECT COUNT(`user_id`) FROM `hpapi_user`) = 0) THEN
-    INSERT INTO `hpapi_user` (`id`, `active`, `uuid`, `key`, `key_expired`, `key_release`, `key_release_until`, `remote_addr_pattern`, `name`, `notes`, `email`, `email_verified`, `email_fallback`, `email_fallback_verified`, `password_hash`) VALUES
-    (1, 1,  '20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1', '20180725104327::0e0f4ce8-8fee-11e8-902b-001f16148bc1', 0,  0,  0,  '^.*$', 'Sysadmin Temp',  'Temporary system administrator', 'sysadmin@no.where',  1,  '', 0,  '20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1'),
-    (2, 1,  '20180720110427::57d2eff7-8ff3-11e8-902b-001f16148bc1', '20180720110427::89c56ad8-8ff3-11e8-902b-001f16148bc1', 0,  1,  0,  '^.*$', 'Admin Temp', 'Temporary organisation administrator', 'orgadmin@no.where',  1,  '', 0,  '$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
+  IF ((SELECT COUNT(`id`) FROM `hpapi_user`) = 0) THEN
+    INSERT INTO `hpapi_user` (`id`, `active`, `uuid`, `key`, `remote_addr_pattern`, `name`, `notes`, `email`, `email_verified`, `password_hash`) VALUES
+    (1, 1,  '322025bd-8ff2-11e8-902b-001f16148bc1', '0e0f4ce8-8fee-11e8-902b-001f16148bc1', '^.*$', 'Sysadmin Temp',  'Temporary system administrator', 'sysadmin@no.where',  1,  '20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1'),
+    (2, 1,  '57d2eff7-8ff3-11e8-902b-001f16148bc1', '89c56ad8-8ff3-11e8-902b-001f16148bc1', '^.*$', 'Admin Temp', 'Temporary organisation administrator', 'orgadmin@no.where',  1,  '$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
     SELECT 'Inserted test users into hpapi_key, hpapi_user, hpapi_email and hpapi_membership' AS `Completed`;
   ELSE
     SELECT 'Refusing to add test users - rows found in hpapi_user' AS `Refused`;

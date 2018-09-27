@@ -16,27 +16,13 @@ INSERT IGNORE INTO `hpapi_level` (`level`, `name`, `notes`) VALUES
 (100000,	'Public',	'Public registered customer or web site user.'),
 (10000000,	'Anonymous',	'Users unidentified except for the use of a valid API key.');
 
-INSERT INTO `hpapi_method` (`vendor`, `package`, `class`, `method`, `label`, `notes`) VALUES
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	'Method description',	'Method, argument and validation details'),
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'methods',	'My methods',	'Methods available to the current user.'),
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'usergroups',	'My user groups',	'User groups for the current user.'),
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid',	'Get UUID',	'Hpapi default UUID generating method.');
-
-INSERT INTO `hpapi_methodarg` (`vendor`, `package`, `class`, `method`, `argument`, `name`, `empty_allowed`, `pattern`) VALUES
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	1,	'Vendor',	0,	'vendor'),
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	2,	'Package',	0,	'package'),
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	3,	'Class',	0,	'class'),
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'describeMethod',	4,	'Method',	0,	'method'),
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid',	1,	'Date (yyyymmdd)',	1,	'yyyymmdd'),
-('whitelamp-uk',	'hpapi-utility',	'\\Hpapi\\Utility',	'uuid',	2,	'Time (hhmmss)',	1,	'hhmmss');
-
-INSERT IGNORE INTO `hpapi_model` (`model`, `notes`, `dsn`, `usr`, `pwd`) VALUES
-('HpapiModel',	'Model for the API itself. Consequently there are no dns/usr/pwd details for a blueprint.',	'',	'',	'');
+INSERT IGNORE INTO `hpapi_model` (`model`, `notes`) VALUES
+('HpapiModel',	'Model for the API itself.');
 
 INSERT IGNORE INTO `hpapi_package` (`vendor`, `package`, `notes`) VALUES
 ('whitelamp-uk',	'hpapi-utility',	'Hpapi utility class(es).');
 
-INSERT INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `input`, `php_filter`, `length_minimum`, `length_maximum`, `value_minimum`, `value_maximum`) VALUES
+INSERT IGNORE INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `input`, `php_filter`, `length_minimum`, `length_maximum`, `value_minimum`, `value_maximum`) VALUES
 ('alpha-lc-64',	'HPAPI_PATTERN_DESC_ALPHA_LC',	'^[a-z]*$',	'text',	'',	1,	64,	'',	''),
 ('class',	'HPAPI_PATTERN_DESC_CLASS',	'^\\\\[A-Z][A-z]*\\\\[A-Z][A-z]*$',	'text',	'',	4,	64,	'',	''),
 ('db-boolean',	'HPAPI_PATTERN_DESC_DB_BOOL',	'',	'checkbox',	'FILTER_VALIDATE_INT',	0,	0,	'0',	'1'),
@@ -55,41 +41,9 @@ INSERT INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `input`, `p
 ('yyyy-mm-dd',	'HPAPI_PATTERN_DESC_YYYY_MM_DD',	'^[0-9]{4}-[0-9]{2}-[0-9]{2}$',	'date',	'',	10,	10,	'2000-01-01',	'2100-12-31'),
 ('yyyymmdd',	'HPAPI_PATTERN_DESC_YYYYMMDD',	'^[0-9]{8}$',	'text',	'',	0,	0,	'20000101',	'99991231');
 
-INSERT INTO `hpapi_spr` (`model`, `spr`, `notes`) VALUES
-('HpapiModel',	'hpapiAuthenticate',	'Authenticate a given key/email/password/method.'),
-('HpapiModel',	'hpapiMethodargs',	'Used by \\Hpapi\\Hpapi::authenticate() on every request but registered here because it is also deployed by \\Hpapi\\Utility::describeMethod()'),
-('HpapiModel',	'hpapiMethods',	'List of methods for a user UUID (authenticated or not).'),
-('HpapiModel',	'hpapiSprargs',	'List of stored procedure arguments for a given method.'),
-('HpapiModel',	'hpapiUsergroups',	'Usergroups for a user UUID.'),
-('HpapiModel',	'hpapiUUID',	'Return UUID based on YYMMDD, HHMMSS and UUID v4.');
 
 
-INSERT INTO `hpapi_sprarg` (`model`, `spr`, `argument`, `name`, `empty_allowed`, `pattern`) VALUES
-('HpapiModel',	'hpapiAuthenticate',	1,	'API key',	1,	'uuid-hpapi'),
-('HpapiModel',	'hpapiAuthenticate',	2,	'Email address',	1,	'email'),
-('HpapiModel',	'hpapiAuthenticate',	3,	'Hashed password',	1,	'varchar-255'),
-('HpapiModel',	'hpapiAuthenticate',	4,	'Vendor handle',	0,	'vendor'),
-('HpapiModel',	'hpapiAuthenticate',	5,	'Package handle',	0,	'package'),
-('HpapiModel',	'hpapiAuthenticate',	6,	'Class (including namespace)',	0,	'class'),
-('HpapiModel',	'hpapiAuthenticate',	7,	'Method',	0,	'method'),
-('HpapiModel',	'hpapiMethodargs',	1,	'API key',	0,	'uuid-hpapi'),
-('HpapiModel',	'hpapiMethodargs',	2,	'Email',	1,	'email'),
-('HpapiModel',	'hpapiMethodargs',	3,	'Vendor',	0,	'vendor'),
-('HpapiModel',	'hpapiMethodargs',	4,	'Package',	0,	'package'),
-('HpapiModel',	'hpapiMethodargs',	5,	'Class',	0,	'class'),
-('HpapiModel',	'hpapiMethodargs',	6,	'Method',	0,	'method'),
-('HpapiModel',	'hpapiMethods',	1,	'User UUID',	0,	'uuid-hpapi'),
-('HpapiModel',	'hpapiMethods',	2,	'Fully authenticated?',	0,	'db-boolean'),
-('HpapiModel',	'hpapiSprargs',	1,	'Vendor handle',	0,	'vendor'),
-('HpapiModel',	'hpapiSprargs',	2,	'Package handle',	0,	'package'),
-('HpapiModel',	'hpapiSprargs',	3,	'Class (including namespace)',	0,	'class'),
-('HpapiModel',	'hpapiSprargs',	4,	'Method',	0,	'method'),
-('HpapiModel',	'hpapiUsergroups',	1,	'User UUID',	0,	'uuid-hpapi'),
-('HpapiModel',	'hpapiUsergroups',	2,	'Fully authenticated?',	0,	'db-boolean'),
-('HpapiModel',	'hpapiUUID',	1,	'Date (yyyymmdd)',	0,	'yyyymmdd'),
-('HpapiModel',	'hpapiUUID',	2,	'Time (hhmmss)',	0,	'hhmmss');
-
-INSERT INTO `hpapi_usergroup` (`usergroup`, `level`, `name`, `remote_addr_pattern`, `notes`) VALUES
+INSERT IGNORE INTO `hpapi_usergroup` (`usergroup`, `level`, `name`, `remote_addr_pattern`, `notes`) VALUES
 ('admin',	2,	'Administrators',	'^.*$',	'Users performing high level administration of business data within the model.'),
 ('agent',	10000,	'Client Agents',	'^.*$',	'Custom user group for users acting on behalf of a company client. They may or may not be operating via a third party agency organsiation (eg. a lottery provider).'),
 ('anon',	10000000,	'Unknown Users',	'^.*$',	'Users having no identity.'),
