@@ -255,12 +255,12 @@ class Hpapi {
             $this->object->email                    = '';
         }
         // Define current user
-        $this->userUUID                             = $auth['userUUID'];
-        if ($auth['newKey']) {
+        $this->userID                               = $auth['userID'];
+        if ($auth['respondWithKey']) {
             // Adopt the key for this transaction
-            $this->object->key                      = $auth['newKey'];
+            $this->object->key                      = $auth['key'];
             // Return released key to client
-            $this->object->response->newKey         = $auth['newKey'];
+            $this->object->response->newKey         = $auth['key'];
         }
     }
 
