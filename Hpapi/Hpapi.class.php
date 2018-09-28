@@ -227,14 +227,6 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
-        if (!$auth['userUUID']) {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_RECOG;
-            if (!HPAPI_ANON_ACCESS) {
-                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
-                $this->end ();
-            }
-            $this->object->email                    = '';
-        }
         elseif (!$auth['userActive']) {
             $this->object->response->authStatus     = HPAPI_STR_AUTH_ACTIVE;
             if (!HPAPI_ANON_ACCESS) {

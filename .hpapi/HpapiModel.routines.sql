@@ -7,10 +7,25 @@ SET time_zone = '+00:00';
 DELIMITER $$
 
 
+DROP PROCEDURE IF EXISTS `hpapiKeyreleaseRevoke`$$
+CREATE PROCEDURE `hpapiKeyreleaseRevoke`(
+  IN        `ts` INT(11) UNSIGNED
+ ,IN        `ky` VARCHAR(64) CHARSET ascii
+)
+BEGIN
+  UPDATE `hpapi_user`
+  SET
+    `key_release`=0
+  WHERE UNIX_TIMESTAMP(`key_release_until`)<ts
+     OR `key`=ky
+  ;
+END $$
+
+
 DROP PROCEDURE IF EXISTS `hpapiAuthDetails`$$
 CREATE PROCEDURE `hpapiAuthDetails`(
   IN        `ts` INT(11) UNSIGNED
- ,IN        `ky` CHAR(52) CHARSET ascii
+ ,IN        `ky` VARCHAR(64) CHARSET ascii
  ,IN        `em` VARCHAR(254) CHARSET ascii
 )
 BEGIN
@@ -24,12 +39,10 @@ BEGIN
    ,`key_release` AS `respondWithKey`
    ,`hpapi_user`.`remote_addr_pattern` AS `remoteAddrPattern`
   FROM `hpapi_user`
-  LEFT JOIN `hpapi_keyrelease`
-         ON `keyrelease_user_uuid`=`user_uuid`
-  WHERE `email_email`=em
+  WHERE `email`=em
     AND (
          (`key`=ky AND `key_expired`='0')
-      OR (`key_release`>0 AND `key_release_until`>ts)
+      OR (`key_release`>0 AND UNIX_TIMESTAMP(`key_release_until`)>ts)
     )
   LIMIT 0,1
   ;
@@ -101,7 +114,8 @@ BEGIN
   LEFT JOIN `hpapi_membership`
          ON `hpapi_membership`.`usergroup`=`hpapi_run`.`usergroup`
         AND `hpapi_membership`.`user_id`=userID
-  LEFT JOIN `hpapi_usergroup` AS `ug` USING (`usergroup`)
+  LEFT JOIN `hpapi_usergroup` AS `ug`
+         ON `ug`.`usergroup`=`hpapi_membership`.`usergroup`
   LEFT JOIN `hpapi_usergroup` AS `anon`
          ON `anon`.`usergroup`='anon'
   WHERE `hpapi_method`.`vendor`=methodVendor
@@ -126,9 +140,9 @@ CREATE PROCEDURE `hpapiSprargs`(
 )
 BEGIN
   SELECT
-    `hpapi_sprarg`.`model`
-   ,`hpapi_sprarg`.`spr`
-   ,`hpapi_sprarg`.`notes`
+    `hpapi_spr`.`model`
+   ,`hpapi_spr`.`spr`
+   ,`hpapi_spr`.`notes`
    ,`hpapi_sprarg`.`argument`
    ,`hpapi_sprarg`.`name`
    ,`hpapi_sprarg`.`empty_allowed` AS `emptyAllowed`
@@ -161,7 +175,7 @@ CREATE PROCEDURE `hpapiInsertTestUsers`(
 BEGIN
   IF ((SELECT COUNT(`id`) FROM `hpapi_user`) = 0) THEN
     INSERT INTO `hpapi_user` (`id`, `active`, `uuid`, `key`, `remote_addr_pattern`, `name`, `notes`, `email`, `email_verified`, `password_hash`) VALUES
-    (1, 1,  '322025bd-8ff2-11e8-902b-001f16148bc1', '0e0f4ce8-8fee-11e8-902b-001f16148bc1', '^.*$', 'Sysadmin Temp',  'Temporary system administrator', 'sysadmin@no.where',  1,  '20180720110427::322025bd-8ff2-11e8-902b-001f16148bc1'),
+    (1, 1,  '322025bd-8ff2-11e8-902b-001f16148bc1', '0e0f4ce8-8fee-11e8-902b-001f16148bc1', '^.*$', 'Sysadmin Temp',  'Temporary system administrator', 'sysadmin@no.where',  1,  '$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
     (2, 1,  '57d2eff7-8ff3-11e8-902b-001f16148bc1', '89c56ad8-8ff3-11e8-902b-001f16148bc1', '^.*$', 'Admin Temp', 'Temporary organisation administrator', 'orgadmin@no.where',  1,  '$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
     SELECT 'Inserted test users into hpapi_key, hpapi_user, hpapi_email and hpapi_membership' AS `Completed`;
   ELSE

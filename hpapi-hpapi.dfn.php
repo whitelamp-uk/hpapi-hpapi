@@ -13,6 +13,7 @@ define ( 'HPAPI_CONTENT_TYPE_TEXT',         'text/plain; charset=utf-8'         
 define ( 'HPAPI_CONTENT_TYPE_UNKNOWN',      'unknown/unknown'                                                                       );
 
 // Definitions for `hpapi_pattern`.`pattern_Constraints` for hpapi (and supporting class) methods and stored procedures
+define ( 'HPAPI_PATTERN_DESC_INT_11_POS',   'must be a positive integer of no more than 11 digits'                                  );
 define ( 'HPAPI_PATTERN_DESC_CLASS',        'must be a valid PHP class name'                                                        );
 define ( 'HPAPI_PATTERN_DESC_DATETIME',     'must be universal datetime format yyyy-mm-ddThh:mm:ss+hh:mm'                           );
 define ( 'HPAPI_PATTERN_DESC_DB_BOOL',      'must be 0 or 1'                                                                        );
@@ -54,7 +55,6 @@ define ( 'HPAPI_STR_DB_CONN',               '045 500 Could not connect to databa
 define ( 'HPAPI_STR_AUTH_DENIED',           '051 403 Access denied'                                                                 );
 define ( 'HPAPI_STR_AUTH_ID',               '052 Could not match credentials'                                                       );
 define ( 'HPAPI_STR_AUTH_REMOTE_ADDR',      '053 Access not allowed from client location'                                           );
-define ( 'HPAPI_STR_AUTH_RECOG',            '054 Anonymous access (user not recognised)'                                            );
 define ( 'HPAPI_STR_AUTH_ACTIVE',           '055 Anonymous access (user not active)'                                                );
 define ( 'HPAPI_STR_AUTH_PWD',              '056 Anonymous access (email not authenticated)'                                        );
 define ( 'HPAPI_STR_AUTH_VERIFY',           '057 Anonymous access (email not verified)'                                             );
