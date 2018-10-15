@@ -14,8 +14,10 @@ class Hpapi {
     public  $datetime;                   // DateTime of response (can be faked for matching time-based test data)
     public  $logtime;                    // DateTime of response for logging (never faked)
     public  $microtime;                  // Microtime of response (decimal fraction of a second)
-    public  $sprs;                       // Stored procedures available for the requested method
+    public  $timestamp;                  // Timestamp (never faked)
+    public  $privilege;                  // Privilege array for this vendor::package::class::method
     public  $userUUID;                   // User identifier established by the authentication process
+    public  $usergroups = array ();      // Usergroups for this user
     private $config;                     // User identifier established by the authentication process
 
     public function __construct ( ) {
@@ -24,7 +26,8 @@ class Hpapi {
             return false;
         }
         error_reporting (HPAPI_PHP_ERROR_LEVEL);
-        $now                                        = null;
+        $this->timestamp                            = time ();
+        $now                                        = '@'.$this->timestamp;
         if (defined('HPAPI_DIAGNOSTIC_FAKE_NOW') && strlen(HPAPI_DIAGNOSTIC_FAKE_NOW)) {
             $now                                    = HPAPI_DIAGNOSTIC_FAKE_NOW;
         }
@@ -132,6 +135,7 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_DB_OBJ;
             $this->end ();
         }
+/*
         // Tidy old key releases
         try {
             $this->db->call (
@@ -145,8 +149,28 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
+*/
         $this->authenticate ();
-        $this->access ();
+        if (HPAPI_PRIVILEGES_DYNAMIC) {
+            $privileges                             = $this->callPrivileges ();
+        }
+        else {
+            if (is_readable(HPAPI_PRIVILEGES_FILE)) {
+                $privileges                         = require HPAPI_PRIVILEGES_FILE;
+            }
+            if (!is_array($privileges)) {
+                $privileges                         = $this->callPrivileges ();
+                try {
+                    $this->exportArray (HPAPI_PRIVILEGES_FILE,$privileges);
+                }
+                catch (\Exception $e) {
+                    $this->diagnostic ($e->getMessage());
+                    $this->object->response->error  = HPAPI_STR_PRIV_WRITE;
+                    $this->end ();
+                }
+            }
+        }
+        $this->privilege                            = $this->access ($privileges);
         $this->object->response->returnValue        = $this->executeMethod ($this->object->method);
         $this->end ();
     }
@@ -158,55 +182,43 @@ class Hpapi {
         array_push ($this->object->response->splash,$message);
     }
 
-    public function access ( ) {
-        try {
-            $method_args                            = $this->db->call (
-                'hpapiMethodargs'
-               ,$this->userUUID
-               ,$this->object->method->vendor
-               ,$this->object->method->package
-               ,$this->object->method->class
-               ,$this->object->method->method
-            );
-        }
-        catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
-            $this->object->response->error          = HPAPI_STR_ERROR_DB;
-            $this->end ();
-        }
-        try {
-            $this->auth                             = $this->parseAuthMethod ($method_args);
-        }
-        catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
+    public function access ($privilege) {
+        $method                                     = $this->object->method->vendor;
+        $method                                    .= '::';
+        $method                                    .= $this->object->method->package;
+        $method                                    .= '::';
+        $method                                    .= $this->object->method->class;
+        $method                                    .= '::';
+        $method                                    .= $this->object->method->method;
+        if (!array_key_exists($method,$privilege)) {
             $this->object->response->error          = HPAPI_STR_AUTH;
             $this->end ();
         }
-        try {
-            $spr_args                               = $this->db->call (
-                'hpapiSprargs'
-               ,$this->object->method->vendor
-               ,$this->object->method->package
-               ,$this->object->method->class
-               ,$this->object->method->method
-            );
+        $privilege                                  = $privilege[$method];
+        $access                                     = false;
+        foreach ($privilege['usergroups'] as $privg) {
+            foreach ($this->usergroups as $authg) {
+                if ($authg['usergroup']==$privg) {
+                    if (preg_match('<'.$authg['remoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
+                        $access                     = true;
+                        break 2;
+                    }
+                }
+            }
         }
-        catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
-            $this->object->response->error          = HPAPI_STR_ERROR_DB;
+        if (!$access) {
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_GRP_REMOTE_ADDR;
+            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
-        $this->sprs                                 = $this->parseAuthSprs ($spr_args);
-        return true;
+        return $privilege;
     }
 
     public function authenticate ( ) {
         // Authentication data
         try {
-            $auth                                   = $this->db->call (
+            $results                                = $this->db->call (
                 'hpapiAuthDetails'
-                ,$this->object->response->datetime
-                ,$this->object->key
                 ,$this->object->email
             );
         }
@@ -215,14 +227,14 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
-        if (!count($auth)) {
+        if (!count($results) || $results[0]['key']!=$this->object->key) {
             $this->object->response->authStatus     = HPAPI_STR_AUTH_ID;
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
-        $auth                                       = $auth[0];
+        $auth                                       = $results[0];
         // Authentication checks
-        if (!preg_match('<'.$auth['remoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
+        if (!preg_match('<'.$auth['userRemoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
             $this->object->response->authStatus     = HPAPI_STR_AUTH_REMOTE_ADDR;
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
@@ -237,6 +249,9 @@ class Hpapi {
         }
         if (strlen($this->object->email) && password_verify($this->object->password,$auth['passwordHash'])) {
             $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
+            foreach ($results as $g) {
+                array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
+            }
         }
         else {
             $this->object->response->authStatus     = HPAPI_STR_AUTH_PWD;
@@ -256,12 +271,96 @@ class Hpapi {
         }
         // Define current user
         $this->userID                               = $auth['userID'];
-        if ($auth['respondWithKey']) {
+        if ($auth['respondWithKey'] && $this->timestamp<$auth['keyReleaseUntil']) {
             // Adopt the key for this transaction
             $this->object->key                      = $auth['key'];
             // Return released key to client
             $this->object->response->newKey         = $auth['key'];
         }
+    }
+
+    private function callPrivileges () {
+        try {
+            $methods                                = $this->db->call (
+                'hpapiMethodPrivileges'
+            );
+        }
+        catch (\Exception $e) {
+            $this->object->response->notice         = $e->getMessage ();
+            $this->object->response->error          = HPAPI_STR_ERROR_DB;
+            $this->end ();
+        }
+        $privileges                                 = array ();
+        foreach ($methods as $m) {
+            $method                                 = $m['method'];
+            unset ($m['method']);
+            if (!array_key_exists($method,$privileges)) {
+                $privileges[$method]                = array ();
+                $privileges[$method]['usergroups']  = array ();
+                $privileges[$method]['arguments']   = array ();
+                $privileges[$method]['sprs']        = array ();
+                $privileges[$method]['package']     = $m['packageNotes'];
+                $privileges[$method]['notes']       = $m['methodNotes'];
+                $privileges[$method]['label']       = $m['methodLabel'];
+            }
+            if (!$m['usergroup']) {
+                continue;
+            }
+            if (!in_array($m['usergroup'],$privileges[$method]['usergroups'])) {
+                array_push ($privileges[$method]['usergroups'],$m['usergroup']);
+            }
+            if (!$m['argument']) {
+                continue;
+            }
+            if (array_key_exists($m['argument'],$privileges[$method]['arguments'])) {
+                continue;
+            }
+            unset ($m['usergroup']);
+            unset ($m['packageNotes']);
+            unset ($m['methodNotes']);
+            unset ($m['packageNotes']);
+            $privileges[$method]['arguments'][$m['argument']] = $m;
+        }
+        try {
+            $sprs                                   = $this->db->call (
+                'hpapiSprPrivileges'
+            );
+        }
+        catch (\Exception $e) {
+            $this->object->response->notice         = $e->getMessage ();
+            $this->object->response->error          = HPAPI_STR_ERROR_DB;
+            $this->end ();
+        }
+        foreach ($sprs as $s) {
+            if (!array_key_exists($s['method'],$privileges)) {
+                continue;
+            }
+            if (!$s['spr']) {
+                continue;
+            }
+            $method                                 = $s['method'];
+            $spr                                    = $s['spr'];
+            unset ($s['method']);
+            unset ($s['spr']);
+            if (!array_key_exists($spr,$privileges[$method]['sprs'])) {
+                $privileges[$method]['sprs'][$spr]                = array ();
+                $privileges[$method]['sprs'][$spr]['arguments']   = array ();
+                $privileges[$method]['sprs'][$spr]['model']       = $s['model'];
+                $privileges[$method]['sprs'][$spr]['modelNotes']  = $s['modelNotes'];
+                $privileges[$method]['sprs'][$spr]['notes']       = $s['sprNotes'];
+            }
+            if (!$s['argument']) {
+                continue;
+            }
+            if (array_key_exists($s['argument'],$privileges[$method]['sprs'][$spr]['arguments'])) {
+                continue;
+            }
+            unset ($s['model']);
+            unset ($s['modelNotes']);
+            unset ($s['sprNotes']);
+            $privileges[$method]['sprs'][$spr]['arguments'][$s['argument']] = $s;
+        }
+        return $privileges;
     }
 
     public function classPath ($method) {
@@ -284,18 +383,17 @@ class Hpapi {
             throw new \Exception (HPAPI_STR_DB_SPR_NO_SPR);
             return false;
         }
-        if (!array_key_exists($spr,$this->sprs)) {
+        if (!array_key_exists($spr,$this->privilege['sprs'])) {
             throw new \Exception (HPAPI_STR_DB_SPR_AVAIL.': `'.$spr.'`');
             return false;
         }
-        if (count($arguments)!=count($this->sprs[$spr]->arguments)) {
+        if (count($arguments)!=count($this->privilege['sprs'][$spr]['arguments'])) {
             throw new \Exception (HPAPI_STR_DB_SPR_ARGS.': `'.$spr.'`');
             return false;
         }
-        $count = 0;
-        foreach ($this->sprs[$spr]->arguments AS $arg) {
+        foreach ($this->privilege['sprs'][$spr]['arguments'] AS $count=>$arg) {
             try {
-                $this->validation ($spr,$count+1,$arguments[$count],$arg);
+                $this->validation ($spr,$count,$arguments[$count-1],$arg);
             }
             catch (\Exception $e) {
                 throw new \Exception (HPAPI_STR_DB_SPR_ARG_VAL.': '.$e->getMessage());
@@ -304,7 +402,7 @@ class Hpapi {
             $count++;
         }
         try {
-            $db             = new \Hpapi\Db ($this,$this->models->{$this->sprs[$spr]->model});
+            $db             = new \Hpapi\Db ($this,$this->models->{$this->privilege['sprs'][$spr]['model']});
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage());
@@ -359,6 +457,12 @@ class Hpapi {
         return $paths;
     }
 
+    public function diagnostic ($msg) {
+        if (in_array($this->object->key,$this->diagnosticKeys)) {
+            $this->object->diagnostic .= $msg."\n";
+        }            
+    }
+
     public function end ( ) {
         if (property_exists($this->object,'error') && strlen($this->object->error)>0) {
              if (preg_match('<^[0-9]*\s*([0-9]*)\s>',$this->object->error,$m)) {
@@ -388,9 +492,7 @@ class Hpapi {
             $this->logLast (trim(file_get_contents('php://input'))."\n".var_export($this->object,true));
         }
         catch (\Exception $e) {
-            if (in_array($this->object->key,$this->diagnosticKeys)) {
-                $this->hpapi->object->diagnostic .= $e->getMessage()."\n";
-            }            
+            $this->diagnostic ($e->getMessage());
         }
         if ($this->contentType==HPAPI_CONTENT_TYPE_JSON) {
             echo $this->jsonEncode ($this->object,HPAPI_JSON_OPTIONS,HPAPI_JSON_DEPTH);
@@ -457,14 +559,13 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_METHOD_ARGS_ARR;
             $this->end ();
         }
-        if (count($m->arguments)!=count($this->auth->arguments)) {
+        if (count($m->arguments)!=count($this->privilege['arguments'])) {
               $this->object->response->error        = HPAPI_STR_DB_MTD_ARGS;
               $this->end ();
         }
-        $count                                      = 0;
-        foreach ($this->auth->arguments AS $arg) {
+        foreach ($this->privilege['arguments'] AS $count=>$arg) {
             try {
-                $this->validation ($m->method,$count+1,$m->arguments[$count],$arg);
+                $this->validation ($m->method,$count,$m->arguments[$count-1],$arg);
             }
             catch (\Exception $e) {
                 $this->object->response->notice     = $e->getMessage ();
@@ -478,9 +579,7 @@ class Hpapi {
                 require_once $package_dfn;
             }
             catch (\Exception $e) {
-                if (in_array($this->object->key,$this->diagnosticKeys)) {
-                    $this->hpapi->object->diagnostic .= $e->getMessage()."\n";
-                }
+                $this->diagnostic ($e->getMessage());
                 $this->object->response->error      = HPAPI_STR_METHOD_DFN_INC;
                 $this->end ();
             }
@@ -518,6 +617,29 @@ class Hpapi {
             $this->end ();
         }
         return $return_value;
+    }
+
+    public function exportArray ($file,$array) {
+        if (!is_writable($file)) {
+            throw new \Exception (HPAPI_STR_EXPORT_ARRAY_FILE.': "'.$file.'"');
+            return false;
+        }
+        if (!is_array($array)) {
+            throw new \Exception (HPAPI_STR_EXPORT_ARRAY_ARR);
+            return false;
+        }
+        try {
+            $str                                    = "<?php\nreturn ";
+            $str                                   .= var_export ($array,true);
+            $str                                   .= ";\n?>";
+            $fp                                     = fopen ($file,'w');
+            fwrite ($fp,$str);
+            fclose ($fp);
+        }
+        catch (\Exception $e) {
+            throw new \Exception ($e->getMessage);
+            return false;
+        }
     }
 
     public function isHTTPS ( ) {
@@ -633,79 +755,6 @@ class Hpapi {
         return $ol;
     }
 
-    public function parseAuthMethod ($m_args) {
-        if (!count($m_args)) {
-            throw new \Exception (HPAPI_STR_DB_MTD_ACCESS);
-            return false;
-        }
-        $method                                                             = new \stdClass ();
-        $method->name                                                       = $m_args[0]['name'];
-        $method->notes                                                      = $m_args[0]['notes'];
-        $method->arguments                                                  = array ();
-        $allowed                                                            = false;
-        $tried                                                              = array ();
-        foreach ($m_args as $m_arg) {
-            if (in_array($m_arg['remoteAddrPattern'],$tried)) {
-                // Pattern already rejected
-                continue;
-            }
-            if (!preg_match('<'.$m_arg['remoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
-                // REMOTE_ADDR does not match pattern
-                array_push ($tried,$m_arg['remoteAddrPattern']);
-                continue;
-            }
-            // REMOTE_ADDR allowed
-            $allowed                                                        = true;
-            if ($m_args[0]['argument']) {
-                unset ($m_arg['label']);
-                unset ($m_arg['notes']);
-                $arg                                                        = new \stdClass ();
-                foreach ($m_arg as $k=>$v) {
-                    $arg->$k                                                = $v;
-                }
-                $method->arguments[$arg->argument-1] = $arg;
-            }
-        }
-        if (!$allowed) {
-            throw new \Exception (HPAPI_STR_DB_MTD_REMOTE_ADDR);
-            return false;            
-        }
-        return $method;
-    }
-
-    public function parseAuthSprs ($spr_args) {
-        $sprs                                                               = array ();
-        if (count($spr_args)==1 && !$spr_args[0]['spr']) {
-            // Null result row
-            return $sprs;
-        }
-        foreach ($spr_args as $spr_arg) {
-            if (!array_key_exists($spr_arg['spr'],$sprs)) {
-                $sprs[$spr_arg['spr']]                                      = new \stdClass ();
-                $sprs[$spr_arg['spr']]->model                               = $spr_arg['model'];
-                $sprs[$spr_arg['spr']]->notes                               = $spr_arg['notes'];
-                $sprs[$spr_arg['spr']]->arguments                           = array ();
-            }
-            if (!$spr_arg['argument']) {
-                break;
-            }
-            if (!array_key_exists($spr_arg['argument']-1,$sprs[$spr_arg['spr']]->arguments)) {
-                $sprs[$spr_arg['spr']]->arguments[$spr_arg['argument']-1]   = new \stdClass ();
-            }
-            $ignore = array ('model','notes');
-            foreach ($ignore as $k) {
-                unset ($spr_arg[$k]);
-            }
-            foreach ($spr_arg as $k=>$v) {
-                if ($k=='spr') {
-                    continue;
-                }
-                $sprs[$spr_arg['spr']]->arguments[$spr_arg['argument']-1]->$k = $v;
-            }
-        }
-        return $sprs;
-    }
-
     public function parseContentType ( ) {
         // Without Content-Type header
         if (!array_key_exists('CONTENT_TYPE',$_SERVER)) {
@@ -759,37 +808,53 @@ class Hpapi {
         return $drv[0];
     }
 
+    public function resetPrivileges ( ) {
+        if (!is_writable(HPAPI_PRIVILEGES_FILE)) {
+            throw new \Exception (HPAPI_STR_RESET_PRIVS_FILE);
+            return false;
+        }
+        try {
+            $fp                                     = fopen (HPAPI_PRIVILEGES_FILE,'w');
+            fwrite ($fp,"<?php\nreturn false;\n?>");
+            fclose ($fp);
+        }
+        catch (\Exception $e) {
+            throw new \Exception ($e->getMessage);
+            return false;
+        }
+    }
+
     public function validation ($name,$argNum,$value,$defn) {
-        if ($defn->emptyAllowed && !strlen($value)) {
+        if ($defn['emptyAllowed'] && !strlen($value)) {
             return true;
         }
         $e          = null;
-        if (strlen($defn->expression) && !preg_match('<'.$defn->expression.'>',$value)) {
-            $e      = HPAPI_STR_VALID_EXPRESSION.' <'.$defn->expression.'>';
+        if (strlen($defn['expression']) && !preg_match('<'.$defn['expression'].'>',$value)) {
+            $e      = HPAPI_STR_VALID_EXPRESSION.' <'.$defn['expression'].'>';
         }
-        elseif (strlen($defn->phpFilter) && filter_var($value,constant($defn->phpFilter))===false) {
-            $e      = HPAPI_STR_VALID_PHP_FILTER.' '.$defn->phpFilter;
+        elseif (strlen($defn['phpFilter']) && filter_var($value,constant($defn['phpFilter']))===false) {
+            $e      = HPAPI_STR_VALID_PHP_FILTER.' '.$defn['phpFilter'];
         }
-        elseif ($defn->lengthMinimum>0 && strlen($value)<$defn->lengthMinimum) {
-            $e      = HPAPI_STR_VALID_LMIN.' '.$defn->lengthMinimum;
+        elseif ($defn['lengthMinimum']>0 && strlen($value)<$defn['lengthMinimum']) {
+            $e      = HPAPI_STR_VALID_LMIN.' '.$defn['lengthMinimum'];
         }
-        elseif ($defn->lengthMaximum>0 && strlen($value)>$defn->lengthMaximum) {
-            $e      = HPAPI_STR_VALID_LMAX.' '.$defn->lengthMaximum;
+        elseif ($defn['lengthMaximum']>0 && strlen($value)>$defn['lengthMaximum']) {
+            $e      = HPAPI_STR_VALID_LMAX.' '.$defn['lengthMaximum'];
         }
-        elseif (strlen($defn->valueMinimum) && $value<$defn->valueMinimum) {
-            $e      = HPAPI_STR_VALID_VMIN.' '.$defn->valueMinimum;
+        elseif (strlen($defn['valueMinimum']) && $value<$defn['valueMinimum']) {
+            $e      = HPAPI_STR_VALID_VMIN.' '.$defn['valueMinimum'];
         }
-        elseif (strlen($defn->valueMaximum) && $value>$defn->valueMaximum) {
-            $e      = HPAPI_STR_VALID_VMAX.' '.$defn->valueMaximum;
+        elseif (strlen($defn['valueMaximum']) && $value>$defn['valueMaximum']) {
+            $e      = HPAPI_STR_VALID_VMAX.' '.$defn['valueMaximum'];
         }
         else {
             return true;
         }
-        $cstr       = $defn->constraints;
-        if (defined($defn->constraints)) {
-            $cstr   = constant ($defn->constraints);
+        $cstr       = $defn['constraints'];
+        if (defined($defn['constraints'])) {
+            $cstr   = constant ($defn['constraints']);
         }
-        $this->addSplash ($defn->name.' '.$cstr);
+        $this->addSplash ($defn['name'].' '.$cstr);
         throw new \Exception ($name.'['.$argNum.']: '.$e);
         return false;
     }

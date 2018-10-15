@@ -24,9 +24,7 @@ END $$
 
 DROP PROCEDURE IF EXISTS `hpapiAuthDetails`$$
 CREATE PROCEDURE `hpapiAuthDetails`(
-  IN        `ts` INT(11) UNSIGNED
- ,IN        `ky` VARCHAR(64) CHARSET ascii
- ,IN        `em` VARCHAR(254) CHARSET ascii
+  IN        `em` VARCHAR(254) CHARSET ascii
 )
 BEGIN
   SELECT
@@ -36,15 +34,23 @@ BEGIN
    ,`email` IS NOT NULL AS `emailFound` 
    ,`email_verified` AS `emailVerified` 
    ,`key`
+   ,`key_expired` AS `keyExpired`
    ,`key_release` AS `respondWithKey`
-   ,`hpapi_user`.`remote_addr_pattern` AS `remoteAddrPattern`
+   ,UNIX_TIMESTAMP(`key_release_until`) AS `keyReleaseUntil`
+   ,`hpapi_user`.`remote_addr_pattern` AS `userRemoteAddrPattern`
+   ,`hpapi_usergroup`.`usergroup`
+   ,`hpapi_usergroup`.`remote_addr_pattern` AS `groupRemoteAddrPattern`
   FROM `hpapi_user`
-  WHERE `email`=em
+  LEFT JOIN `hpapi_usergroup`
+         ON 1
+  LEFT JOIN `hpapi_membership`
+         ON `hpapi_membership`.`user_id`=`hpapi_user`.`id`
+        AND `hpapi_membership`.`usergroup`=`hpapi_usergroup`.`usergroup`
+  WHERE `hpapi_user`.`email`='sysadmin@no.where'
     AND (
-         (`key`=ky AND `key_expired`='0')
-      OR (`key_release`>0 AND UNIX_TIMESTAMP(`key_release_until`)>ts)
+         `hpapi_usergroup`.`usergroup`='anon'
+      OR `hpapi_membership`.`usergroup` IS NOT NULL
     )
-  LIMIT 0,1
   ;
 END$$
 
@@ -181,6 +187,91 @@ BEGIN
   ELSE
     SELECT 'Refusing to add test users - rows found in hpapi_user' AS `Refused`;
   END IF
+  ;
+END$$
+
+DROP PROCEDURE IF EXISTS `hpapiMethodPrivileges`$$
+CREATE PROCEDURE `hpapiMethodPrivileges`(
+)
+BEGIN
+  SELECT
+    CONCAT(
+      `hpapi_method`.`vendor`
+     ,'::'
+     ,`hpapi_method`.`package`
+     ,'::'
+     ,`hpapi_method`.`class`
+     ,'::'
+     ,`hpapi_method`.`method`
+    ) AS `method`
+   ,`hpapi_package`.`notes` AS `packageNotes`
+   ,`hpapi_method`.`notes` AS `methodNotes`
+   ,`hpapi_method`.`label` AS `methodLabel`
+   ,`hpapi_methodarg`.`argument` AS `argument`
+   ,`hpapi_methodarg`.`name` AS `name`
+   ,`hpapi_methodarg`.`empty_allowed` AS `emptyAllowed`
+   ,`hpapi_pattern`.`constraints`
+   ,`hpapi_pattern`.`expression`
+   ,`hpapi_pattern`.`php_filter` AS `phpFilter`
+   ,`hpapi_pattern`.`length_minimum` AS `lengthMinimum`
+   ,`hpapi_pattern`.`length_maximum` AS `lengthMaximum`
+   ,`hpapi_pattern`.`value_minimum` AS `valueMinimum`
+   ,`hpapi_pattern`.`value_maximum` AS `valueMaximum`
+   ,`hpapi_run`.`usergroup`
+  FROM `hpapi_package`
+  LEFT JOIN `hpapi_method` USING (`vendor`,`package`)
+  LEFT JOIN `hpapi_methodarg` USING (`vendor`,`package`,`class`,`method`)
+  LEFT JOIN `hpapi_pattern` USING (`pattern`)
+  LEFT JOIN `hpapi_run` USING (`vendor`,`package`,`class`,`method`)
+  ORDER BY
+      `hpapi_package`.`vendor`
+     ,`hpapi_package`.`package`
+     ,`hpapi_method`.`class`
+     ,`hpapi_method`.`method`
+     ,`hpapi_methodarg`.`argument`
+  ;
+END$$
+
+DROP PROCEDURE IF EXISTS `hpapiSprPrivileges`$$
+CREATE PROCEDURE `hpapiSprPrivileges`(
+)
+BEGIN
+  SELECT
+    CONCAT(
+      `hpapi_method`.`vendor`
+     ,'::'
+     ,`hpapi_method`.`package`
+     ,'::'
+     ,`hpapi_method`.`class`
+     ,'::'
+     ,`hpapi_method`.`method`
+    ) AS `method`
+   ,`hpapi_model`.`model`
+   ,`hpapi_model`.`notes` AS `modelNotes`
+   ,`hpapi_spr`.`spr`
+   ,`hpapi_spr`.`notes` AS `sprNotes`
+   ,`hpapi_sprarg`.`argument`
+   ,`hpapi_sprarg`.`name`
+   ,`hpapi_sprarg`.`empty_allowed` AS `emptyAllowed`
+   ,`hpapi_pattern`.`constraints`
+   ,`hpapi_pattern`.`expression`
+   ,`hpapi_pattern`.`php_filter` AS `phpFilter`
+   ,`hpapi_pattern`.`length_minimum` AS `lengthMinimum`
+   ,`hpapi_pattern`.`length_maximum` AS `lengthMaximum`
+   ,`hpapi_pattern`.`value_minimum` AS `valueMinimum`
+   ,`hpapi_pattern`.`value_maximum` AS `valueMaximum`
+  FROM `hpapi_method`
+  LEFT JOIN `hpapi_call` USING (`vendor`,`package`,`class`,`method`)
+  LEFT JOIN `hpapi_spr` USING (`model`,`spr`)
+  LEFT JOIN `hpapi_model` USING (`model`)
+  LEFT JOIN `hpapi_sprarg` USING (`model`,`spr`)
+  LEFT JOIN `hpapi_pattern` USING (`pattern`)
+  ORDER BY
+      `hpapi_method`.`vendor`
+     ,`hpapi_method`.`package`
+     ,`hpapi_method`.`class`
+     ,`hpapi_method`.`method`
+     ,`hpapi_sprarg`.`argument`
   ;
 END$$
 

@@ -101,9 +101,7 @@ class Db {
         }
         catch (\PDOException $e) {
             // Execution failed
-            if (in_array($this->hpapi->object->key,$this->hpapi->diagnosticKeys)) {
-                $this->hpapi->object->diagnostic   .= HPAPI_STR_DB_SPR_EXEC.' - '.$spr.' ('.$e->getMessage().')'."\n";
-            }
+            $this->hpapi->diagnostic (HPAPI_STR_DB_SPR_EXEC.' - '.$spr.' ('.$e->getMessage().')');
             throw new \Exception ($e->getMessage());
             return false;
         }
