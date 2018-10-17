@@ -621,7 +621,7 @@ class Hpapi {
 
     public function exportArray ($file,$array) {
         if (!is_writable($file)) {
-            throw new \Exception (HPAPI_STR_EXPORT_ARRAY_FILE.': "'.$file.'"');
+            throw new \Exception (HPAPI_STR_EXPORT_ARRAY_FILE.': '.realpath(dirname($file)).'/'.basename($file));
             return false;
         }
         if (!is_array($array)) {
