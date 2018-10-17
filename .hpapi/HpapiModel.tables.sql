@@ -53,11 +53,12 @@ CREATE TABLE IF NOT EXISTS `hpapi_log` (
 CREATE TABLE IF NOT EXISTS `hpapi_membership` (
   `user_id` int(11) unsigned NOT NULL,
   `usergroup` varchar(64) CHARACTER SET ascii NOT NULL,
-  `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`,`usergroup`),
   KEY `membership_usergroup` (`usergroup`),
-  CONSTRAINT `hpapi_membership_ibfk_1` FOREIGN KEY (`usergroup`) REFERENCES `hpapi_usergroup` (`usergroup`)
+  CONSTRAINT `hpapi_membership_ibfk_1` FOREIGN KEY (`usergroup`) REFERENCES `hpapi_usergroup` (`usergroup`),
+  CONSTRAINT `hpapi_membership_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `hpapi_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Associates users with user groups';
 
 
