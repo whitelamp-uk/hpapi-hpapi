@@ -31,7 +31,6 @@ BEGIN
     `id` AS `userID` 
    ,`active` AS `userActive` 
    ,`password_hash` AS `passwordHash` 
-   ,`email` IS NOT NULL AS `emailFound` 
    ,`email_verified` AS `emailVerified` 
    ,`key`
    ,`key_expired` AS `keyExpired`
@@ -46,7 +45,7 @@ BEGIN
   LEFT JOIN `hpapi_membership`
          ON `hpapi_membership`.`user_id`=`hpapi_user`.`id`
         AND `hpapi_membership`.`usergroup`=`hpapi_usergroup`.`usergroup`
-  WHERE `hpapi_user`.`email`='sysadmin@no.where'
+  WHERE `hpapi_user`.`email`=em
     AND (
          `hpapi_usergroup`.`usergroup`='anon'
       OR `hpapi_membership`.`usergroup` IS NOT NULL
@@ -183,7 +182,7 @@ BEGIN
     INSERT INTO `hpapi_user` (`id`, `active`, `uuid`, `key`, `key_expired`, `key_release`, `key_release_until`, `remote_addr_pattern`, `name`, `notes`, `email`, `email_verified`, `email_fallback`, `email_fallback_verified`, `password_hash`) VALUES
     (1,	1,	'322025bd-8ff2-11e8-902b-001f16148bc1',	'0e0f4ce8-8fee-11e8-902b-001f16148bc1',	0,	0,	'0000-00-00 00:00:00',	'^.*$',	'Sysadmin Temp',	'Temporary system administrator',	'sysadmin@no.where',	1,	'',	0,	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
     (2,	1,	'57d2eff7-8ff3-11e8-902b-001f16148bc1',	'89c56ad8-8ff3-11e8-902b-001f16148bc1',	0,	0,	'0000-00-00 00:00:00',	'^.*$',	'Admin Temp',	'Temporary organisation administrator',	'orgadmin@no.where',	1,	'',	0,	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
-    (3,	1,	'caf791cb-d224-11e8-956a-00165e0004e8',	'caf791fc-d224-11e8-956a-00165e0004e8',	0,	0,	'0000-00-00 00:00:00',	'^.*$',	'Example field staff',	'Example lower-level field staff member',	'johnny.rank@no.where',	1,	'',	1,	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
+    (3,	1,	'caf791cb-d224-11e8-956a-00165e0004e8',	'caf791fc-d224-11e8-956a-00165e0004e8',	0,	0,	'0000-00-00 00:00:00',	'^.*$',	'Example field staff',	'Example lower-level field staff member',	'test.1@no.where',	1,	'',	1,	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
     INSERT INTO `hpapi_membership` (`user_id`, `usergroup`) VALUES
     (1,	'sysadmin'),
     (2,	'admin'),
