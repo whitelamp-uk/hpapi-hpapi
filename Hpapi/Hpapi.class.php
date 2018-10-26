@@ -460,7 +460,7 @@ class Hpapi {
     public function diagnostic ($msg) {
         if (in_array($this->object->key,$this->diagnosticKeys)) {
             $this->object->diagnostic .= $msg."\n";
-        }            
+        }
     }
 
     public function end ( ) {
