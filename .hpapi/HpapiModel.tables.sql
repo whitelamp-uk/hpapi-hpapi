@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_log` (
   `class` varchar(64) CHARACTER SET ascii NOT NULL,
   `method` varchar(64) CHARACTER SET ascii NOT NULL,
   `error` varchar(64) NOT NULL,
-  `notice` varchar(64) NOT NULL,
+  `diagnostic` text NOT NULL,
   `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`datetime`,`microtime`,`key`)

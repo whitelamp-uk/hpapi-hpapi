@@ -61,7 +61,6 @@ class Hpapi {
         if (!$this->isHTTPS()) {
             $this->object->response->warning        = HPAPI_STR_PLAIN;
         }
-        $this->object->response->notice             = null;
         $this->object->response->remoteAddr         = $_SERVER['REMOTE_ADDR'];
         $this->object->response->serverAddr         = $_SERVER['SERVER_ADDR'];
         $this->object->response->datetime           = $this->datetime->format (\DateTime::ATOM);
@@ -123,7 +122,7 @@ class Hpapi {
             );
         }
         catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
+            $this->diagnostic ($e->getMessage());
             $this->object->response->error          = HPAPI_STR_DB_DFN;
             $this->end ();
         }
@@ -131,7 +130,7 @@ class Hpapi {
             $this->db                               = new \Hpapi\Db ($this,$this->models->HpapiModel);
         }
         catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
+            $this->diagnostic ($e->getMessage());
             $this->object->response->error          = HPAPI_STR_DB_OBJ;
             $this->end ();
         }
@@ -145,7 +144,7 @@ class Hpapi {
             );
         }
         catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
+            $this->diagnostic ($e->getMessage());
             $this->object->response->error          = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
@@ -223,7 +222,7 @@ class Hpapi {
             );
         }
         catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
+            $this->diagnostic ($e->getMessage());
             $this->object->response->error          = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
@@ -286,7 +285,7 @@ class Hpapi {
             );
         }
         catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
+            $this->diagnostic ($e->getMessage());
             $this->object->response->error          = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
@@ -327,7 +326,7 @@ class Hpapi {
             );
         }
         catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
+            $this->diagnostic ($e->getMessage());
             $this->object->response->error          = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
@@ -474,7 +473,7 @@ class Hpapi {
             $this->log ();
         }
         catch (\Exception $e) {
-             $this->object->response->notice = $e->getMessage ();
+             $this->diagnostic ($e->getMessage());
         }
         if ($this->db) {
             $this->db->close ();
@@ -568,7 +567,7 @@ class Hpapi {
                 $this->validation ($m->method,$count,$m->arguments[$count-1],$arg);
             }
             catch (\Exception $e) {
-                $this->object->response->notice     = $e->getMessage ();
+                $this->diagnostic ($e->getMessage());
                 $this->object->response->error      = HPAPI_STR_DB_MTD_ARG_VAL;
                 $this->end ();
             }
@@ -588,7 +587,7 @@ class Hpapi {
             require_once $file;
         }
         catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
+            $this->diagnostic ($e->getMessage());
             $this->object->response->error          = HPAPI_STR_METHOD_CLS_INC;
             $this->end ();
         }
@@ -600,7 +599,7 @@ class Hpapi {
             $object                                 = new $class ($this);
         }
         catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
+            $this->diagnostic ($e->getMessage());
             $this->object->response->error          = HPAPI_STR_METHOD_CLS_NEW;
             $this->end ();
         }
@@ -612,7 +611,7 @@ class Hpapi {
             $return_value                           = $object->{$m->method} (...$m->arguments);
         }
         catch (\Exception $e) {
-            $this->object->response->notice         = $e->getMessage ();
+            $this->diagnostic ($e->getMessage());
             $this->object->response->error          = HPAPI_STR_METHOD_EXCEPTION;
             $this->end ();
         }
@@ -691,7 +690,7 @@ class Hpapi {
                ,$this->object->method->class
                ,$this->object->method->method
                ,$this->object->response->error.''
-               ,$this->object->response->notice.''
+               ,$this->object->diagnostic.''
             );
         }
         catch (\Exception $e) {

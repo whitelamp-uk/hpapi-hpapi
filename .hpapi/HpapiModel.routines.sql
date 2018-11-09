@@ -67,7 +67,7 @@ CREATE PROCEDURE `hpapiLogRequest`(
  ,IN        `cls` VARCHAR(64) CHARSET ascii
  ,IN        `mtd` VARCHAR(64) CHARSET ascii
  ,IN        `err` VARCHAR(64) CHARSET utf8
- ,IN        `ntc` VARCHAR(64) CHARSET utf8
+ ,IN        `dgn` TEXT CHARSET utf8
 )
 BEGIN
   INSERT INTO `hpapi_log`
@@ -83,7 +83,7 @@ BEGIN
    ,`class`=cls
    ,`method`=mtd
    ,`error`=err
-   ,`notice`=ntc
+   ,`diagnostic`=dgn
   ;
 END $$
 
