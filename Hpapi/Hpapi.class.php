@@ -676,6 +676,10 @@ class Hpapi {
         if (!$this->db) {
             return false;
         }
+        $diagnostic = '';
+        if (property_exists($this->object,'diagnostic')) {
+            $diagnostic = $this->object->diagnostic;
+        }
         try {
             $this->db->call (
                 'hpapiLogRequest'
@@ -690,7 +694,7 @@ class Hpapi {
                ,$this->object->method->class
                ,$this->object->method->method
                ,$this->object->response->error.''
-               ,$this->object->diagnostic.''
+               ,$diagnostic
             );
         }
         catch (\Exception $e) {
