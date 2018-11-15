@@ -28,15 +28,18 @@ CREATE PROCEDURE `hpapiAuthDetails`(
 )
 BEGIN
   SELECT
-    `id` AS `userID` 
-   ,`active` AS `userActive` 
-   ,`password_hash` AS `passwordHash` 
-   ,`email_verified` AS `emailVerified` 
-   ,`key`
-   ,`key_expired` AS `keyExpired`
-   ,`key_release` AS `respondWithKey`
+    `hpapi_user`.`id` AS `userId` 
+   ,`hpapi_user`.`active` AS `userActive`
+   ,`hpapi_user`.`key`
+   ,`hpapi_user`.`key_expired` AS `keyExpired`
+   ,`hpapi_user`.`key_release` AS `respondWithKey`
    ,UNIX_TIMESTAMP(`key_release_until`) AS `keyReleaseUntil`
    ,`hpapi_user`.`remote_addr_pattern` AS `userRemoteAddrPattern`
+   ,`hpapi_user`.`email_verified` AS `emailVerified`
+   ,`hpapi_user`.`password_hash` AS `passwordHash`
+   ,`hpapi_user`.`token`
+   ,UNIX_TIMESTAMP(`hpapi_user`.`token_expires`) AS `tokenExpires`
+   ,`hpapi_user`.`token_remote_addr` AS `tokenRemoteAddr`
    ,`hpapi_usergroup`.`usergroup`
    ,`hpapi_usergroup`.`remote_addr_pattern` AS `groupRemoteAddrPattern`
   FROM `hpapi_user`
@@ -90,7 +93,7 @@ END $$
 
 DROP PROCEDURE IF EXISTS `hpapiMethodargs`$$
 CREATE PROCEDURE `hpapiMethodargs`(
-  IN        `userID` INT(11) UNSIGNED
+  IN        `userId` INT(11) UNSIGNED
  ,IN        `methodVendor` VARCHAR(64) CHARSET ascii
  ,IN        `methodPackage` VARCHAR(64) CHARSET ascii
  ,IN        `methodClass` VARCHAR(64) CHARSET ascii
@@ -118,7 +121,7 @@ BEGIN
   LEFT JOIN `hpapi_run` USING (`vendor`,`package`,`class`,`method`)
   LEFT JOIN `hpapi_membership`
          ON `hpapi_membership`.`usergroup`=`hpapi_run`.`usergroup`
-        AND `hpapi_membership`.`user_id`=userID
+        AND `hpapi_membership`.`user_id`=userId
   LEFT JOIN `hpapi_usergroup` AS `ug`
          ON `ug`.`usergroup`=`hpapi_membership`.`usergroup`
   LEFT JOIN `hpapi_usergroup` AS `anon`
@@ -278,6 +281,38 @@ BEGIN
      ,`hpapi_sprarg`.`argument`
   ;
 END$$
+
+
+DROP PROCEDURE IF EXISTS `hpapiToken`$$
+CREATE PROCEDURE `hpapiToken`(
+  IN        `id` INT(11) UNSIGNED
+ ,IN        `tk` VARCHAR(255) CHARSET ascii
+ ,IN        `ts` INT(11) UNSIGNED
+ ,IN        `ra` VARCHAR(64) CHARSET ascii
+)
+BEGIN
+  UPDATE `hpapi_user`
+  SET
+    `token`=tk
+   ,`token_expires`=FROM_UNIXTIME(ts)
+   ,`token_remote_addr`=ra
+  WHERE `id`=id
+  ;
+END $$
+
+
+DROP PROCEDURE IF EXISTS `hpapiTokenExtend`$$
+CREATE PROCEDURE `hpapiTokenExtend`(
+  IN        `id` INT(11) UNSIGNED
+ ,IN        `ts` INT(11) UNSIGNED
+)
+BEGIN
+  UPDATE `hpapi_user`
+  SET
+    `token_expires`=FROM_UNIXTIME(ts)
+  WHERE `id`=id
+  ;
+END $$
 
 
 DELIMITER ;

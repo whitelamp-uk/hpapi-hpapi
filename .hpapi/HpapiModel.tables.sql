@@ -192,7 +192,9 @@ CREATE TABLE IF NOT EXISTS `hpapi_user` (
   PRIMARY KEY (`id`),
   KEY `user_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='API users';
-
+ALTER TABLE `hpapi_user` ADD COLUMN IF NOT EXISTS `token` varchar(255) CHARACTER SET ascii NOT NULL AFTER `password_hash`;
+ALTER TABLE `hpapi_user` ADD COLUMN IF NOT EXISTS `token_expires` datetime NOT NULL AFTER `token`;
+ALTER TABLE `hpapi_user` ADD COLUMN IF NOT EXISTS `token_remote_addr` varchar(64) CHARACTER SET ascii NOT NULL AFTER `token_expires`;
 
 CREATE TABLE IF NOT EXISTS `hpapi_usergroup` (
   `usergroup` varchar(64) CHARACTER SET ascii NOT NULL,

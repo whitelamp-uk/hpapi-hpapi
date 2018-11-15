@@ -33,7 +33,7 @@ define ( 'HPAPI_POST_BYTES_MAX',            1024                                
 
 
 // ANONYMOUS ACCESS TO METHODS FOR USERGROUP ANON
-define ( 'HPAPI_ANON_ACCESS',               true                                                                                    );
+define ( 'HPAPI_ANON_ACCESS',               false                                                                                   );
 
 
 // DIAGNOSTIC
@@ -47,6 +47,15 @@ define ( 'HPAPI_LOG_LAST_FILE',             HPAPI_DIR_LOG.'/hpapi-last-output.lo
 // PASSWORD MANAGEMENT
 define ( 'HPAPI_HASH_COST',                 12                                                                                      );
 define ( 'HPAPI_HASH_ALGO',                 PASSWORD_BCRYPT                                                                         );
+
+
+// TOKEN MANAGEMENT
+define ( 'HPAPI_TOKEN_BYTES',               64                                                                                      );
+define ( 'HPAPI_TOKEN_DURATION_MINUTES',    30                                                                                      );
+// Server stored expiry slightly longer than that reported to client
+define ( 'HPAPI_TOKEN_EXTRA_SECONDS',       60                                                                                      );
+// Extend token expiry on each request
+define ( 'HPAPI_TOKEN_ACTIVE_EXTEND',       true                                                                                    );
 
 
 // JSON DEPTH AND ENCODING OPTIONS (JSON_PRETTY_PRINT is handy for development)

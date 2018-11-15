@@ -85,8 +85,8 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_EMAIL;
             $this->end ();
         }
-        if (!property_exists($this->object,'password')) {
-            $this->object->response->error          = HPAPI_STR_PASSWORD;
+        if (!property_exists($this->object,'password') && !property_exists($this->object,'token')) {
+            $this->object->response->error          = HPAPI_STR_PWD_OR_TKN;
             $this->end ();
         }
         if (!property_exists($this->object,'method')) {
@@ -227,7 +227,7 @@ class Hpapi {
             $this->end ();
         }
         if (!count($results) || $results[0]['key']!=$this->object->key) {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_ID;
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_KEY;
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
@@ -246,19 +246,62 @@ class Hpapi {
             }
             $this->object->email                    = '';
         }
-        if (strlen($this->object->email) && password_verify($this->object->password,$auth['passwordHash'])) {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
-            foreach ($results as $g) {
-                array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
+        if (property_exists($this->object,'password')) {
+            if (password_verify($this->object->password,$auth['passwordHash'])) {
+                $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
+                // Valid password so store and return fresh token
+                $this->object->response->token          = $this->token ();
+                $this->object->response->tokenExpires   = $this->timestamp + (60*HPAPI_TOKEN_DURATION_MINUTES);
+                $this->db->call (
+                    'hpapiToken'
+                   ,$auth['userId']
+                   ,$this->object->response->token
+                   ,$this->object->response->tokenExpires + HPAPI_TOKEN_EXTRA_SECONDS
+                   ,$_SERVER['REMOTE_ADDR']
+                );
+                foreach ($results as $g) {
+                    array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
+                }
+            }
+            else {
+                $this->object->response->authStatus     = HPAPI_STR_AUTH_PWD_OR_TKN;
+                if (!HPAPI_ANON_ACCESS) {
+                    $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
+                    $this->end ();
+                }
+                $this->object->email                    = '';
             }
         }
         else {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_PWD;
-            if (!HPAPI_ANON_ACCESS) {
-                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
-                $this->end ();
+            if ($this->object->token==$auth['token'] && $auth['tokenExpires']>$this->timestamp && $auth['tokenRemoteAddr']==$_SERVER['REMOTE_ADDR']) {
+                $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
+                if (HPAPI_TOKEN_ACTIVE_EXTEND) {
+                    // Update token expiry and return
+                    $this->object->response->tokenExpires   = $this->timestamp + (60*HPAPI_TOKEN_DURATION_MINUTES);
+                    try {
+                        $this->db->call (
+                            'hpapiTokenExtend'
+                           ,$auth['userId']
+                           ,$this->object->response->tokenExpires + HPAPI_TOKEN_EXTRA_SECONDS
+                        );
+                    }
+                    catch (\Exception $e) {
+                        throw new \Exception ($e->getMessage());
+                        return false;
+                    }
+                }
+                foreach ($results as $g) {
+                    array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
+                }
             }
-            $this->object->email                    = '';
+            else {
+                $this->object->response->authStatus = HPAPI_STR_AUTH_PWD_OR_TKN;
+                if (!HPAPI_ANON_ACCESS) {
+                    $this->object->response->error  = HPAPI_STR_AUTH_DENIED;
+                    $this->end ();
+                }
+                $this->object->email                = '';
+            }
         }
         if (!$auth['emailVerified']) {
             $this->object->response->authStatus     = HPAPI_STR_AUTH_VERIFY;
@@ -269,7 +312,7 @@ class Hpapi {
             $this->object->email                    = '';
         }
         // Define current user
-        $this->userID                               = $auth['userID'];
+        $this->userId                               = $auth['userId'];
         if ($auth['respondWithKey'] && $this->timestamp<$auth['keyReleaseUntil']) {
             // Adopt the key for this transaction
             $this->object->key                      = $auth['key'];
@@ -486,6 +529,9 @@ class Hpapi {
         }
         if (property_exists($this->object,'password')) {
             unset ($this->object->password);
+        }
+        if (property_exists($this->object,'token')) {
+            unset ($this->object->token);
         }
         try {
             $this->logLast (trim(file_get_contents('php://input'))."\n".var_export($this->object,true));
@@ -825,6 +871,10 @@ class Hpapi {
             throw new \Exception ($e->getMessage);
             return false;
         }
+    }
+
+    public function token ( ) {
+        return bin2hex (random_bytes(HPAPI_TOKEN_BYTES));
     }
 
     public function validation ($name,$argNum,$value,$defn) {
