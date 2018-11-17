@@ -55,6 +55,7 @@ define ( 'HPAPI_STR_DB_OBJ',                '054 500 Could not construct databas
 define ( 'HPAPI_STR_DB_CONN',               '055 500 Could not connect to database'                                                 );
 define ( 'HPAPI_STR_PRIV_WRITE',            '056 500 Could not write privileges'                                                    );
 define ( 'HPAPI_STR_PRIV_READ',             '057 500 Could not read privileges'                                                     );
+define ( 'HPAPI_STR_TOKEN_DURATION',        '058 500 No matching user group has a token duration'                                   );
 
 // Evaluating authentication status
 define ( 'HPAPI_STR_AUTH_DENIED',           '061 403 Access denied'                                                                 );

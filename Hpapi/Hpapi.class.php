@@ -16,6 +16,7 @@ class Hpapi {
     public  $microtime;                  // Microtime of response (decimal fraction of a second)
     public  $timestamp;                  // Timestamp (never faked)
     public  $privilege;                  // Privilege array for this vendor::package::class::method
+    public  $tokenDurationMinutes = 0;   // Length of "session"
     public  $userUUID;                   // User identifier established by the authentication process
     public  $usergroups = array ();      // Usergroups for this user
     private $config;                     // User identifier established by the authentication process
@@ -250,8 +251,18 @@ class Hpapi {
             if (password_verify($this->object->password,$auth['passwordHash'])) {
                 $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
                 // Valid password so store and return fresh token
+                foreach ($results as $g) {
+                    array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
+                    if ($g['tokenDurationMinutes']>$this->tokenDurationMinutes) {
+                        $this->tokenDurationMinutes     = $g['tokenDurationMinutes'];
+                    }
+                }
+                if (!$this->tokenDurationMinutes) {
+                    $this->object->response->error      = HPAPI_STR_TOKEN_DURATION;
+                    $this->end ();
+                }
                 $this->object->response->token          = $this->token ();
-                $this->object->response->tokenExpires   = $this->timestamp + (60*HPAPI_TOKEN_DURATION_MINUTES);
+                $this->object->response->tokenExpires   = $this->timestamp + (60*$this->tokenDurationMinutes);
                 $this->db->call (
                     'hpapiToken'
                    ,$auth['userId']
@@ -259,9 +270,6 @@ class Hpapi {
                    ,$this->object->response->tokenExpires + HPAPI_TOKEN_EXTRA_SECONDS
                    ,$_SERVER['REMOTE_ADDR']
                 );
-                foreach ($results as $g) {
-                    array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
-                }
             }
             else {
                 $this->object->response->authStatus     = HPAPI_STR_AUTH_PWD_OR_TKN;
@@ -275,6 +283,9 @@ class Hpapi {
         else {
             if ($this->object->token==$auth['token'] && $auth['tokenExpires']>$this->timestamp && $auth['tokenRemoteAddr']==$_SERVER['REMOTE_ADDR']) {
                 $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
+                foreach ($results as $g) {
+                    array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
+                }
                 if (HPAPI_TOKEN_ACTIVE_EXTEND) {
                     // Update token expiry and return
                     $this->object->response->tokenExpires   = $this->timestamp + (60*HPAPI_TOKEN_DURATION_MINUTES);
@@ -289,9 +300,6 @@ class Hpapi {
                         throw new \Exception ($e->getMessage());
                         return false;
                     }
-                }
-                foreach ($results as $g) {
-                    array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
                 }
             }
             else {

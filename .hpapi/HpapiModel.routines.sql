@@ -41,6 +41,7 @@ BEGIN
    ,UNIX_TIMESTAMP(`hpapi_user`.`token_expires`) AS `tokenExpires`
    ,`hpapi_user`.`token_remote_addr` AS `tokenRemoteAddr`
    ,`hpapi_usergroup`.`usergroup`
+   ,`hpapi_usergroup`.`token_duration_minutes` AS `tokenDurationMinutes`
    ,`hpapi_usergroup`.`remote_addr_pattern` AS `groupRemoteAddrPattern`
   FROM `hpapi_user`
   LEFT JOIN `hpapi_usergroup`

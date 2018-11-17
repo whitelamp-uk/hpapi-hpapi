@@ -187,19 +187,20 @@ CREATE TABLE IF NOT EXISTS `hpapi_user` (
   `email_fallback` varchar(254) CHARACTER SET ascii NOT NULL,
   `email_fallback_verified` int(1) unsigned NOT NULL DEFAULT '0',
   `password_hash` varchar(255) CHARACTER SET ascii NOT NULL DEFAULT '',
+  `token` varchar(255) CHARACTER SET ascii NOT NULL,
+  `token_expires` datetime NOT NULL,
+  `token_remote_addr` varchar(64) CHARACTER SET ascii NOT NULL,
   `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `user_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='API users';
-ALTER TABLE `hpapi_user` ADD COLUMN IF NOT EXISTS `token` varchar(255) CHARACTER SET ascii NOT NULL AFTER `password_hash`;
-ALTER TABLE `hpapi_user` ADD COLUMN IF NOT EXISTS `token_expires` datetime NOT NULL AFTER `token`;
-ALTER TABLE `hpapi_user` ADD COLUMN IF NOT EXISTS `token_remote_addr` varchar(64) CHARACTER SET ascii NOT NULL AFTER `token_expires`;
 
 CREATE TABLE IF NOT EXISTS `hpapi_usergroup` (
   `usergroup` varchar(64) CHARACTER SET ascii NOT NULL,
   `level` int(11) unsigned NOT NULL,
   `name` varchar(64) NOT NULL,
+  `token_duration_minutes` int(11) unsigned NOT NULL DEFAULT 1,
   `remote_addr_pattern` varchar(64) CHARACTER SET ascii NOT NULL DEFAULT '^.*$',
   `notes` text NOT NULL,
   `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
