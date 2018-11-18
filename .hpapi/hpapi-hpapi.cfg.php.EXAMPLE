@@ -50,7 +50,10 @@ define ( 'HPAPI_HASH_ALGO',                 PASSWORD_BCRYPT                     
 
 
 // TOKEN MANAGEMENT
+// Length of token
 define ( 'HPAPI_TOKEN_BYTES',               64                                                                                      );
+// Duration of token
+define ( 'HPAPI_TOKEN_LIFE_MINS',           30                                                                                      );
 // Server stored expiry slightly longer than that reported to client
 define ( 'HPAPI_TOKEN_EXTRA_SECONDS',       60                                                                                      );
 // Extend token expiry on each request

@@ -253,16 +253,9 @@ class Hpapi {
                 // Valid password so store and return fresh token
                 foreach ($results as $g) {
                     array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
-                    if ($g['tokenDurationMinutes']>$this->tokenDurationMinutes) {
-                        $this->tokenDurationMinutes     = $g['tokenDurationMinutes'];
-                    }
-                }
-                if (!$this->tokenDurationMinutes) {
-                    $this->object->response->error      = HPAPI_STR_TOKEN_DURATION;
-                    $this->end ();
                 }
                 $this->object->response->token          = $this->token ();
-                $this->object->response->tokenExpires   = $this->timestamp + (60*$this->tokenDurationMinutes);
+                $this->object->response->tokenExpires   = $this->timestamp + (60*HPAPI_TOKEN_LIFE_MINS);
                 $this->db->call (
                     'hpapiToken'
                    ,$auth['userId']
@@ -874,6 +867,17 @@ class Hpapi {
             $fp                                     = fopen (HPAPI_PRIVILEGES_FILE,'w');
             fwrite ($fp,"<?php\nreturn false;\n?>");
             fclose ($fp);
+        }
+        catch (\Exception $e) {
+            throw new \Exception ($e->getMessage);
+            return false;
+        }
+    }
+
+    public function setResponseExpiry ($timestamp) {
+        try {
+            $this->object->response->tokenExpires   = $timestamp;
+            return true;
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage);
