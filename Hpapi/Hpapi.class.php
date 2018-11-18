@@ -509,7 +509,7 @@ class Hpapi {
         if (property_exists($this->object,'response') && property_exists($this->object->response,'token')) {
                 $this->db->call (
                     'hpapiToken'
-                   ,$auth['userId']
+                   ,$this->userId
                    ,$this->object->response->token
                    ,$this->object->response->tokenExpires + HPAPI_TOKEN_EXTRA_SECONDS
                    ,$_SERVER['REMOTE_ADDR']
@@ -866,7 +866,7 @@ class Hpapi {
             return false;
         }
         try {
-            $fp                                     = fopen (HPAPI_PRIVILEGES_FILE,'w');
+            $fp                                 = fopen (HPAPI_PRIVILEGES_FILE,'w');
             fwrite ($fp,"<?php\nreturn false;\n?>");
             fclose ($fp);
         }
@@ -877,14 +877,11 @@ class Hpapi {
     }
 
     public function setTokenExpiry ($timestamp) {
-        try {
-            $this->object->response->tokenExpires   = $timestamp;
-            return true;
-        }
-        catch (\Exception $e) {
-            throw new \Exception ($e->getMessage);
+        if (!property_exists($this->object->response,'tokenExpires')) {
             return false;
         }
+        $this->object->response->tokenExpires   = $timestamp;
+        return true;
     }
 
     public function token ( ) {
