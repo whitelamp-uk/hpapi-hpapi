@@ -39,7 +39,7 @@ BEGIN
    ,`hpapi_user`.`password_hash` AS `passwordHash`
    ,`hpapi_user`.`token`
    ,UNIX_TIMESTAMP(`hpapi_user`.`token_expires`) AS `tokenExpires`
-   ,`hpapi_user`.`token_remote_addr` AS `tokenRemoteAddr`
+   ,INET6_NTOA(`hpapi_user`.`token_remote_addr`) AS `tokenRemoteAddr`
    ,`hpapi_usergroup`.`usergroup`
    ,`hpapi_usergroup`.`token_duration_minutes` AS `tokenDurationMinutes`
    ,`hpapi_usergroup`.`remote_addr_pattern` AS `groupRemoteAddrPattern`
@@ -80,7 +80,7 @@ BEGIN
    ,`microtime`=mt
    ,`key`=ky
    ,`email`=em
-   ,`remote_addr`=rma
+   ,`remote_addr`=INET6_ATON(rma)
    ,`user_agent`=ua
    ,`vendor`=vdr
    ,`package`=pkg
@@ -296,7 +296,7 @@ BEGIN
   SET
     `token`=tk
    ,`token_expires`=FROM_UNIXTIME(ts)
-   ,`token_remote_addr`=ra
+   ,`token_remote_addr`=INET6_ATON(ra)
   WHERE `id`=id
   ;
 END $$
