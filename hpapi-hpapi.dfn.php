@@ -133,4 +133,3 @@ define ( 'HPAPI_STR_VALID_VMAX',            'must have value no more than'      
 // Userland configuration - definitions and classes
 require_once HPAPI_DIR_CONFIG.'/whitelamp-uk/hpapi-hpapi.cfg.php';
 
-?>

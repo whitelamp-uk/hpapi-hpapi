@@ -73,5 +73,3 @@ require_once HPAPI_DIR_HPAPI.'/whitelamp-uk/hpapi-hpapi/Hpapi/Db.class.php';
 // HPAPI SERVER HTTP HEADERS
 require_once HPAPI_DIR_CONFIG.'/hpapi-server.hdr.php';
 
-
-?>
