@@ -1,4 +1,5 @@
 
+-- Copyright 2018 Whitelamp http://www.whitelamp.com/
 
 SET NAMES utf8;
 SET time_zone = '+00:00';

@@ -1,5 +1,7 @@
 <?php
 
+/* Copyright 2018 Whitelamp http://www.whitelamp.com/ */
+
 // The hpapi model
 define ( 'HPAPI_MODEL_NAME',                'HpapiModel'                                                                            );
 
