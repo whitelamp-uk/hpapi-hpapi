@@ -15,21 +15,36 @@ define ( 'HPAPI_CONTENT_TYPE_TEXT',         'text/plain; charset=utf-8'         
 define ( 'HPAPI_CONTENT_TYPE_UNKNOWN',      'unknown/unknown'                                                                       );
 
 // Definitions for `hpapi_pattern`.`constraints` for hpapi (and supporting class) methods and stored procedures
-define ( 'HPAPI_PATTERN_DESC_INT_11_POS',   'must be a positive integer of no more than 11 digits'                                  );
+define ( 'HPAPI_PATTERN_DESC_ALPHA_LC',     'must have only small letters (up to 64 characters)'                                    );
 define ( 'HPAPI_PATTERN_DESC_CLASS',        'must be a valid PHP class name'                                                        );
 define ( 'HPAPI_PATTERN_DESC_DATETIME',     'must be universal datetime format yyyy-mm-dd hh:mm:ss+hh:mm'                           );
 define ( 'HPAPI_PATTERN_DESC_DB_BOOL',      'must be 0 or 1'                                                                        );
+define ( 'HPAPI_PATTERN_DESC_EMAIL',        'must be a valid email address'                                                         );
+define ( 'HPAPI_PATTERN_GEO_COORD',         'must be a valid decimal geo-coordinate value'                                          );
 define ( 'HPAPI_PATTERN_DESC_HHMMSS',       'must be 6 digits representing a time - HHMMSS'                                         );
-define ( 'HPAPI_PATTERN_DESC_YYYYMMDD',     'must be 8 digits representing a date - YYYYMMDD'                                       );
-define ( 'HPAPI_PATTERN_DESC_YYYY_MM_DD',   'must be a standard formatted date - YYYY-MM-DD'                                        );
-define ( 'HPAPI_PATTERN_DESC_URI',          'must be a Linux-friendly request URI'                                                  );
+define ( 'HPAPI_PATTERN_DESC_INT_11_POS',   'must be a positive integer of no more than 11 digits'                                  );
+define ( 'HPAPI_PATTERN_DESC_INT_11_POS_NEG','must be an integer of no more than 11 digits'                                         );
+define ( 'HPAPI_PATTERN_DESC_INT_2_POS',    'must be a positive integer of no more than 2 digits'                                   );
+define ( 'HPAPI_PATTERN_DESC_INT_4_POS',    'must be a positive integer of no more than 4 digits'                                   );
 define ( 'HPAPI_PATTERN_DESC_IPV4',         'must be valid IPv4 address'                                                            );
-define ( 'HPAPI_PATTERN_DESC_PASSWORD_1',   'must have at least 8 characters with at least one: big letter, small letter, number'   );
-define ( 'HPAPI_PATTERN_DESC_ALPHA_LC',     'must have only small letters (up to 64 characters)'                                    );
-define ( 'HPAPI_PATTERN_DESC_VARCHAR_255',  'must have no more than 255 characters of any type'                                     );
-define ( 'HPAPI_PATTERN_DESC_VARCHAR_64',   'must have no more than 64 characters of any type'                                      );
-define ( 'HPAPI_PATTERN_DESC_UUIDV4',       'must be UUID v4 format'                                                                );
 define ( 'HPAPI_PATTERN_DESC_JSON',         'must be JSON formatted string with no methods'                                         );
+define ( 'HPAPI_PATTERN_DESC_METHOD',       'must be valid format for a method name'                                                );
+define ( 'HPAPI_PATTERN_DESC_PACKAGE',      'must be valid format for a package name'                                               );
+define ( 'HPAPI_PATTERN_DESC_PASSWORD_1',   'must have at least 8 characters with at least one: big letter, small letter, number'   );
+define ( 'HPAPI_PATTERN_DESC_URI_PATH',     'must be a Linux-friendly request URI path'                                             );
+define ( 'HPAPI_PATTERN_DESC_UUIDV4',       'must be UUID v4 format'                                                                );
+define ( 'HPAPI_PATTERN_DESC_VARCHAR_140',  'must have no more than 140 characters'                                                 );
+define ( 'HPAPI_PATTERN_DESC_VARCHAR_16',   'must have no more than 16 characters'                                                  );
+define ( 'HPAPI_PATTERN_DESC_VARCHAR_2',    'must have no more than 2 characters'                                                   );
+define ( 'HPAPI_PATTERN_DESC_VARCHAR_255',  'must have no more than 255 characters'                                                 );
+define ( 'HPAPI_PATTERN_DESC_VARCHAR_32',   'must have no more than 32 characters'                                                  );
+define ( 'HPAPI_PATTERN_DESC_VARCHAR_4',    'must have no more than 4 characters'                                                   );
+define ( 'HPAPI_PATTERN_DESC_VARCHAR_4096', 'must have no more than 4096 characters'                                                );
+define ( 'HPAPI_PATTERN_DESC_VARCHAR_6',    'must have no more than 6 characters'                                                   );
+define ( 'HPAPI_PATTERN_DESC_VARCHAR_64',   'must have no more than 64 characters'                                                  );
+define ( 'HPAPI_PATTERN_DESC_VENDOR',       'must be valid format for a vendor name'                                                );
+define ( 'HPAPI_PATTERN_DESC_YYYY_MM_DD',   'must be a standard formatted date - YYYY-MM-DD'                                        );
+define ( 'HPAPI_PATTERN_DESC_YYYYMMDD',     'must be 8 digits representing a date - YYYYMMDD'                                       );
 
 // Initiating response
 define ( 'HPAPI_STR_INIT',                  '021 500 \Hpapi\Hpapi could not be initialised'                                         );
