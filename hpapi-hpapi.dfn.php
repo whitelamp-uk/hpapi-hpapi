@@ -14,7 +14,7 @@ define ( 'HPAPI_CONTENT_TYPE_JSON',         'application/json; charset=utf-8'   
 define ( 'HPAPI_CONTENT_TYPE_TEXT',         'text/plain; charset=utf-8'                                                             );
 define ( 'HPAPI_CONTENT_TYPE_UNKNOWN',      'unknown/unknown'                                                                       );
 
-// Definitions for `hpapi_pattern`.`pattern_Constraints` for hpapi (and supporting class) methods and stored procedures
+// Definitions for `hpapi_pattern`.`constraints` for hpapi (and supporting class) methods and stored procedures
 define ( 'HPAPI_PATTERN_DESC_INT_11_POS',   'must be a positive integer of no more than 11 digits'                                  );
 define ( 'HPAPI_PATTERN_DESC_CLASS',        'must be a valid PHP class name'                                                        );
 define ( 'HPAPI_PATTERN_DESC_DATETIME',     'must be universal datetime format yyyy-mm-dd hh:mm:ss+hh:mm'                           );
@@ -29,6 +29,7 @@ define ( 'HPAPI_PATTERN_DESC_ALPHA_LC',     'must have only small letters (up to
 define ( 'HPAPI_PATTERN_DESC_VARCHAR_255',  'must have no more than 255 characters of any type'                                     );
 define ( 'HPAPI_PATTERN_DESC_VARCHAR_64',   'must have no more than 64 characters of any type'                                      );
 define ( 'HPAPI_PATTERN_DESC_UUIDV4',       'must be UUID v4 format'                                                                );
+define ( 'HPAPI_PATTERN_DESC_JSON',         'must be JSON formatted string with no methods'                                         );
 
 // Initiating response
 define ( 'HPAPI_STR_INIT',                  '021 500 \Hpapi\Hpapi could not be initialised'                                         );
@@ -125,6 +126,7 @@ define ( 'HPAPI_STR_DB_SPR_BIND',           'Query binding failed'              
 define ( 'HPAPI_STR_DB_SPR_EXEC',           'Query execution failed'                                                                );
 
 // Validation strings
+define ( 'HPAPI_STR_VALID_PATTERN',         'must match pattern'                                                                    );
 define ( 'HPAPI_STR_VALID_EXPRESSION',      'must match regular expression'                                                         );
 define ( 'HPAPI_STR_VALID_PHP_FILTER',      'must pass validation filter'                                                           );
 define ( 'HPAPI_STR_VALID_LMIN',            'must have character length at least'                                                   );

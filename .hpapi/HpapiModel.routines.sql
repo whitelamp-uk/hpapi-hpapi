@@ -219,6 +219,7 @@ BEGIN
    ,`hpapi_methodarg`.`argument` AS `argument`
    ,`hpapi_methodarg`.`name` AS `name`
    ,`hpapi_methodarg`.`empty_allowed` AS `emptyAllowed`
+   ,`hpapi_pattern`.`pattern`
    ,`hpapi_pattern`.`constraints`
    ,`hpapi_pattern`.`expression`
    ,`hpapi_pattern`.`php_filter` AS `phpFilter`
@@ -262,6 +263,7 @@ BEGIN
    ,`hpapi_sprarg`.`argument`
    ,`hpapi_sprarg`.`name`
    ,`hpapi_sprarg`.`empty_allowed` AS `emptyAllowed`
+   ,`hpapi_pattern`.`pattern`
    ,`hpapi_pattern`.`constraints`
    ,`hpapi_pattern`.`expression`
    ,`hpapi_pattern`.`php_filter` AS `phpFilter`

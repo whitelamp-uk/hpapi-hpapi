@@ -42,7 +42,8 @@ INSERT IGNORE  INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `in
 ('varchar-64',	'HPAPI_PATTERN_DESC_VARCHAR_64',	'',	'text',	'',	1,	64,	'',	''),
 ('vendor',	'HPAPI_PATTERN_DESC_VENDOR',	'^[a-z][a-z\\-]*[a-z]$',	'text',	'',	2,	64,	'',	''),
 ('yyyy-mm-dd',	'HPAPI_PATTERN_DESC_YYYY_MM_DD',	'^[0-9]{4}-[0-9]{2}-[0-9]{2}$',	'date',	'',	10,	10,	'2000-01-01',	'2100-12-31'),
-('yyyymmdd',	'HPAPI_PATTERN_DESC_YYYYMMDD',	'^[0-9]{8}$',	'text',	'',	0,	0,	'20000101',	'99991231');
+('yyyymmdd',	'HPAPI_PATTERN_DESC_YYYYMMDD',	'^[0-9]{8}$',	'text',	'',	0,	0,	'20000101',	'99991231'),
+('json',	'HPAPI_PATTERN_DESC_JSON',	'',	'textarea',	'',	0,	0,	'',	'');
 
 INSERT IGNORE INTO `hpapi_usergroup` (`usergroup`, `level`, `name`, `remote_addr_pattern`, `notes`) VALUES
 ('admin',	2,	'Administrators',	'^.*$',	'Users performing high level administration of business data within the model.'),

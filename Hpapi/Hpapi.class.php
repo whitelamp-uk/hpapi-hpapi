@@ -895,7 +895,10 @@ class Hpapi {
             return true;
         }
         $e          = null;
-        if (strlen($defn['expression']) && !preg_match('<'.$defn['expression'].'>',$value)) {
+        if ($defn['pattern']=='json' && !$this->jsonDecode($value,false,HPAPI_JSON_DEPTH)) {
+            $e      = HPAPI_STR_VALID_PATTERN.' <'.$defn['expression'].'>';
+        }
+        elseif (strlen($defn['expression']) && !preg_match('<'.$defn['expression'].'>',$value)) {
             $e      = HPAPI_STR_VALID_EXPRESSION.' <'.$defn['expression'].'>';
         }
         elseif (strlen($defn['phpFilter']) && filter_var($value,constant($defn['phpFilter']))===false) {
