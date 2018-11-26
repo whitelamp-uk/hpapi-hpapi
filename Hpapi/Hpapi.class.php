@@ -681,7 +681,7 @@ class Hpapi {
         try {
             $str                                    = "<?php\nreturn ";
             $str                                   .= var_export ($array,true);
-            $str                                   .= ";\n?>";
+            $str                                   .= ";\n";
             $fp                                     = fopen ($file,'w');
             fwrite ($fp,$str);
             fclose ($fp);
@@ -869,7 +869,7 @@ class Hpapi {
         }
         try {
             $fp                                 = fopen (HPAPI_PRIVILEGES_FILE,'w');
-            fwrite ($fp,"<?php\nreturn false;\n?>");
+            fwrite ($fp,"<?php\nreturn false;\n");
             fclose ($fp);
         }
         catch (\Exception $e) {
