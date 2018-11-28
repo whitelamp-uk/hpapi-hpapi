@@ -685,6 +685,7 @@ class Hpapi {
             $fp                                     = fopen ($file,'w');
             fwrite ($fp,$str);
             fclose ($fp);
+            chmod ($file,0666);
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage);
@@ -851,12 +852,6 @@ class Hpapi {
         return password_hash ($plain,HPAPI_HASH_ALGO,array('cost'=>HPAPI_HASH_COST));
     }
 
-    public function pdoDbName ($dsn) {
-        $dbn = explode (';',$dbn);
-        $dbn = explode ('=',$dbn[1]);
-        return $dbn[1];
-    }
-
     public function pdoDriver ($dsn) {
         $drv = explode (':',$dsn);
         return $drv[0];
@@ -895,7 +890,7 @@ class Hpapi {
             return true;
         }
         $e          = null;
-        if ($defn['pattern']=='json' && !$this->jsonDecode($value,false,HPAPI_JSON_DEPTH)) {
+        if ($defn['pattern']=='object' && !is_object($value)) {
             $e      = HPAPI_STR_VALID_PATTERN.' <'.$defn['expression'].'>';
         }
         elseif (strlen($defn['expression']) && !preg_match('<'.$defn['expression'].'>',$value)) {

@@ -27,7 +27,7 @@ define ( 'HPAPI_PATTERN_DESC_INT_11_POS_NEG','must be an integer of no more than
 define ( 'HPAPI_PATTERN_DESC_INT_2_POS',    'must be a positive integer of no more than 2 digits'                                   );
 define ( 'HPAPI_PATTERN_DESC_INT_4_POS',    'must be a positive integer of no more than 4 digits'                                   );
 define ( 'HPAPI_PATTERN_DESC_IPV4',         'must be valid IPv4 address'                                                            );
-define ( 'HPAPI_PATTERN_DESC_JSON',         'must be JSON formatted string with no methods'                                         );
+define ( 'HPAPI_PATTERN_DESC_OBJECT',       'must be a data object'                                                                 );
 define ( 'HPAPI_PATTERN_DESC_METHOD',       'must be valid format for a method name'                                                );
 define ( 'HPAPI_PATTERN_DESC_PACKAGE',      'must be valid format for a package name'                                               );
 define ( 'HPAPI_PATTERN_DESC_PASSWORD_1',   'must have at least 8 characters with at least one: big letter, small letter, number'   );
