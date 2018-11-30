@@ -83,28 +83,29 @@ define ( 'HPAPI_STR_AUTH_ACTIVE',           '065 User not active'               
 define ( 'HPAPI_STR_AUTH_PWD_OR_TKN',       '066 Invalid credentials'                                                               );
 define ( 'HPAPI_STR_AUTH_VERIFY',           '067 Email not verified'                                                                );
 define ( 'HPAPI_STR_AUTH_OK',               '068 Fully authenticated'                                                               );
-define ( 'HPAPI_STR_AUTH_GRP_REMOTE_ADDR',  '069 User group access not allowed from client location'                                );
+define ( 'HPAPI_STR_AUTH_MTD',              '069 Method not allowed'                                                                );
+define ( 'HPAPI_STR_AUTH_GRP',              '070 No matching user group'                                                            );
+define ( 'HPAPI_STR_AUTH_GRP_REMOTE_ADDR',  '071 User group access not allowed from client location'                                );
 
 // Validating posted object->method
-define ( 'HPAPI_STR_METHOD_VDR',            '071 400 Method property "vendor" does not exist'                                       );
-define ( 'HPAPI_STR_METHOD_VDR_STR',        '072 400 Method property "vendor" is not a string'                                      );
-define ( 'HPAPI_STR_METHOD_VDR_PTH',        '073 400 Method vendor directory not found'                                             );
-define ( 'HPAPI_STR_METHOD_PKG',            '074 400 Method property "package" does not exist'                                      );
-define ( 'HPAPI_STR_METHOD_PKG_STR',        '075 400 Method property "package" is not a string'                                     );
-define ( 'HPAPI_STR_METHOD_PKG_PTH',        '076 400 Method package directory not found'                                            );
-define ( 'HPAPI_STR_METHOD_CLS',            '077 400 Method property "class" does not exist'                                        );
-define ( 'HPAPI_STR_METHOD_CLS_STR',        '078 400 Method property "class" is not a string'                                       );
-define ( 'HPAPI_STR_METHOD_CLS_PTH',        '079 400 Method package does not contain class file'                                    );
-define ( 'HPAPI_STR_METHOD_MTD',            '080 400 Method property "method" does not exist'                                       );
-define ( 'HPAPI_STR_METHOD_MTD_STR',        '081 400 Method property "method" is not a string'                                      );
-define ( 'HPAPI_STR_METHOD_ARGS',           '082 400 Method property "arguments" does not exist'                                    );
-define ( 'HPAPI_STR_METHOD_ARGS_ARR',       '083 400 Method property "arguments" is not an array'                                   );
-define ( 'HPAPI_STR_METHOD_DFN_INC',        '084 500 Could not include definition file'                                             );
-define ( 'HPAPI_STR_METHOD_CLS_INC',        '085 500 Could not include class file'                                                  );
-define ( 'HPAPI_STR_METHOD_CLS_GOT',        '086 500 Class file included but class does not exist'                                  );
-define ( 'HPAPI_STR_METHOD_CLS_NEW',        '087 500 Class exists but could not be instantiated'                                    );
-define ( 'HPAPI_STR_METHOD_MTD_GOT',        '088 500 Method not in instantiated class'                                              );
-define ( 'HPAPI_STR_AUTH',                  '089 403 Not allowed'                                                                   );
+define ( 'HPAPI_STR_METHOD_VDR',            '081 400 Method property "vendor" does not exist'                                       );
+define ( 'HPAPI_STR_METHOD_VDR_STR',        '082 400 Method property "vendor" is not a string'                                      );
+define ( 'HPAPI_STR_METHOD_VDR_PTH',        '083 400 Method vendor directory not found'                                             );
+define ( 'HPAPI_STR_METHOD_PKG',            '084 400 Method property "package" does not exist'                                      );
+define ( 'HPAPI_STR_METHOD_PKG_STR',        '085 400 Method property "package" is not a string'                                     );
+define ( 'HPAPI_STR_METHOD_PKG_PTH',        '086 400 Method package directory not found'                                            );
+define ( 'HPAPI_STR_METHOD_CLS',            '087 400 Method property "class" does not exist'                                        );
+define ( 'HPAPI_STR_METHOD_CLS_STR',        '088 400 Method property "class" is not a string'                                       );
+define ( 'HPAPI_STR_METHOD_CLS_PTH',        '089 400 Method package does not contain class file'                                    );
+define ( 'HPAPI_STR_METHOD_MTD',            '090 400 Method property "method" does not exist'                                       );
+define ( 'HPAPI_STR_METHOD_MTD_STR',        '091 400 Method property "method" is not a string'                                      );
+define ( 'HPAPI_STR_METHOD_ARGS',           '092 400 Method property "arguments" does not exist'                                    );
+define ( 'HPAPI_STR_METHOD_ARGS_ARR',       '093 400 Method property "arguments" is not an array'                                   );
+define ( 'HPAPI_STR_METHOD_DFN_INC',        '094 500 Could not include definition file'                                             );
+define ( 'HPAPI_STR_METHOD_CLS_INC',        '095 500 Could not include class file'                                                  );
+define ( 'HPAPI_STR_METHOD_CLS_GOT',        '096 500 Class file included but class does not exist'                                  );
+define ( 'HPAPI_STR_METHOD_CLS_NEW',        '097 500 Class exists but could not be instantiated'                                    );
+define ( 'HPAPI_STR_METHOD_MTD_GOT',        '098 500 Method not in instantiated class'                                              );
 
 // Running method
 define ( 'HPAPI_STR_DB_MTD_ARGS',           '101 400 Incorrect argument count for method'                                           );
@@ -130,6 +131,7 @@ define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'  
 define ( 'HPAPI_STR_DECODE_NOTHING',        '\Hpapi\Hpapi::decodePost(): nothing was posted'                                        );
 define ( 'HPAPI_STR_DECODE_LENGTH',         '\Hpapi\Hpapi::decodePost(): posted data is too long'                                   );
 define ( 'HPAPI_STR_DB_EMPTY',              '\Hpapi\Db::call(): empty argument(s)'                                                  );
+define ( 'HPAPI_STR_ACCESS_METHOD',         '\Hpapi\Hpapi::access(): No privileges for method'                                      );
 define ( 'HPAPI_STR_2D_ARRAY',              '\Hpapi\Utility::parse2D(): a 2-D array was not given'                                  );
 define ( 'HPAPI_STR_EXPORT_ARRAY_FILE',     '\Hpapi\Hpapi::exportArray(): file is not writable'                                     );
 define ( 'HPAPI_STR_EXPORT_ARRAY_ARR',      '\Hpapi\Hpapi::exportArray(): variable is not an array'                                 );

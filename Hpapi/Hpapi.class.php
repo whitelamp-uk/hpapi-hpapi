@@ -191,11 +191,13 @@ class Hpapi {
         $method                                    .= '::';
         $method                                    .= $this->object->method->method;
         if (!array_key_exists($method,$privilege)) {
-            $this->object->response->error          = HPAPI_STR_AUTH;
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_MTD;
+            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
         $privilege                                  = $privilege[$method];
         $access                                     = false;
+        $status                                     = HPAPI_STR_AUTH_GRP;
         foreach ($privilege['usergroups'] as $privg) {
             foreach ($this->usergroups as $authg) {
                 if ($authg['usergroup']==$privg) {
@@ -203,11 +205,14 @@ class Hpapi {
                         $access                     = true;
                         break 2;
                     }
+                    else {
+                        $status                     = HPAPI_STR_AUTH_GRP_REMOTE_ADDR;
+                    }
                 }
             }
         }
         if (!$access) {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_GRP_REMOTE_ADDR;
+            $this->object->response->authStatus     = $status;
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
@@ -420,10 +425,12 @@ class Hpapi {
             return false;
         }
         if (!array_key_exists($spr,$this->privilege['sprs'])) {
+            $this->diagnostic (HPAPI_STR_DB_SPR_AVAIL.': `'.$spr.'`');
             throw new \Exception (HPAPI_STR_DB_SPR_AVAIL.': `'.$spr.'`');
             return false;
         }
         if (count($arguments)!=count($this->privilege['sprs'][$spr]['arguments'])) {
+            $this->diagnostic (HPAPI_STR_DB_SPR_ARGS.': `'.$spr.'`');
             throw new \Exception (HPAPI_STR_DB_SPR_ARGS.': `'.$spr.'`');
             return false;
         }
@@ -432,6 +439,7 @@ class Hpapi {
                 $this->validation ($spr,$count,$arguments[$count-1],$arg);
             }
             catch (\Exception $e) {
+                $this->diagnostic (HPAPI_STR_DB_SPR_ARG_VAL.': `'.$spr.'`');
                 throw new \Exception (HPAPI_STR_DB_SPR_ARG_VAL.': '.$e->getMessage());
                 return false;
             }
@@ -449,6 +457,7 @@ class Hpapi {
             $db->close ();
         }
         catch (\Exception $e) {
+            $this->diagnostic ($e->getMessage());
             throw new \Exception ($e->getMessage());
             return false;
         }
