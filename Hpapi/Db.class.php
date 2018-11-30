@@ -6,13 +6,13 @@ namespace Hpapi;
 
 class Db {
 
-    private $dfn;
-    private $filter;
-    public  $hpapi;
-    public  $inputs;
-    public  $model;
-    private $PDO;
-    private $sprCmd; // eg. CALL (), SELECT () OR EXEC () keyword
+    protected   $dfn;
+    protected   $filter;
+    protected   $hpapi;
+    public      $inputs;
+    public      $model;
+    protected   $PDO;
+    protected   $sprCmd; // eg. CALL (), SELECT () OR EXEC () keyword
 
     public function __construct (\Hpapi\Hpapi $hpapi,$model) {
         $this->hpapi        = $hpapi;
