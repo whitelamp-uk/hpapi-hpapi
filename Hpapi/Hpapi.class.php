@@ -6,22 +6,20 @@ namespace Hpapi;
 
 class Hpapi {
 
-    public  $auth;                       // Object having successful authentication data for requested method
-    public  $contentTypeRequested;       // Client declaration of content type
-    public  $contentType;                // Interpretation of client contentheader for interpreting raw POST data
-    private $db;                         // Database object \Hpapi\HpapiDb
-    public  $object;                     // The PHP object loaded from the input which is modified and returned
-    public  $remoteAddrPattern;          // REMOTE_ADDR matching pattern for the current key
-    public  $email;                      // Email contained in request
-    public  $datetime;                   // DateTime of response (can be faked for matching time-based test data)
-    public  $logtime;                    // DateTime of response for logging (never faked)
-    public  $microtime;                  // Microtime of response (decimal fraction of a second)
-    public  $timestamp;                  // Timestamp (never faked)
-    public  $privilege;                  // Privilege array for this vendor::package::class::method
-    public  $tokenDurationMinutes = 0;   // Length of "session"
-    public  $userUUID;                   // User identifier established by the authentication process
-    public  $usergroups = array ();      // Usergroups for this user
-    private $config;                     // User identifier established by the authentication process
+    public      $contentTypeRequested;       // Client declaration of content type
+    public      $contentType;                // Interpretation of client contentheader for interpreting raw POST data
+    protected   $db;                         // Database object \Hpapi\HpapiDb
+    public      $object;                     // The PHP object loaded from the input which is modified and returned
+    public      $remoteAddrPattern;          // REMOTE_ADDR matching pattern for the current key
+    public      $email;                      // Email contained in request
+    public      $datetime;                   // DateTime of response (can be faked for matching time-based test data)
+    public      $logtime;                    // DateTime of response for logging (never faked)
+    public      $microtime;                  // Microtime of response (decimal fraction of a second)
+    public      $timestamp;                  // Timestamp (never faked)
+    protected   $privilege;                  // Privilege array for this vendor::package::class::method
+    public      $tokenDurationMinutes = 0;   // Length of "session"
+    public      $userId;                     // User identifier established by the authentication process
+    public      $usergroups = array ();      // Usergroups for this user
 
     public function __construct ( ) {
         if (count(func_get_args())) {
@@ -184,7 +182,7 @@ class Hpapi {
         array_push ($this->object->response->splash,$message);
     }
 
-    public function access ($privilege) {
+    protected function access ($privilege) {
         $method                                     = $this->object->method->vendor;
         $method                                    .= '::';
         $method                                    .= $this->object->method->package;
@@ -216,7 +214,7 @@ class Hpapi {
         return $privilege;
     }
 
-    public function authenticate ( ) {
+    protected function authenticate ( ) {
         // Authentication data
         try {
             $results                                = $this->db->call (
@@ -317,7 +315,7 @@ class Hpapi {
         }
     }
 
-    private function callPrivileges () {
+    public function callPrivileges () {
         try {
             $methods                                = $this->db->call (
                 'hpapiMethodPrivileges'
@@ -554,7 +552,7 @@ class Hpapi {
         exit;
     }
 
-    public function executeMethod ($m) {
+    protected function executeMethod ($m) {
         if (!property_exists($m,'vendor')) {
             $this->object->response->error          = HPAPI_STR_METHOD_VDR;
             $this->end ();
@@ -756,7 +754,7 @@ class Hpapi {
         return true;
     }
 
-    public function logLast ($output) {
+    protected function logLast ($output) {
         if (!HPAPI_LOG_LAST_OUTPUT) {
             return true;
         }
@@ -810,7 +808,7 @@ class Hpapi {
         return $ol;
     }
 
-    public function parseContentType ( ) {
+    private function parseContentType ( ) {
         // Without Content-Type header
         if (!array_key_exists('CONTENT_TYPE',$_SERVER)) {
             $pattern = '<[^A-z]'.HPAPI_CONTENT_TYPE_HTML.'[^A-z]>i';
@@ -887,14 +885,19 @@ class Hpapi {
 
     public function validation ($name,$argNum,$value,$defn) {
         if (is_object($defn)) {
-print_r ($defn);
-die ();
             $arr = array ();
             foreach ($defn as $k=>$v) {
                 $arr[$k] = $v;
             }
             $defn = $arr;
             unset ($arr);
+        }
+        $defnParameters = array ('constraints','emptyAllowed','expression','lengthMaximum','lengthMinimum','pattern','phpFilter','valueMaximum','valueMinimum');
+        foreach ($defnParameters as $p) {
+            if (!array_key_exists($p,$defn)) {
+                throw new \Exception (HPAPI_STR_VALID_DEFN_PARAM.' "'.$p.'"');
+                return false;
+            }
         }
         if ($defn['emptyAllowed'] && !strlen($value)) {
             return true;
