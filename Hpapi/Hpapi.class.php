@@ -886,6 +886,16 @@ class Hpapi {
     }
 
     public function validation ($name,$argNum,$value,$defn) {
+        if (is_object($defn)) {
+print_r ($defn);
+die ();
+            $arr = array ();
+            foreach ($defn as $k=>$v) {
+                $arr[$k] = $v;
+            }
+            $defn = $arr;
+            unset ($arr);
+        }
         if ($defn['emptyAllowed'] && !strlen($value)) {
             return true;
         }
