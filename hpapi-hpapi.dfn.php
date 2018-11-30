@@ -134,6 +134,9 @@ define ( 'HPAPI_STR_2D_ARRAY',              '\Hpapi\Utility::parse2D(): a 2-D ar
 define ( 'HPAPI_STR_EXPORT_ARRAY_FILE',     '\Hpapi\Hpapi::exportArray(): file is not writable'                                     );
 define ( 'HPAPI_STR_EXPORT_ARRAY_ARR',      '\Hpapi\Hpapi::exportArray(): variable is not an array'                                 );
 define ( 'HPAPI_STR_RESET_PRIVS_FILE',      '\Hpapi\Hpapi::resetPrivileges(): privileges file is not writable'                      );
+define ( 'HPAPI_STR_VALID_DEFN_PARAM',      '\Hpapi\Hpapi::validation(): definition is missing property'                            );
+
+
 
 // Database notices
 define ( 'HPAPI_STR_DB_SPR_PREP',           'Query preparation failed'                                                              );
