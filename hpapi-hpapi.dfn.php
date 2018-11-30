@@ -83,9 +83,6 @@ define ( 'HPAPI_STR_AUTH_ACTIVE',           '065 User not active'               
 define ( 'HPAPI_STR_AUTH_PWD_OR_TKN',       '066 Invalid credentials'                                                               );
 define ( 'HPAPI_STR_AUTH_VERIFY',           '067 Email not verified'                                                                );
 define ( 'HPAPI_STR_AUTH_OK',               '068 Fully authenticated'                                                               );
-define ( 'HPAPI_STR_AUTH_MTD',              '069 Method not allowed'                                                                );
-define ( 'HPAPI_STR_AUTH_GRP',              '070 No matching user group'                                                            );
-define ( 'HPAPI_STR_AUTH_GRP_REMOTE_ADDR',  '071 User group access not allowed from client location'                                );
 
 // Validating posted object->method
 define ( 'HPAPI_STR_METHOD_VDR',            '081 400 Method property "vendor" does not exist'                                       );
@@ -111,10 +108,9 @@ define ( 'HPAPI_STR_METHOD_MTD_GOT',        '098 500 Method not in instantiated 
 define ( 'HPAPI_STR_DB_MTD_ARGS',           '101 400 Incorrect argument count for method'                                           );
 define ( 'HPAPI_STR_DB_MTD_ARG_VAL',        '102 400 Invalid method argument'                                                       );
 define ( 'HPAPI_STR_DB_SPR_MODEL',          '103 500 No database for data model'                                                    );
-define ( 'HPAPI_STR_METHOD_EXCEPTION',      '104 500 Method threw an exception'                                                     );
-define ( 'HPAPI_STR_DB_Z',                  '105 500 Empty arguments to database function'                                          );
-define ( 'HPAPI_STR_DB_MTD_ACCESS',         '106 403 Method is not available'                                                       );
-define ( 'HPAPI_STR_DB_MTD_REMOTE_ADDR',    '107 403 Remote address not allowed for user group(s)'                                  );
+define ( 'HPAPI_STR_DB_Z',                  '104 500 Empty arguments to database function'                                          );
+define ( 'HPAPI_STR_DB_MTD_ACCESS',         '105 403 Method is not available'                                                       );
+define ( 'HPAPI_STR_DB_MTD_REMOTE_ADDR',    '106 403 Remote address not allowed for user group(s)'                                  );
 
 // Calling stored procedures
 define ( 'HPAPI_STR_DB_SPR_NO_SPR',         '201 500 Method did not give stored procedure'                                          );
@@ -132,6 +128,10 @@ define ( 'HPAPI_STR_DECODE_NOTHING',        '\Hpapi\Hpapi::decodePost(): nothing
 define ( 'HPAPI_STR_DECODE_LENGTH',         '\Hpapi\Hpapi::decodePost(): posted data is too long'                                   );
 define ( 'HPAPI_STR_DB_EMPTY',              '\Hpapi\Db::call(): empty argument(s)'                                                  );
 define ( 'HPAPI_STR_ACCESS_METHOD',         '\Hpapi\Hpapi::access(): No privileges for method'                                      );
+define ( 'HPAPI_STR_ACCESS_MTD',            '\Hpapi\Hpapi::access(): Method not allowed'                                            );
+define ( 'HPAPI_STR_ACCESS_GRP',            '\Hpapi\Hpapi::access(): No matching user group'                                        );
+define ( 'HPAPI_STR_ACCESS_GRP_REM_ADDR',   '\Hpapi\Hpapi::access(): User group access not allowed from client location'            );
+
 define ( 'HPAPI_STR_2D_ARRAY',              '\Hpapi\Utility::parse2D(): a 2-D array was not given'                                  );
 define ( 'HPAPI_STR_EXPORT_ARRAY_FILE',     '\Hpapi\Hpapi::exportArray(): file is not writable'                                     );
 define ( 'HPAPI_STR_EXPORT_ARRAY_ARR',      '\Hpapi\Hpapi::exportArray(): variable is not an array'                                 );

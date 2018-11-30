@@ -191,13 +191,12 @@ class Hpapi {
         $method                                    .= '::';
         $method                                    .= $this->object->method->method;
         if (!array_key_exists($method,$privilege)) {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_MTD;
-            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
+             $this->object->response->error         = HPAPI_STR_ACCESS_MTD;
             $this->end ();
         }
         $privilege                                  = $privilege[$method];
         $access                                     = false;
-        $status                                     = HPAPI_STR_AUTH_GRP;
+        $error                                      = HPAPI_STR_ACCESS_GRP;
         foreach ($privilege['usergroups'] as $privg) {
             foreach ($this->usergroups as $authg) {
                 if ($authg['usergroup']==$privg) {
@@ -206,14 +205,13 @@ class Hpapi {
                         break 2;
                     }
                     else {
-                        $status                     = HPAPI_STR_AUTH_GRP_REMOTE_ADDR;
+                        $error                      = HPAPI_STR_ACCESS_GRP_REM_ADDR;
                     }
                 }
             }
         }
         if (!$access) {
-            $this->object->response->authStatus     = $status;
-            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
+            $this->object->response->error          = $error;
             $this->end ();
         }
         return $privilege;
@@ -425,7 +423,6 @@ class Hpapi {
             return false;
         }
         if (!array_key_exists($spr,$this->privilege['sprs'])) {
-            $this->diagnostic (HPAPI_STR_DB_SPR_AVAIL.': `'.$spr.'`');
             throw new \Exception (HPAPI_STR_DB_SPR_AVAIL.': `'.$spr.'`');
             return false;
         }
@@ -669,8 +666,7 @@ class Hpapi {
             $return_value                           = $object->{$m->method} (...$m->arguments);
         }
         catch (\Exception $e) {
-            $this->diagnostic ($e->getMessage());
-            $this->object->response->error          = HPAPI_STR_METHOD_EXCEPTION;
+            $this->object->response->error          = $e->getMessage();
             $this->end ();
         }
         return $return_value;
