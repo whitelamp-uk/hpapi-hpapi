@@ -530,7 +530,9 @@ class Hpapi {
         if ($this->db) {
             $this->db->close ();
         }
+        $key = '';
         if (property_exists($this->object,'key')) {
+            $key = $this->object->key;
             unset ($this->object->key);
         }
         if (property_exists($this->object,'email')) {
@@ -547,6 +549,9 @@ class Hpapi {
         }
         catch (\Exception $e) {
             $this->diagnostic ($e->getMessage());
+        }
+        if (!in_array($key,$this->diagnosticKeys) && property_exists($this->object,'method')) {
+            unset ($this->object->method);
         }
         if ($this->contentType==HPAPI_CONTENT_TYPE_JSON) {
             echo $this->jsonEncode ($this->object,HPAPI_JSON_OPTIONS,HPAPI_JSON_DEPTH);
