@@ -668,7 +668,15 @@ class Hpapi {
             $this->end ();
         }
         try {
-            $return_value                           = $object->{$m->method} (...$m->arguments);
+            $args                                   = array ();
+            foreach ($m->arguments as $arg) {
+                if (is_object($arg)) {
+                    $copy                           = $this->jsonEncode ($arg);
+                    array_push ($args,$this->jsonDecode($copy));
+                }
+                array_push ($args,$arg);
+            }
+            $return_value                           = $object->{$m->method} (...$args);
         }
         catch (\Exception $e) {
             $this->object->response->error          = $e->getMessage();
