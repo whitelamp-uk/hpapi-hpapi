@@ -936,7 +936,11 @@ class Hpapi {
         if (defined($defn['constraints'])) {
             $cstr   = constant ($defn['constraints']);
         }
-        $this->addSplash ($defn['name'].' '.$cstr);
+        $label      = $name;
+        if (array_key_exists('name',$defn)) {
+            $label  = $defn['name'];
+        }
+        $this->addSplash ($label.' '.$cstr);
         throw new \Exception ($name.'['.$argNum.']: '.$e);
         return false;
     }
