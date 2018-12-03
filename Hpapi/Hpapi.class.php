@@ -277,7 +277,7 @@ class Hpapi {
                 }
                 if (HPAPI_TOKEN_LIFE_EXTEND) {
                     // Update token expiry and return
-                    $this->object->response->tokenExpires   = $this->timestamp + (60*HPAPI_TOKEN_DURATION_MINUTES);
+                    $this->object->response->tokenExpires   = $this->timestamp + (60*HPAPI_TOKEN_LIFE_MINS);
                     try {
                         $this->db->call (
                             'hpapiTokenExtend'
