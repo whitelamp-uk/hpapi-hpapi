@@ -275,7 +275,7 @@ class Hpapi {
                 foreach ($results as $g) {
                     array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
                 }
-                if (HPAPI_TOKEN_ACTIVE_EXTEND) {
+                if (HPAPI_TOKEN_LIFE_EXTEND) {
                     // Update token expiry and return
                     $this->object->response->tokenExpires   = $this->timestamp + (60*HPAPI_TOKEN_DURATION_MINUTES);
                     try {
