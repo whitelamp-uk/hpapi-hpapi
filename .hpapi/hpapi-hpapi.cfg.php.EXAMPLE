@@ -1,5 +1,15 @@
 <?php
 
+// DIAGNOSTIC
+define ( 'HPAPI_DIAGNOSTIC_EMAIL_REGEXP',   '^(sysadmin|orgadmin|test\.1)@no\.where$'                                               );
+// Under normal circumstances this should be null. It is an argument to new \DateTime() to fake data time eg. '@1534487400'
+define ( 'HPAPI_DIAGNOSTIC_FAKE_NOW',       null                                                                                    );
+
+
+// LOGGING
+define ( 'HPAPI_LOG_LAST_OUTPUT',           false                                                                                   );
+define ( 'HPAPI_LOG_LAST_FILE',             HPAPI_DIR_LOG.'/hpapi-last-output.log'                                                  );
+
 
 // REDIRECTION (LEAVE EMPTY TO NOT REDIRECT)
 define ( 'HPAPI_URL_HTML_HEADER',           './web.php'                                                                             );
@@ -34,14 +44,6 @@ define ( 'HPAPI_POST_BYTES_MAX',            1024                                
 
 // ANONYMOUS ACCESS TO METHODS FOR USERGROUP ANON
 define ( 'HPAPI_ANON_ACCESS',               false                                                                                   );
-
-
-// DIAGNOSTIC
-// Under normal circumstances this should be null. It is an argument to new \DateTime() to fake the response time eg. '@1534487400'
-define ( 'HPAPI_DIAGNOSTIC_FAKE_NOW',       null                                                                                    );
-define ( 'HPAPI_DIAGNOSTIC_KEYS_CSV',       '89c56ad8-8ff3-11e8-902b-001f16148bc1,caf791fc-d224-11e8-956a-00165e0004e8'             );
-define ( 'HPAPI_LOG_LAST_OUTPUT',           false                                                                                   );
-define ( 'HPAPI_LOG_LAST_FILE',             HPAPI_DIR_LOG.'/hpapi-last-output.log'                                                  );
 
 
 // PASSWORD MANAGEMENT

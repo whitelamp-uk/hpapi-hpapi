@@ -108,6 +108,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_package` (
   `vendor` varchar(64) CHARACTER SET ascii NOT NULL,
   `package` varchar(64) CHARACTER SET ascii NOT NULL,
   `notes` text NOT NULL,
+  `requires_key` int(1) UNSIGNED,
   `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`vendor`,`package`)

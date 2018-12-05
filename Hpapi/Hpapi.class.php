@@ -15,6 +15,7 @@ class Hpapi {
     public      $datetime;                   // DateTime of response (can be faked for matching time-based test data)
     public      $logtime;                    // DateTime of response for logging (never faked)
     public      $microtime;                  // Microtime of response (decimal fraction of a second)
+    public      $returnDiagnostic;           // Microtime of response (decimal fraction of a second)
     public      $timestamp;                  // Timestamp (never faked)
     protected   $privilege;                  // Privilege array for this vendor::package::class::method
     public      $tokenDurationMinutes = 0;   // Length of "session"
@@ -65,14 +66,9 @@ class Hpapi {
         $this->object->response->remoteAddr         = $_SERVER['REMOTE_ADDR'];
         $this->object->response->serverAddr         = $_SERVER['SERVER_ADDR'];
         $this->object->response->datetime           = $this->datetime->format (\DateTime::ATOM);
-        if (strlen(HPAPI_DIAGNOSTIC_KEYS_CSV)) {
-            $this->diagnosticKeys                   = explode (',',HPAPI_DIAGNOSTIC_KEYS_CSV);
-        }
-        else {
-            $this->diagnosticKeys                   = array ();
-        }
-        if (in_array($this->object->key,$this->diagnosticKeys)) {
-                $this->object->diagnostic           = '';
+        if (strlen(HPAPI_DIAGNOSTIC_EMAIL_REGEXP) && preg_match('<'.HPAPI_DIAGNOSTIC_EMAIL_REGEXP.'>',$this->object->email)) {
+            $this->returnDiagnostic                 = true;
+            $this->diagnostic ('Diagnostic enabled');
         }
         if (!property_exists($this->object,'datetime')) {
             $this->object->response->error          = HPAPI_STR_DATETIME;
@@ -500,7 +496,10 @@ class Hpapi {
     }
 
     public function diagnostic ($msg) {
-        if (in_array($this->object->key,$this->diagnosticKeys)) {
+        if ($this->returnDiagnostic) {
+            if (!property_exists($this->object,'diagnostic')) {
+                $this->object->diagnostic = '';
+            }
             $this->object->diagnostic .= $msg."\n";
         }
     }
@@ -530,12 +529,12 @@ class Hpapi {
         if ($this->db) {
             $this->db->close ();
         }
-        $key = '';
+        $email = '';
         if (property_exists($this->object,'key')) {
-            $key = $this->object->key;
             unset ($this->object->key);
         }
         if (property_exists($this->object,'email')) {
+            $email = $this->object->email;
             unset ($this->object->email);
         }
         if (property_exists($this->object,'password')) {
@@ -550,7 +549,7 @@ class Hpapi {
         catch (\Exception $e) {
             $this->diagnostic ($e->getMessage());
         }
-        if (!in_array($key,$this->diagnosticKeys) && property_exists($this->object,'method')) {
+        if (!$this->returnDiagnostic) {
             unset ($this->object->method);
         }
         if ($this->contentType==HPAPI_CONTENT_TYPE_JSON) {
@@ -749,11 +748,17 @@ class Hpapi {
             $diagnostic = $this->object->diagnostic;
         }
         try {
+            if (property_exists($this->object,'key')) {
+                $key = $this->object->key;
+            }
+            else {
+                $key = '';
+            }
             $this->db->call (
                 'hpapiLogRequest'
                ,$this->logtime->format (\DateTime::ATOM)
                ,$this->microtime
-               ,$this->object->key
+               ,$key
                ,$this->email
                ,$_SERVER['REMOTE_ADDR']
                ,$_SERVER['HTTP_USER_AGENT']

@@ -103,7 +103,8 @@ CREATE PROCEDURE `hpapiMethodargs`(
 )
 BEGIN
   SELECT
-    `hpapi_method`.`label` AS `label`
+    `hpapi_package`.`requires_key` AS `requiresKey`
+   ,`hpapi_method`.`label` AS `label`
    ,`hpapi_method`.`notes` AS `notes`
    ,`hpapi_methodarg`.`argument` AS `argument`
    ,`hpapi_methodarg`.`name` AS `name`
@@ -118,6 +119,7 @@ BEGIN
    ,`hpapi_pattern`.`value_maximum` AS `valueMaximum`
    ,IFNULL(`ug`.`remote_addr_pattern`,`anon`.`remote_addr_pattern`) AS `remoteAddrPattern`
   FROM `hpapi_method`
+  LEFT JOIN `hpapi_package` USING (`vendor`,`package`)
   LEFT JOIN `hpapi_methodarg` USING (`vendor`,`package`,`class`,`method`)
   LEFT JOIN `hpapi_pattern` USING (`pattern`)
   LEFT JOIN `hpapi_run` USING (`vendor`,`package`,`class`,`method`)

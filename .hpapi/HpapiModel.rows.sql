@@ -21,8 +21,8 @@ INSERT IGNORE INTO `hpapi_level` (`level`, `name`, `notes`) VALUES
 INSERT IGNORE INTO `hpapi_model` (`model`, `notes`) VALUES
 ('HpapiModel',	'Model for the API itself.');
 
-INSERT IGNORE INTO `hpapi_package` (`vendor`, `package`, `notes`) VALUES
-('whitelamp-uk',	'hpapi-utility',	'Hpapi utility class(es).');
+INSERT IGNORE INTO `hpapi_package` (`vendor`, `package`, `requires_key`, `notes`) VALUES
+('whitelamp-uk',	'hpapi-utility',	0,	'Hpapi utility class(es).');
 
 INSERT IGNORE INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `input`, `php_filter`, `length_minimum`, `length_maximum`, `value_minimum`, `value_maximum`) VALUES
 ('alpha-lc-64',	'HPAPI_PATTERN_DESC_ALPHA_LC',	'^[a-z]*$',	'text',	'',	1,	64,	'',	''),
