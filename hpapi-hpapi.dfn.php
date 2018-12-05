@@ -55,15 +55,14 @@ define ( 'HPAPI_STR_SYS_CFG',               '025 500 Could not load system confi
 
 // Validating posted object properties
 define ( 'HPAPI_STR_DATETIME',              '031 400 Property "datetime" does not exist'                                            );
-define ( 'HPAPI_STR_KEY',                   '032 400 Property "key" does not exist'                                                 );
-define ( 'HPAPI_STR_EMAIL',                 '033 400 Property "email" does not exist'                                               );
-define ( 'HPAPI_STR_PWD_OR_TKN',            '034 400 Neither property "password" nor property "token" exists'                       );
-define ( 'HPAPI_STR_METHOD',                '035 400 Property "method" does not exist'                                              );
-define ( 'HPAPI_STR_METHOD_OBJ',            '036 400 Property "method" is not an object'                                            );
-define ( 'HPAPI_STR_METHOD_VENDOR',         '037 400 Method property "vendor" was not given'                                        );
-define ( 'HPAPI_STR_METHOD_PACKAGE',        '038 400 Method property "package" was not given'                                       );
-define ( 'HPAPI_STR_METHOD_CLASS',          '039 400 Method property "class" was not given'                                         );
-define ( 'HPAPI_STR_METHOD_METHOD',         '040 400 Method property "method" was not given'                                        );
+define ( 'HPAPI_STR_EMAIL',                 '032 400 Property "email" does not exist'                                               );
+define ( 'HPAPI_STR_PWD_OR_TKN',            '033 400 Neither property "password" nor property "token" exists'                       );
+define ( 'HPAPI_STR_METHOD',                '034 400 Property "method" does not exist'                                              );
+define ( 'HPAPI_STR_METHOD_OBJ',            '035 400 Property "method" is not an object'                                            );
+define ( 'HPAPI_STR_METHOD_VENDOR',         '036 400 Method property "vendor" was not given'                                        );
+define ( 'HPAPI_STR_METHOD_PACKAGE',        '037 400 Method property "package" was not given'                                       );
+define ( 'HPAPI_STR_METHOD_CLASS',          '038 400 Method property "class" was not given'                                         );
+define ( 'HPAPI_STR_METHOD_METHOD',         '039 400 Method property "method" was not given'                                        );
 
 // Configuration errors
 define ( 'HPAPI_STR_DB_CFG',                '051 500 DB configuration error - could not load database configuration'                );
@@ -77,12 +76,13 @@ define ( 'HPAPI_STR_TOKEN_DURATION',        '058 500 No matching user group has 
 
 // Evaluating authentication status
 define ( 'HPAPI_STR_AUTH_DENIED',           '061 403 Access denied'                                                                 );
-define ( 'HPAPI_STR_AUTH_KEY',              '062 Invalid key'                                                                       );
+define ( 'HPAPI_STR_AUTH_EMAIL',            '062 Invalid email'                                                                     );
 define ( 'HPAPI_STR_AUTH_REMOTE_ADDR',      '063 Access not allowed from remote address'                                            );
 define ( 'HPAPI_STR_AUTH_ACTIVE',           '065 User not active'                                                                   );
 define ( 'HPAPI_STR_AUTH_PWD_OR_TKN',       '066 Invalid credentials'                                                               );
 define ( 'HPAPI_STR_AUTH_VERIFY',           '067 Email not verified'                                                                );
 define ( 'HPAPI_STR_AUTH_OK',               '068 Fully authenticated'                                                               );
+define ( 'HPAPI_STR_AUTH_KEY',              '069 Invalid key'                                                                       );
 
 // Validating posted object->method
 define ( 'HPAPI_STR_METHOD_VDR',            '081 400 Method property "vendor" does not exist'                                       );

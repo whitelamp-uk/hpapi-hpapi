@@ -10,15 +10,15 @@ DELIMITER $$
 
 DROP PROCEDURE IF EXISTS `hpapiKeyreleaseRevoke`$$
 CREATE PROCEDURE `hpapiKeyreleaseRevoke`(
-  IN        `ts` INT(11) UNSIGNED
- ,IN        `ky` VARCHAR(64) CHARSET ascii
+  IN        `em` VARCHAR(254) CHARSET ascii
+ ,IN        `ts` INT(11) UNSIGNED
 )
 BEGIN
   UPDATE `hpapi_user`
   SET
     `key_release`=0
-  WHERE UNIX_TIMESTAMP(`key_release_until`)<ts
-     OR `key`=ky
+  WHERE `email`=em
+     OR UNIX_TIMESTAMP(`key_release_until`)<ts
   ;
 END $$
 
@@ -215,6 +215,7 @@ BEGIN
      ,'::'
      ,`hpapi_method`.`method`
     ) AS `method`
+   ,`hpapi_package`.`requires_key` AS `requiresKey`
    ,`hpapi_package`.`notes` AS `packageNotes`
    ,`hpapi_method`.`notes` AS `methodNotes`
    ,`hpapi_method`.`label` AS `methodLabel`

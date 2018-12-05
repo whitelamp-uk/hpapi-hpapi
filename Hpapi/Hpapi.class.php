@@ -74,10 +74,6 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_DATETIME;
             $this->end ();
         }
-        if (!property_exists($this->object,'key')) {
-            $this->object->response->error          = HPAPI_STR_KEY;
-            $this->end ();
-        }
         if (!property_exists($this->object,'email')) {
             $this->object->response->error          = HPAPI_STR_EMAIL;
             $this->end ();
@@ -131,22 +127,7 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_DB_OBJ;
             $this->end ();
         }
-/*
-        // Tidy old key releases
-        try {
-            $this->db->call (
-                'hpapiKeyreleaseRevoke'
-                ,$this->object->response->datetime
-                ,$this->object->key
-            );
-        }
-        catch (\Exception $e) {
-            $this->diagnostic ($e->getMessage());
-            $this->object->response->error          = HPAPI_STR_ERROR_DB;
-            $this->end ();
-        }
-*/
-        $this->authenticate ();
+        $key                                        = $this->authenticate ();
         if (HPAPI_PRIVILEGES_DYNAMIC) {
             $privileges                             = $this->callPrivileges ();
         }
@@ -166,7 +147,7 @@ class Hpapi {
                 }
             }
         }
-        $this->privilege                            = $this->access ($privileges);
+        $this->privilege                            = $this->access ($privileges,$key);
         $this->object->response->returnValue        = $this->executeMethod ($this->object->method);
         $this->end ();
     }
@@ -178,7 +159,7 @@ class Hpapi {
         array_push ($this->object->response->splash,$message);
     }
 
-    protected function access ($privilege) {
+    protected function access ($privilege,$key) {
         $method                                     = $this->object->method->vendor;
         $method                                    .= '::';
         $method                                    .= $this->object->method->package;
@@ -191,6 +172,13 @@ class Hpapi {
             $this->end ();
         }
         $privilege                                  = $privilege[$method];
+        if ($privilege['requiresKey']) {
+            if (!property_exists($this->object,'key') || $this->object->key!=$key) {
+                $this->object->response->authStatus = HPAPI_STR_AUTH_KEY;
+                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
+                $this->end ();
+            }
+        }
         $access                                     = false;
         $error                                      = HPAPI_STR_ACCESS_GRP;
         foreach ($privilege['usergroups'] as $privg) {
@@ -226,12 +214,29 @@ class Hpapi {
             $this->object->response->error          = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
-        if (!count($results) || $results[0]['key']!=$this->object->key) {
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_KEY;
+        // Revoke old key releases
+        try {
+            $this->db->call (
+                'hpapiKeyreleaseRevoke'
+                ,$this->object->email
+                ,$this->timestamp
+            );
+        }
+        catch (\Exception $e) {
+            $this->diagnostic ($e->getMessage());
+            $this->object->response->error          = HPAPI_STR_ERROR_DB;
+            $this->end ();
+        }
+        if (!count($results)) {
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_EMAIL;
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
         $auth                                       = $results[0];
+        $key                                        = null;
+        if ($auth['key'] && !$auth['keyExpired']) {
+            $key                                    = $auth['key'];
+        }
         // Authentication checks
         if (!preg_match('<'.$auth['userRemoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
             $this->object->response->authStatus     = HPAPI_STR_AUTH_REMOTE_ADDR;
@@ -312,6 +317,7 @@ class Hpapi {
             // Return released key to client
             $this->object->response->newKey         = $auth['key'];
         }
+        return $key;
     }
 
     public function callPrivileges () {
@@ -335,6 +341,7 @@ class Hpapi {
                 $privileges[$method]['arguments']   = array ();
                 $privileges[$method]['sprs']        = array ();
                 $privileges[$method]['package']     = $m['packageNotes'];
+                $privileges[$method]['requiresKey'] = $m['requiresKey'];
                 $privileges[$method]['notes']       = $m['methodNotes'];
                 $privileges[$method]['label']       = $m['methodLabel'];
             }
