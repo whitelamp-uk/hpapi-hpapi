@@ -107,8 +107,9 @@ CREATE TABLE IF NOT EXISTS `hpapi_model` (
 CREATE TABLE IF NOT EXISTS `hpapi_package` (
   `vendor` varchar(64) CHARACTER SET ascii NOT NULL,
   `package` varchar(64) CHARACTER SET ascii NOT NULL,
-  `notes` text NOT NULL,
   `requires_key` int(1) UNSIGNED,
+  `remote_addr_pattern` varchar(255) CHARACTER SET ascii NOT NULL DEFAULT '^.*$',
+  `notes` text NOT NULL,
   `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`vendor`,`package`)
@@ -181,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_user` (
   `key_expired` int(1) unsigned NOT NULL DEFAULT '0',
   `key_release` int(1) unsigned NOT NULL DEFAULT '1',
   `key_release_until` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `remote_addr_pattern` varchar(64) NOT NULL DEFAULT '^.*$',
+  `remote_addr_pattern` varchar(255) NOT NULL DEFAULT '^.*$',
   `name` varchar(64) NOT NULL,
   `notes` text NOT NULL,
   `email` varchar(254) CHARACTER SET ascii NOT NULL,
@@ -203,7 +204,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_usergroup` (
   `level` int(11) unsigned NOT NULL,
   `name` varchar(64) NOT NULL,
   `token_duration_minutes` int(11) unsigned NOT NULL DEFAULT 1,
-  `remote_addr_pattern` varchar(64) CHARACTER SET ascii NOT NULL DEFAULT '^.*$',
+  `remote_addr_pattern` varchar(255) CHARACTER SET ascii NOT NULL DEFAULT '^.*$',
   `notes` text NOT NULL,
   `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

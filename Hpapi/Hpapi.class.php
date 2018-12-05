@@ -172,6 +172,11 @@ class Hpapi {
             $this->end ();
         }
         $privilege                                  = $privilege[$method];
+        if (!preg_match('<'.$privilege['remoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_REM_ADDR;
+            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
+            $this->end ();
+        }
         if ($privilege['requiresKey']) {
             if (!property_exists($this->object,'key') || $this->object->key!=$key) {
                 $this->object->response->authStatus = HPAPI_STR_AUTH_KEY;
@@ -322,28 +327,29 @@ class Hpapi {
 
     public function callPrivileges () {
         try {
-            $methods                                = $this->db->call (
+            $methods                                                = $this->db->call (
                 'hpapiMethodPrivileges'
             );
         }
         catch (\Exception $e) {
             $this->diagnostic ($e->getMessage());
-            $this->object->response->error          = HPAPI_STR_ERROR_DB;
+            $this->object->response->error                          = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
-        $privileges                                 = array ();
+        $privileges                                                 = array ();
         foreach ($methods as $m) {
-            $method                                 = $m['method'];
+            $method                                                 = $m['method'];
             unset ($m['method']);
             if (!array_key_exists($method,$privileges)) {
-                $privileges[$method]                = array ();
-                $privileges[$method]['usergroups']  = array ();
-                $privileges[$method]['arguments']   = array ();
-                $privileges[$method]['sprs']        = array ();
-                $privileges[$method]['package']     = $m['packageNotes'];
-                $privileges[$method]['requiresKey'] = $m['requiresKey'];
-                $privileges[$method]['notes']       = $m['methodNotes'];
-                $privileges[$method]['label']       = $m['methodLabel'];
+                $privileges[$method]                                = array ();
+                $privileges[$method]['usergroups']                  = array ();
+                $privileges[$method]['arguments']                   = array ();
+                $privileges[$method]['sprs']                        = array ();
+                $privileges[$method]['package']                     = $m['packageNotes'];
+                $privileges[$method]['requiresKey']                 = $m['requiresKey'];
+                $privileges[$method]['remoteAddrPattern'        ]   = $m['remoteAddrPattern'];
+                $privileges[$method]['notes']                       = $m['methodNotes'];
+                $privileges[$method]['label']                       = $m['methodLabel'];
             }
             if (!$m['usergroup']) {
                 continue;
@@ -361,16 +367,16 @@ class Hpapi {
             unset ($m['packageNotes']);
             unset ($m['methodNotes']);
             unset ($m['packageNotes']);
-            $privileges[$method]['arguments'][$m['argument']] = $m;
+            $privileges[$method]['arguments'][$m['argument']]       = $m;
         }
         try {
-            $sprs                                   = $this->db->call (
+            $sprs                                                   = $this->db->call (
                 'hpapiSprPrivileges'
             );
         }
         catch (\Exception $e) {
             $this->diagnostic ($e->getMessage());
-            $this->object->response->error          = HPAPI_STR_ERROR_DB;
+            $this->object->response->error                          = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
         foreach ($sprs as $s) {
@@ -380,16 +386,16 @@ class Hpapi {
             if (!$s['spr']) {
                 continue;
             }
-            $method                                 = $s['method'];
-            $spr                                    = $s['spr'];
+            $method                                                 = $s['method'];
+            $spr                                                    = $s['spr'];
             unset ($s['method']);
             unset ($s['spr']);
             if (!array_key_exists($spr,$privileges[$method]['sprs'])) {
-                $privileges[$method]['sprs'][$spr]                = array ();
-                $privileges[$method]['sprs'][$spr]['arguments']   = array ();
-                $privileges[$method]['sprs'][$spr]['model']       = $s['model'];
-                $privileges[$method]['sprs'][$spr]['modelNotes']  = $s['modelNotes'];
-                $privileges[$method]['sprs'][$spr]['notes']       = $s['sprNotes'];
+                $privileges[$method]['sprs'][$spr]                  = array ();
+                $privileges[$method]['sprs'][$spr]['arguments']     = array ();
+                $privileges[$method]['sprs'][$spr]['model']         = $s['model'];
+                $privileges[$method]['sprs'][$spr]['modelNotes']    = $s['modelNotes'];
+                $privileges[$method]['sprs'][$spr]['notes']         = $s['sprNotes'];
             }
             if (!$s['argument']) {
                 continue;

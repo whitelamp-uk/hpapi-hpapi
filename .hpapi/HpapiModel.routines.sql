@@ -216,6 +216,7 @@ BEGIN
      ,`hpapi_method`.`method`
     ) AS `method`
    ,`hpapi_package`.`requires_key` AS `requiresKey`
+   ,`hpapi_package`.`remote_addr_pattern` AS `remoteAddrPattern`
    ,`hpapi_package`.`notes` AS `packageNotes`
    ,`hpapi_method`.`notes` AS `methodNotes`
    ,`hpapi_method`.`label` AS `methodLabel`

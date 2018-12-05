@@ -82,7 +82,8 @@ define ( 'HPAPI_STR_AUTH_ACTIVE',           '065 User not active'               
 define ( 'HPAPI_STR_AUTH_PWD_OR_TKN',       '066 Invalid credentials'                                                               );
 define ( 'HPAPI_STR_AUTH_VERIFY',           '067 Email not verified'                                                                );
 define ( 'HPAPI_STR_AUTH_OK',               '068 Fully authenticated'                                                               );
-define ( 'HPAPI_STR_AUTH_KEY',              '069 Invalid key'                                                                       );
+define ( 'HPAPI_STR_AUTH_REM_ADDR',         '069 Remote address not allowed for this package'                                       );
+define ( 'HPAPI_STR_AUTH_KEY',              '070 Invalid key'                                                                       );
 
 // Validating posted object->method
 define ( 'HPAPI_STR_METHOD_VDR',            '081 400 Method property "vendor" does not exist'                                       );
