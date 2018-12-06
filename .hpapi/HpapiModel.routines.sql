@@ -309,20 +309,6 @@ BEGIN
 END $$
 
 
-DROP PROCEDURE IF EXISTS `hpapiTokenExtend`$$
-CREATE PROCEDURE `hpapiTokenExtend`(
-  IN        `id` INT(11) UNSIGNED
- ,IN        `ts` INT(11) UNSIGNED
-)
-BEGIN
-  UPDATE `hpapi_user`
-  SET
-    `token_expires`=FROM_UNIXTIME(ts)
-  WHERE `id`=id
-  ;
-END $$
-
-
 DROP PROCEDURE IF EXISTS `hpapiUser`$$
 CREATE PROCEDURE `hpapiUser`(
     IN `userId` INT(11) UNSIGNED
