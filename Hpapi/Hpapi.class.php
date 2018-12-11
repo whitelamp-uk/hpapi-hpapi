@@ -32,7 +32,7 @@ class Hpapi {
         }
         error_reporting (HPAPI_PHP_ERROR_LEVEL);
         $this->timestamp                            = time ();
-        $this->setTokenExpiry (60*HPAPI_TOKEN_LIFE_MINS);
+        $this->setTokenExpiry ($this->timestamp+(60*HPAPI_TOKEN_LIFE_MINS));
         $this->setTokenExtend (HPAPI_TOKEN_LIFE_EXTEND);
         $now                                        = '@'.$this->timestamp;
         if (defined('HPAPI_DIAGNOSTIC_FAKE_NOW') && strlen(HPAPI_DIAGNOSTIC_FAKE_NOW)) {
@@ -280,14 +280,22 @@ class Hpapi {
             }
         }
         else {
-            if ($this->object->token==$auth['token'] && $auth['tokenExpires']>$this->timestamp) {
-//            if ($this->object->token==$auth['token'] && $auth['tokenExpires']>$this->timestamp && $auth['tokenRemoteAddr']==$_SERVER['REMOTE_ADDR']) { - BROKEN!!!!!!!!!!!!
+            if ($this->object->token==$auth['token'] && $auth['tokenExpires']>$this->timestamp && $auth['tokenRemoteAddr']==$_SERVER['REMOTE_ADDR']) {
                 $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
                 foreach ($results as $g) {
                     array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
                 }
             }
             else {
+                if ($this->object->token!=$auth['token']) {
+                    $this->diagnostic ('Token mismatch: '.$this->object->token.' != '.$auth['token']);
+                }
+                elseif ($this->timestamp>=$auth['tokenExpires']) {
+                    $this->diagnostic ('Token expired: '.$auth['tokenExpires'].' >= '.$this->timestamp);
+                }
+                elseif ($auth['tokenRemoteAddr']!=$_SERVER['REMOTE_ADDR']) {
+                    $this->diagnostic ('REMOTE_ADDR mismatch: '.$auth['tokenRemoteAddr'].' != '.$_SERVER['REMOTE_ADDR']);
+                }
                 $this->object->response->authStatus = HPAPI_STR_AUTH_PWD_OR_TKN;
                 if (!HPAPI_ANON_ACCESS) {
                     $this->object->response->error  = HPAPI_STR_AUTH_DENIED;
@@ -510,39 +518,39 @@ class Hpapi {
     public function end ( ) {
         if (property_exists($this->object,'error') && strlen($this->object->error)>0) {
              if (preg_match('<^[0-9]*\s*([0-9]*)\s>',$this->object->error,$m)) {
-                $this->object->httpErrorCode = $m[0];
+                $this->object->httpErrorCode        = $m[0];
                 http_response_code ($m[0]);
             }
         }
-        if ($this->tokenExtend && property_exists($this->object,'token')) {
-            $this->setToken ($this->object->token);
-        }
-        if ($this->token) {
-            $expires                                = $this->timestamp + $this->tokenExpiry;
+        if ($this->tokenExtend && property_exists($this->object,'token') && !$this->token) {
             try {
-                if ($this->tokenExtend) {
-                    $this->db->call (
-                        'hpapiTokenExtend'
-                       ,$this->userId
-                       ,$expires + HPAPI_TOKEN_EXTRA_SECONDS
-                    );
-                }
-                else {
-                    $this->db->call (
-                        'hpapiToken'
-                       ,$this->userId
-                       ,$this->token
-                       ,$expires + HPAPI_TOKEN_EXTRA_SECONDS
-                       ,$_SERVER['REMOTE_ADDR']
-                    );
-                }
+$this->diagnostic ('Extending token expiry to '.($this->tokenExpiry+HPAPI_TOKEN_EXTRA_SECONDS));
+                $this->db->call (
+                    'hpapiTokenExtend'
+                   ,$this->userId
+                   ,$this->tokenExpiry + HPAPI_TOKEN_EXTRA_SECONDS
+                );
             }
             catch (\Exception $e) {
-                throw new \Exception ($e->getMessage());
-                return false;
+                $this->diagnostic ('Token extend error: '.$e->getMessage());
+            }
+            $this->object->response->tokenExpires   = $this->tokenExpiry;
+        }
+        elseif ($this->token) {
+            try {
+                $this->db->call (
+                    'hpapiToken'
+                   ,$this->userId
+                   ,$this->token
+                   ,$this->tokenExpiry + HPAPI_TOKEN_EXTRA_SECONDS
+                   ,$_SERVER['REMOTE_ADDR']
+                );
+            }
+            catch (\Exception $e) {
+                $this->diagnostic ('Token error: '.$e->getMessage());
             }
             $this->object->response->token          = $this->token;
-            $this->object->response->tokenExpires   = $expires;
+            $this->object->response->tokenExpires   = $this->tokenExpiry;
         }
         try {
             $this->log ();
@@ -581,6 +589,7 @@ class Hpapi {
             echo "\n";
             exit;
         }
+        $this->object->remoteAddr                   = $_SERVER['REMOTE_ADDR'];
         var_export ($this->object);
         echo "\n";
         exit;

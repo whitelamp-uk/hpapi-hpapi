@@ -293,7 +293,7 @@ END$$
 
 DROP PROCEDURE IF EXISTS `hpapiToken`$$
 CREATE PROCEDURE `hpapiToken`(
-  IN        `id` INT(11) UNSIGNED
+  IN        `ui` INT(11) UNSIGNED
  ,IN        `tk` VARCHAR(255) CHARSET ascii
  ,IN        `ts` INT(11) UNSIGNED
  ,IN        `ra` VARCHAR(64) CHARSET ascii
@@ -304,7 +304,21 @@ BEGIN
     `token`=tk
    ,`token_expires`=FROM_UNIXTIME(ts)
    ,`token_remote_addr`=INET6_ATON(ra)
-  WHERE `id`=id
+  WHERE `id`=ui
+  ;
+END $$
+
+
+DROP PROCEDURE IF EXISTS `hpapiTokenExtend`$$
+CREATE PROCEDURE `hpapiTokenExtend`(
+  IN        `ui` INT(11) UNSIGNED
+ ,IN        `ts` INT(11) UNSIGNED
+)
+BEGIN
+  UPDATE `hpapi_user`
+  SET
+    `token_expires`=FROM_UNIXTIME(ts)
+  WHERE `id`=ui
   ;
 END $$
 
