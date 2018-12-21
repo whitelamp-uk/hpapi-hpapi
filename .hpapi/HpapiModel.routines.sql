@@ -323,23 +323,6 @@ BEGIN
 END $$
 
 
-DROP PROCEDURE IF EXISTS `hpapiUser`$$
-CREATE PROCEDURE `hpapiUser`(
-    IN `userId` INT(11) UNSIGNED
-)
-BEGIN
-  SELECT  `hpapi_user`.`name`
-         ,`hpapi_user`.`notes`
-         ,`hpapi_user`.`email_fallback` AS `emailFallback`
-         ,`hpapi_user`.`email_fallback_verified` AS `emailFallbackVerified`
-  FROM `hpapi_user`
-  WHERE `hpapi_user`.`id`=userId
-    AND `hpapi_user`.`active`=1
-  LIMIT 0,1
-  ;
-END$$
-
-
 DELIMITER ;
 
 
