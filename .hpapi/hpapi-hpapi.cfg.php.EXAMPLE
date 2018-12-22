@@ -42,10 +42,6 @@ define ( 'HPAPI_SSL_ENFORCE',               true                                
 define ( 'HPAPI_POST_BYTES_MAX',            1024                                                                                    );
 
 
-// ANONYMOUS ACCESS TO METHODS FOR USERGROUP ANON
-define ( 'HPAPI_ANON_ACCESS',               false                                                                                   );
-
-
 // PASSWORD MANAGEMENT
 define ( 'HPAPI_HASH_COST',                 12                                                                                      );
 define ( 'HPAPI_HASH_ALGO',                 PASSWORD_BCRYPT                                                                         );

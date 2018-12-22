@@ -5,6 +5,9 @@
 // The hpapi model
 define ( 'HPAPI_MODEL_NAME',                'HpapiModel'                                                                            );
 
+// Anonymous user group
+define ( 'HPAPI_USERGROUP_ANON',            'anon'                                                                                  );
+
 // File suffix for PHP classes
 define ( 'HPAPI_CLASS_SUFFIX',              '.class.php'                                                                            );
 
@@ -130,15 +133,12 @@ define ( 'HPAPI_STR_DECODE_LENGTH',         '\Hpapi\Hpapi::decodePost(): posted 
 define ( 'HPAPI_STR_DB_EMPTY',              '\Hpapi\Db::call(): empty argument(s)'                                                  );
 define ( 'HPAPI_STR_ACCESS_METHOD',         '\Hpapi\Hpapi::access(): No privileges for method'                                      );
 define ( 'HPAPI_STR_ACCESS_MTD',            '\Hpapi\Hpapi::access(): Method not allowed'                                            );
-define ( 'HPAPI_STR_ACCESS_GRP',            '\Hpapi\Hpapi::access(): No matching user group'                                        );
-define ( 'HPAPI_STR_ACCESS_GRP_REM_ADDR',   '\Hpapi\Hpapi::access(): User group access not allowed from client location'            );
 
 define ( 'HPAPI_STR_2D_ARRAY',              '\Hpapi\Utility::parse2D(): a 2-D array was not given'                                  );
 define ( 'HPAPI_STR_EXPORT_ARRAY_FILE',     '\Hpapi\Hpapi::exportArray(): file is not writable'                                     );
 define ( 'HPAPI_STR_EXPORT_ARRAY_ARR',      '\Hpapi\Hpapi::exportArray(): variable is not an array'                                 );
 define ( 'HPAPI_STR_RESET_PRIVS_FILE',      '\Hpapi\Hpapi::resetPrivileges(): privileges file is not writable'                      );
 define ( 'HPAPI_STR_VALID_DEFN_PARAM',      '\Hpapi\Hpapi::validation(): definition is missing property'                            );
-
 
 
 // Database notices
@@ -154,6 +154,24 @@ define ( 'HPAPI_STR_VALID_LMIN',            'must have character length at least
 define ( 'HPAPI_STR_VALID_LMAX',            'must have character length no more than'                                               );
 define ( 'HPAPI_STR_VALID_VMIN',            'must have value at least'                                                              );
 define ( 'HPAPI_STR_VALID_VMAX',            'must have value no more than'                                                          );
+
+// Diagnostic messages
+define ( 'HPAPI_DG_ENABLED',                'Diagnostic enabled'                                                                    );
+define ( 'HPAPI_DG_PRIV_REM_ADDR',          'Privilege remote address mismatch'                                                     );
+define ( 'HPAPI_DG_PRIV_KEY',               'Privilege requires key which was not given'                                            );
+define ( 'HPAPI_DG_PRIV_RESULTS',           'No privilege results'                                                                  );
+define ( 'HPAPI_DG_USER_REM_ADDR',          'User remote address mismatch'                                                          );
+define ( 'HPAPI_DG_USER_ACTIVE',            'User inactive'                                                                         );
+define ( 'HPAPI_DG_TOKEN_MATCH',            'Token mismatch'                                                                        );
+define ( 'HPAPI_DG_TOKEN_EXPIRY',           'Token expired'                                                                         );
+define ( 'HPAPI_DG_REM_ADDR',               'Remote address mismatch'                                                               );
+define ( 'HPAPI_DG_TOKEN_EXTEND',           'Token extend error'                                                                    );
+define ( 'HPAPI_DG_TOKEN',                  'Token error'                                                                           );
+
+define ( 'HPAPI_DG_ACCESS_GRP',             'Privilege user group mismatch'                                                         );
+define ( 'HPAPI_DG_ACCESS_GRP_REM_ADDR',    'User group remote address mismatch'                                                    );
+
+
 
 // Userland configuration - definitions and classes
 require_once HPAPI_DIR_CONFIG.'/whitelamp-uk/hpapi-hpapi.cfg.php';
