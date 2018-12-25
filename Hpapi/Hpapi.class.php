@@ -810,6 +810,7 @@ class Hpapi {
                ,$this->object->method->package
                ,$this->object->method->class
                ,$this->object->method->method
+               ,$this->object->response->authStatus
                ,$this->object->response->error.''
                ,$diagnostic
             );

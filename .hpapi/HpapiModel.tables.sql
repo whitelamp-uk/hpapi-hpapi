@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_log` (
   `package` varchar(64) CHARACTER SET ascii NOT NULL,
   `class` varchar(64) CHARACTER SET ascii NOT NULL,
   `method` varchar(64) CHARACTER SET ascii NOT NULL,
+  `status` char(4) CHARACTER SET ascii NOT NULL,
   `error` varchar(64) NOT NULL,
   `diagnostic` text NOT NULL,
   `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
