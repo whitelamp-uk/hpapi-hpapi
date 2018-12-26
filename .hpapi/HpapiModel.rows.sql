@@ -58,6 +58,7 @@ INSERT IGNORE INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `inp
 
 
 INSERT IGNORE INTO `hpapi_usergroup` (`usergroup`, `level`, `name`, `remote_addr_pattern`, `notes`) VALUES
+('system',	1,	'System',	'^::1$',	'Automated system routines.'),
 ('admin',	2,	'Administrators',	'^.*$',	'Users performing high level administration of business data within the model.'),
 ('agent',	10000,	'Client Agents',	'^.*$',	'Custom user group for users acting on behalf of a company client. They may or may not be operating via a third party agency organsiation (eg. a lottery provider).'),
 ('anon',	10000000,	'Unknown Users',	'^.*$',	'Users having no identity.'),
