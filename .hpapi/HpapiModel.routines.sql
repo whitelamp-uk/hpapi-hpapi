@@ -61,8 +61,8 @@ END$$
 
 DROP PROCEDURE IF EXISTS `hpapiLogRequest`$$
 CREATE PROCEDURE `hpapiLogRequest`(
-  IN        `dt` VARCHAR(32) CHARSET ascii
- ,IN        `mt` DECIMAL(9,8) UNSIGNED
+  IN        `ts` INT(11) unsigned
+ ,IN        `mt` DECIMAL(9,8) unsigned
  ,IN        `ky` VARCHAR(64) CHARSET ascii
  ,IN        `uid` INT(11) unsigned
  ,IN        `em` VARCHAR(254) CHARSET utf8
@@ -79,7 +79,7 @@ CREATE PROCEDURE `hpapiLogRequest`(
 BEGIN
   INSERT INTO `hpapi_log`
   SET
-    `datetime`=dt
+    `datetime`=FROM_UNIXTIME(ts)
    ,`microtime`=mt
    ,`key`=ky
    ,`user_id`=uid

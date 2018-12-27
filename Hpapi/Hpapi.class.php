@@ -38,7 +38,6 @@ class Hpapi {
         if (defined('HPAPI_DIAGNOSTIC_FAKE_NOW') && strlen(HPAPI_DIAGNOSTIC_FAKE_NOW)) {
             $now                                    = HPAPI_DIAGNOSTIC_FAKE_NOW;
         }
-        $this->logtime                              = new \DateTime ();
         $this->datetime                             = new \DateTime ($now);
         $this->microtime                            = explode(' ',microtime())[0];
         if (HPAPI_SSL_ENFORCE && !$this->isHTTPS()) {
@@ -800,7 +799,7 @@ class Hpapi {
             }
             $this->db->call (
                 'hpapiLogRequest'
-               ,$this->logtime->format (\DateTime::ATOM)
+               ,$this->timestamp
                ,$this->microtime
                ,$key
                ,$this->userId
