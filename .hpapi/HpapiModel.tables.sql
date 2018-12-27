@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `hpapi_log` (
   `datetime` varchar(32) CHARACTER SET ascii NOT NULL,
   `microtime` decimal(9,8) unsigned NOT NULL,
   `key` varchar(64) CHARACTER SET ascii NOT NULL,
+  `user_id` int(11) unsigned NOT NULL,
   `email` varchar(254) CHARACTER SET ascii NOT NULL,
   `remote_addr` varbinary(16) NOT NULL,
   `user_agent` varchar(255) CHARACTER SET ascii NOT NULL,
@@ -48,7 +49,8 @@ CREATE TABLE IF NOT EXISTS `hpapi_log` (
   `diagnostic` text NOT NULL,
   `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`datetime`,`microtime`,`key`)
+  PRIMARY KEY (`datetime`,`microtime`,`key`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Logs each request';
 
 

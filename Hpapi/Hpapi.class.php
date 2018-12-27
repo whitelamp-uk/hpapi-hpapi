@@ -22,7 +22,7 @@ class Hpapi {
     public      $returnDiagnostic;           // Microtime of response (decimal fraction of a second)
     public      $timestamp;                  // Timestamp (never faked)
     protected   $privilege;                  // Privilege array for this vendor::package::class::method
-    public      $userId;                     // User identifier established by the authentication process
+    public      $userId = 0;                 // User unique numeric identifier
     public      $usergroups = array ();      // Usergroups for this user
 
     public function __construct ( ) {
@@ -803,6 +803,7 @@ class Hpapi {
                ,$this->logtime->format (\DateTime::ATOM)
                ,$this->microtime
                ,$key
+               ,$this->userId
                ,$this->email
                ,$_SERVER['REMOTE_ADDR']
                ,$_SERVER['HTTP_USER_AGENT']

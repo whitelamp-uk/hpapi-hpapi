@@ -64,6 +64,7 @@ CREATE PROCEDURE `hpapiLogRequest`(
   IN        `dt` VARCHAR(32) CHARSET ascii
  ,IN        `mt` DECIMAL(9,8) UNSIGNED
  ,IN        `ky` VARCHAR(64) CHARSET ascii
+ ,IN        `uid` INT(11) unsigned
  ,IN        `em` VARCHAR(254) CHARSET utf8
  ,IN        `rma` VARCHAR(64) CHARSET ascii
  ,IN        `ua` VARCHAR(255) CHARSET ascii
@@ -81,6 +82,7 @@ BEGIN
     `datetime`=dt
    ,`microtime`=mt
    ,`key`=ky
+   ,`user_id`=uid
    ,`email`=em
    ,`remote_addr`=INET6_ATON(rma)
    ,`user_agent`=ua
