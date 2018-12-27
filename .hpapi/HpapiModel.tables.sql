@@ -176,12 +176,13 @@ CREATE TABLE IF NOT EXISTS `hpapi_sprarg` (
 
 CREATE TABLE IF NOT EXISTS `hpapi_user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `locked_until` datetime NOT NULL,
   `active` int(1) unsigned NOT NULL DEFAULT '1',
   `uuid` varchar(64) CHARACTER SET ascii NOT NULL,
   `key` varchar(64) CHARACTER SET ascii NOT NULL,
   `key_expired` int(1) unsigned NOT NULL DEFAULT '0',
   `key_release` int(1) unsigned NOT NULL DEFAULT '1',
-  `key_release_until` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `key_release_until` datetime NOT NULL,
   `remote_addr_pattern` varchar(255) NOT NULL DEFAULT '^.*$',
   `name` varchar(64) NOT NULL,
   `notes` text NOT NULL,
