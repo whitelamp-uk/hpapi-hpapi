@@ -31,12 +31,12 @@ BEGIN
   SELECT
     `hpapi_user`.`id` AS `userId` 
    ,`hpapi_user`.`active` AS `userActive`
+   ,`hpapi_user`.`verified`
    ,`hpapi_user`.`key`
    ,`hpapi_user`.`key_expired` AS `keyExpired`
    ,`hpapi_user`.`key_release` AS `respondWithKey`
    ,UNIX_TIMESTAMP(`key_release_until`) AS `keyReleaseUntil`
    ,`hpapi_user`.`remote_addr_pattern` AS `userRemoteAddrPattern`
-   ,`hpapi_user`.`email_verified` AS `emailVerified`
    ,`hpapi_user`.`password_hash` AS `passwordHash`
    ,`hpapi_user`.`token`
    ,UNIX_TIMESTAMP(`hpapi_user`.`token_expires`) AS `tokenExpires`
@@ -190,10 +190,10 @@ CREATE PROCEDURE `hpapiInsertTestUsers`(
 )
 BEGIN
   IF ((SELECT COUNT(`id`) FROM `hpapi_user`) = 0) THEN
-    INSERT INTO `hpapi_user` (`id`, `active`, `uuid`, `key`, `key_expired`, `key_release`, `key_release_until`, `remote_addr_pattern`, `name`, `notes`, `email`, `email_verified`, `email_fallback`, `email_fallback_verified`, `password_hash`) VALUES
-    (1,	1,	'322025bd-8ff2-11e8-902b-001f16148bc1',	'89c56ad8-8ff3-11e8-902b-001f16148bc1',	0,	0,	'0000-00-00 00:00:00',	'^.*$',	'Sysadmin Temp',	'Temporary system administrator',	'sysadmin@no.where',	1,	'',	0,	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
-    (2,	1,	'57d2eff7-8ff3-11e8-902b-001f16148bc1',	'89c56ad8-8ff3-11e8-902b-001f16148bc1',	0,	0,	'0000-00-00 00:00:00',	'^.*$',	'Admin Temp',	'Temporary organisation administrator',	'orgadmin@no.where',	1,	'',	0,	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
-    (3,	1,	'caf791cb-d224-11e8-956a-00165e0004e8',	'caf791fc-d224-11e8-956a-00165e0004e8',	0,	0,	'0000-00-00 00:00:00',	'^.*$',	'Example field staff',	'Example lower-level field staff member',	'test.1@no.where',	1,	'',	1,	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
+    INSERT INTO `hpapi_user` (`id`, `active`, `verified`, `uuid`, `key`, `key_expired`, `key_release`, `key_release_until`, `remote_addr_pattern`, `name`, `notes`, `email`, `password_hash`) VALUES
+    (1, 1,	1,	'322025bd-8ff2-11e8-902b-001f16148bc1',	'89c56ad8-8ff3-11e8-902b-001f16148bc1',	0,	0,	'0000-00-00 00:00:00',	'^.*$',	'Sysadmin Temp',	'Temporary system administrator',	'sysadmin@no.where',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
+    (2, 1,	1,	'57d2eff7-8ff3-11e8-902b-001f16148bc1',	'89c56ad8-8ff3-11e8-902b-001f16148bc1',	0,	0,	'0000-00-00 00:00:00',	'^.*$',	'Admin Temp',	'Temporary organisation administrator',	'orgadmin@no.where',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq'),
+    (3, 1,	1,	'caf791cb-d224-11e8-956a-00165e0004e8',	'caf791fc-d224-11e8-956a-00165e0004e8',	0,	0,	'0000-00-00 00:00:00',	'^.*$',	'Example field staff',	'Example lower-level field staff member',	'test.1@no.where',	'$2y$10$hLSdApW6.30YLK3ze49uSu7OV0gmS3ZT65pufxDPGiMxsmW3bykeq');
     INSERT INTO `hpapi_membership` (`user_id`, `usergroup`) VALUES
     (1,	'sysadmin'),
     (2,	'admin'),

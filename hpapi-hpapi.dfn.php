@@ -83,7 +83,7 @@ define ( 'HPAPI_STR_AUTH_EMAIL',            '062 Invalid email'                 
 define ( 'HPAPI_STR_AUTH_REMOTE_ADDR',      '063 Access not allowed from remote address'                                            );
 define ( 'HPAPI_STR_AUTH_ACTIVE',           '065 User not active'                                                                   );
 define ( 'HPAPI_STR_AUTH_PWD_OR_TKN',       '066 Invalid credentials'                                                               );
-define ( 'HPAPI_STR_AUTH_VERIFY',           '067 Email not verified'                                                                );
+define ( 'HPAPI_STR_AUTH_VERIFY',           '067 User account not verified'                                                         );
 define ( 'HPAPI_STR_AUTH_OK',               '068 Fully authenticated'                                                               );
 define ( 'HPAPI_STR_AUTH_REM_ADDR',         '069 Remote address not allowed for this package'                                       );
 define ( 'HPAPI_STR_AUTH_KEY',              '070 Invalid key'                                                                       );
