@@ -179,7 +179,7 @@ class Hpapi {
         $privilege                                  = $privilege[$method];
         if (!preg_match('<'.$privilege['remoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
             $this->diagnostic (HPAPI_DG_PRIV_REM_ADDR);
-            $this->object->response->authStatus     = HPAPI_STR_AUTH_REM_ADDR;
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_REM_ADDR_PKG;
             $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
@@ -218,6 +218,13 @@ class Hpapi {
     }
 
     protected function authenticate ( ) {
+        // Blacklist
+        if ($type=$this->blacklistMatch($this->object)) {
+            $this->diagnostic (HPAPI_DG_BLACKLIST.' (type='.$type.')');
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_BLACKLIST;
+            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
+            $this->end ();
+        }
         // Authentication data
         try {
             $results                                = $this->db->call (
@@ -243,43 +250,45 @@ class Hpapi {
         }
         catch (\Exception $e) {
             $this->diagnostic ($e->getMessage());
-            $this->object->response->error              = HPAPI_STR_ERROR_DB;
+            $this->object->response->error          = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
         if (!count($results)) {
             $this->diagnostic (HPAPI_DG_PRIV_RESULTS);
-            $this->object->response->authStatus         = HPAPI_STR_AUTH_EMAIL;
-            $this->object->response->error              = HPAPI_STR_AUTH_DENIED;
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_EMAIL;
+            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
-        $auth                                           = $results[0];
-        $key                                            = null;
+        $auth                                       = $results[0];
+        // Key for returning on success
+        $key                                        = null;
         if ($auth['key'] && !$auth['keyExpired']) {
-            $key                                        = $auth['key'];
+            $key                                    = $auth['key'];
         }
         // Authentication checks
         if (!preg_match('<'.$auth['userRemoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
             $this->diagnostic (HPAPI_DG_USER_REM_ADDR);
-            $this->object->response->authStatus         = HPAPI_STR_AUTH_REMOTE_ADDR;
-            $this->object->response->error              = HPAPI_STR_AUTH_DENIED;
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_REM_ADDR;
+            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
-        if (!$auth['userActive']) {
+        if (!$auth['active']) {
             $this->diagnostic (HPAPI_DG_USER_ACTIVE);
-            $this->object->response->authStatus         = HPAPI_STR_AUTH_ACTIVE;
-            $this->object->response->error              = HPAPI_STR_AUTH_DENIED;
+            $this->object->response->authStatus     = HPAPI_STR_AUTH_ACTIVE;
+            $this->object->response->error          = HPAPI_STR_AUTH_DENIED;
             $this->end ();
         }
         if (property_exists($this->object,'password')) {
             if (password_verify($this->object->password,$auth['passwordHash'])) {
-                $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
+                $this->object->response->authStatus = HPAPI_STR_AUTH_OK;
                 // Valid password so store and return fresh token
                 $this->setToken ();
                 // Load user groups
-                $this->groupsAllowed                    = $this->groupsAvailable;
+                $this->groupsAllowed                = $this->groupsAvailable;
             }
             else {
-                $this->object->response->authStatus     = HPAPI_STR_AUTH_PWD_OR_TKN;
+                $this->diagnostic (HPAPI_DG_PASSWORD);
+                $this->object->response->authStatus = HPAPI_STR_AUTH_PASSWORD;
                 // Load anon user group
                 foreach ($this->groupsAllowed as $g) {
                     if ($g['usergroup']==HPAPI_USERGROUP_ANON) {
@@ -291,9 +300,9 @@ class Hpapi {
         }
         else {
             if ($this->object->token==$auth['token'] && $auth['tokenExpires']>$this->timestamp && $auth['tokenRemoteAddr']==$_SERVER['REMOTE_ADDR']) {
-                $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
+                $this->object->response->authStatus = HPAPI_STR_AUTH_OK;
                 // Load user groups
-                $this->groupsAllowed                    = $this->groupsAvailable;
+                $this->groupsAllowed                = $this->groupsAvailable;
             }
             else {
                 if ($this->object->token!=$auth['token']) {
@@ -305,7 +314,7 @@ class Hpapi {
                 elseif ($auth['tokenRemoteAddr']!=$_SERVER['REMOTE_ADDR']) {
                     $this->diagnostic (HPAPI_DG_REM_ADDR.': '.$auth['tokenRemoteAddr'].' != '.$_SERVER['REMOTE_ADDR']);
                 }
-                $this->object->response->authStatus = HPAPI_STR_AUTH_PWD_OR_TKN;
+                $this->object->response->authStatus = HPAPI_STR_AUTH_TOKEN;
             }
         }
         if (!$auth['verified']) {
@@ -327,31 +336,58 @@ class Hpapi {
         return $key;
     }
 
+    public function blacklistMatch ($request) {
+        if (is_readable(HPAPI_BLACKLIST_ARRAY)) {
+            $blacklist                              = include HPAPI_BLACKLIST_ARRAY;
+        }
+        else {
+            $this->diagnostic (HPAPI_DG_BLACKLIST_ARRAY.': '.HPAPI_BLACKLIST_ARRAY);
+        }
+        foreach ($blacklist as $item) {
+            if ($item[2]<$this->timestamp) {
+                continue;
+            }
+            if ($item[0]=='remAddr' && $item[1]==$_SERVER['REMOTE_ADDR']) {
+                return 'remAddr';
+            }
+            if ($item[0]=='key' && $item[1]==$request->key) {
+                return 'key';
+            }
+            if ($item[0]=='email' && $item[1]==$request->email) {
+                return 'email';
+            }
+            if ($item[0]=='pwd' && $item[1]==$request->password) {
+                return 'pwd';
+            }
+        }
+        return false;
+    }
+
     public function callPrivileges () {
         try {
-            $methods                                                = $this->db->call (
+            $methods                                = $this->db->call (
                 'hpapiMethodPrivileges'
             );
         }
         catch (\Exception $e) {
             $this->diagnostic ($e->getMessage());
-            $this->object->response->error                          = HPAPI_STR_ERROR_DB;
+            $this->object->response->error          = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
-        $privileges                                                 = array ();
+        $privileges                                 = array ();
         foreach ($methods as $m) {
-            $method                                                 = $m['method'];
+            $method                                 = $m['method'];
             unset ($m['method']);
             if (!array_key_exists($method,$privileges)) {
-                $privileges[$method]                                = array ();
-                $privileges[$method]['usergroups']                  = array ();
-                $privileges[$method]['arguments']                   = array ();
-                $privileges[$method]['sprs']                        = array ();
-                $privileges[$method]['package']                     = $m['packageNotes'];
-                $privileges[$method]['requiresKey']                 = $m['requiresKey'];
-                $privileges[$method]['remoteAddrPattern'        ]   = $m['remoteAddrPattern'];
-                $privileges[$method]['notes']                       = $m['methodNotes'];
-                $privileges[$method]['label']                       = $m['methodLabel'];
+                $privileges[$method]                        = array ();
+                $privileges[$method]['usergroups']          = array ();
+                $privileges[$method]['arguments']           = array ();
+                $privileges[$method]['sprs']                = array ();
+                $privileges[$method]['package']             = $m['packageNotes'];
+                $privileges[$method]['requiresKey']         = $m['requiresKey'];
+                $privileges[$method]['remoteAddrPattern']   = $m['remoteAddrPattern'];
+                $privileges[$method]['notes']               = $m['methodNotes'];
+                $privileges[$method]['label']               = $m['methodLabel'];
             }
             if (!$m['usergroup']) {
                 continue;
@@ -369,16 +405,16 @@ class Hpapi {
             unset ($m['packageNotes']);
             unset ($m['methodNotes']);
             unset ($m['packageNotes']);
-            $privileges[$method]['arguments'][$m['argument']]       = $m;
+            $privileges[$method]['arguments'][$m['argument']]   = $m;
         }
         try {
-            $sprs                                                   = $this->db->call (
+            $sprs                                               = $this->db->call (
                 'hpapiSprPrivileges'
             );
         }
         catch (\Exception $e) {
             $this->diagnostic ($e->getMessage());
-            $this->object->response->error                          = HPAPI_STR_ERROR_DB;
+            $this->object->response->error                      = HPAPI_STR_ERROR_DB;
             $this->end ();
         }
         foreach ($sprs as $s) {
@@ -736,7 +772,6 @@ class Hpapi {
             $fp                                     = fopen ($file,'w');
             fwrite ($fp,$str);
             fclose ($fp);
-            chmod ($file,0666);
         }
         catch (\Exception $e) {
             throw new \Exception ($e->getMessage);

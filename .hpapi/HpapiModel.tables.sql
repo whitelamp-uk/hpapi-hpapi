@@ -176,7 +176,6 @@ CREATE TABLE IF NOT EXISTS `hpapi_sprarg` (
 
 CREATE TABLE IF NOT EXISTS `hpapi_user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `locked_until` datetime NOT NULL,
   `active` int(1) unsigned NOT NULL DEFAULT '1',
   `verified` int(1) unsigned NOT NULL DEFAULT '0',
   `uuid` varchar(64) CHARACTER SET ascii NOT NULL,

@@ -30,7 +30,7 @@ CREATE PROCEDURE `hpapiAuthDetails`(
 BEGIN
   SELECT
     `hpapi_user`.`id` AS `userId` 
-   ,`hpapi_user`.`active` AS `userActive`
+   ,`hpapi_user`.`active`
    ,`hpapi_user`.`verified`
    ,`hpapi_user`.`key`
    ,`hpapi_user`.`key_expired` AS `keyExpired`

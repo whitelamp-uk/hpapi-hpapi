@@ -68,25 +68,29 @@ define ( 'HPAPI_STR_METHOD_CLASS',          '038 400 Method property "class" was
 define ( 'HPAPI_STR_METHOD_METHOD',         '039 400 Method property "method" was not given'                                        );
 
 // Configuration errors
-define ( 'HPAPI_STR_DB_CFG',                '051 500 DB configuration error - could not load database configuration'                );
-define ( 'HPAPI_STR_DB_DFN',                '052 500 DB configuration error - could not load PDO definition'                        );
-define ( 'HPAPI_STR_DB_DFN_DRV',            '053 500 DB configuration error - no PDO definition for driver specified by DSN'        );
-define ( 'HPAPI_STR_DB_OBJ',                '054 500 Could not construct database object'                                           );
-define ( 'HPAPI_STR_DB_CONN',               '055 500 Could not connect to database'                                                 );
-define ( 'HPAPI_STR_PRIV_WRITE',            '056 500 Could not write privileges'                                                    );
-define ( 'HPAPI_STR_PRIV_READ',             '057 500 Could not read privileges'                                                     );
-define ( 'HPAPI_STR_TOKEN_DURATION',        '058 500 No matching user group has a token duration'                                   );
+define ( 'HPAPI_STR_DB_CFG',                '041 500 DB configuration error - could not load database configuration'                );
+define ( 'HPAPI_STR_DB_DFN',                '042 500 DB configuration error - could not load PDO definition'                        );
+define ( 'HPAPI_STR_DB_DFN_DRV',            '043 500 DB configuration error - no PDO definition for driver specified by DSN'        );
+define ( 'HPAPI_STR_DB_OBJ',                '044 500 Could not construct database object'                                           );
+define ( 'HPAPI_STR_DB_CONN',               '045 500 Could not connect to database'                                                 );
+define ( 'HPAPI_STR_PRIV_WRITE',            '046 500 Could not write privileges'                                                    );
+define ( 'HPAPI_STR_PRIV_READ',             '047 500 Could not read privileges'                                                     );
+define ( 'HPAPI_STR_TOKEN_DURATION',        '048 500 No matching user group has a token duration'                                   );
 
-// Evaluating authentication status
-define ( 'HPAPI_STR_AUTH_DENIED',           '061 403 Access denied'                                                                 );
-define ( 'HPAPI_STR_AUTH_EMAIL',            '062 Invalid email'                                                                     );
-define ( 'HPAPI_STR_AUTH_REMOTE_ADDR',      '063 Access not allowed from remote address'                                            );
-define ( 'HPAPI_STR_AUTH_ACTIVE',           '065 User not active'                                                                   );
-define ( 'HPAPI_STR_AUTH_PWD_OR_TKN',       '066 Invalid credentials'                                                               );
-define ( 'HPAPI_STR_AUTH_VERIFY',           '067 User account not verified'                                                         );
+// Authentication error
+define ( 'HPAPI_STR_AUTH_DENIED',           '050 403 Access denied'                                                                 );
+
+// Authentication status
+define ( 'HPAPI_STR_AUTH_EMAIL',            '063 Invalid credentials'                                                               );
+define ( 'HPAPI_STR_AUTH_BLACKLIST',        '061 Request not allowed at this time'                                                  );
+define ( 'HPAPI_STR_AUTH_REM_ADDR',         '062 User not allowed from remote address'                                              );
+define ( 'HPAPI_STR_AUTH_ACTIVE',           '063 Invalid credentials'                                                               );
+define ( 'HPAPI_STR_AUTH_PASSWORD',         '063 Invalid credentials'                                                               );
+define ( 'HPAPI_STR_AUTH_TOKEN',            '063 Invalid credentials'                                                               );
+define ( 'HPAPI_STR_AUTH_VERIFY',           '064 Account not verified'                                                              );
 define ( 'HPAPI_STR_AUTH_OK',               '068 Fully authenticated'                                                               );
-define ( 'HPAPI_STR_AUTH_REM_ADDR',         '069 Remote address not allowed for this package'                                       );
-define ( 'HPAPI_STR_AUTH_KEY',              '070 Invalid key'                                                                       );
+define ( 'HPAPI_STR_AUTH_REM_ADDR_PKG',     '069 Package not allowed from remote address'                                           );
+define ( 'HPAPI_STR_AUTH_KEY',              '070 Package requires valid key'                                                        );
 
 // Validating posted object->method
 define ( 'HPAPI_STR_METHOD_VDR',            '081 400 Method property "vendor" does not exist'                                       );
@@ -157,9 +161,11 @@ define ( 'HPAPI_STR_VALID_VMAX',            'must have value no more than'      
 
 // Diagnostic messages
 define ( 'HPAPI_DG_ENABLED',                'Diagnostic enabled'                                                                    );
+define ( 'HPAPI_DG_BLACKLIST_ARRAY',        'No blacklist array'                                                                    );
 define ( 'HPAPI_DG_PRIV_REM_ADDR',          'Privilege remote address mismatch'                                                     );
 define ( 'HPAPI_DG_PRIV_KEY',               'Privilege requires key which was not given'                                            );
 define ( 'HPAPI_DG_PRIV_RESULTS',           'No privilege results'                                                                  );
+define ( 'HPAPI_DG_BLACKLIST',              'Request blacklisted'                                                                   );
 define ( 'HPAPI_DG_USER_REM_ADDR',          'User remote address mismatch'                                                          );
 define ( 'HPAPI_DG_USER_ACTIVE',            'User inactive'                                                                         );
 define ( 'HPAPI_DG_TOKEN_MATCH',            'Token mismatch'                                                                        );
