@@ -292,7 +292,7 @@ class Hpapi {
                 // Load anon user group
                 foreach ($this->groupsAvailable as $g) {
                     if ($g['usergroup']==HPAPI_USERGROUP_ANON) {
-                        array_push ($this->groupsAllowed,array('usergroup'=>HPAPI_USERGROUP_ANON,'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
+                        array_push ($this->groupsAllowed,array('usergroup'=>HPAPI_USERGROUP_ANON,'remoteAddrPattern'=>$g['remoteAddrPattern']));
                         break;
                     }
                 }
