@@ -290,7 +290,7 @@ class Hpapi {
                 $this->diagnostic (HPAPI_DG_PASSWORD);
                 $this->object->response->authStatus = HPAPI_STR_AUTH_PASSWORD;
                 // Load anon user group
-                foreach ($this->groupsAllowed as $g) {
+                foreach ($this->groupsAvailable as $g) {
                     if ($g['usergroup']==HPAPI_USERGROUP_ANON) {
                         array_push ($this->groupsAllowed,array('usergroup'=>HPAPI_USERGROUP_ANON,'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
                         break;
