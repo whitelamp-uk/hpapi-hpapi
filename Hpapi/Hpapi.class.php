@@ -23,7 +23,8 @@ class Hpapi {
     public      $timestamp;                  // Timestamp (never faked)
     protected   $privilege;                  // Privilege array for this vendor::package::class::method
     public      $userId = 0;                 // User unique numeric identifier
-    public      $usergroups = array ();      // Usergroups for this user
+    public      $groupsAllowed   = array (); // Usergroups for this user
+    public      $groupsAvailable = array (); // Usergroups for this user
 
     public function __construct ( ) {
         if (count(func_get_args())) {
@@ -193,7 +194,7 @@ class Hpapi {
         $access                                     = false;
         $match                                      = false;
         foreach ($privilege['usergroups'] as $privg) {
-            foreach ($this->usergroups as $authg) {
+            foreach ($this->groupsAllowed as $authg) {
                 if ($authg['usergroup']==$privg) {
                     $match                          = true;
                     if (preg_match('<'.$authg['remoteAddrPattern'].'>',$_SERVER['REMOTE_ADDR'])) {
@@ -228,6 +229,9 @@ class Hpapi {
             $this->diagnostic ($e->getMessage());
             $this->object->response->error          = HPAPI_STR_ERROR_DB;
             $this->end ();
+        }
+        foreach ($results as $g) {
+            array_push ($this->groupsAvailable,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
         }
         // Revoke old key releases
         try {
@@ -272,15 +276,14 @@ class Hpapi {
                 // Valid password so store and return fresh token
                 $this->setToken ();
                 // Load user groups
-                foreach ($results as $g) {
-                    array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
-                }
+                $this->groupsAllowed                    = $this->groupsAvailable
             }
             else {
                 $this->object->response->authStatus     = HPAPI_STR_AUTH_PWD_OR_TKN;
-                foreach ($results as $g) {
+                // Load anon user group
+                foreach ($this->groupsAllowed as $g) {
                     if ($g['usergroup']==HPAPI_USERGROUP_ANON) {
-                        array_push ($this->usergroups,array('usergroup'=>HPAPI_USERGROUP_ANON,'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
+                        array_push ($this->groupsAllowed,array('usergroup'=>HPAPI_USERGROUP_ANON,'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
                         break;
                     }
                 }
@@ -289,9 +292,8 @@ class Hpapi {
         else {
             if ($this->object->token==$auth['token'] && $auth['tokenExpires']>$this->timestamp && $auth['tokenRemoteAddr']==$_SERVER['REMOTE_ADDR']) {
                 $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
-                foreach ($results as $g) {
-                    array_push ($this->usergroups,array('usergroup'=>$g['usergroup'],'remoteAddrPattern'=>$g['groupRemoteAddrPattern']));
-                }
+                // Load user groups
+                $this->groupsAllowed                    = $this->groupsAvailable
             }
             else {
                 if ($this->object->token!=$auth['token']) {
@@ -742,8 +744,17 @@ class Hpapi {
         }
     }
 
-    public function inUsergroup ($groupName) {
-        foreach ($this->usergroups as $ug) {
+    public function groupAllowed ($groupName) {
+        foreach ($this->groupsAllowed as $ug) {
+            if ($ug['usergroup']==$groupName) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function groupAvailable ($groupName) {
+        foreach ($this->groupsAvailable as $ug) {
             if ($ug['usergroup']==$groupName) {
                 return true;
             }
