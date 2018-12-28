@@ -276,7 +276,7 @@ class Hpapi {
                 // Valid password so store and return fresh token
                 $this->setToken ();
                 // Load user groups
-                $this->groupsAllowed                    = $this->groupsAvailable
+                $this->groupsAllowed                    = $this->groupsAvailable;
             }
             else {
                 $this->object->response->authStatus     = HPAPI_STR_AUTH_PWD_OR_TKN;
@@ -293,7 +293,7 @@ class Hpapi {
             if ($this->object->token==$auth['token'] && $auth['tokenExpires']>$this->timestamp && $auth['tokenRemoteAddr']==$_SERVER['REMOTE_ADDR']) {
                 $this->object->response->authStatus     = HPAPI_STR_AUTH_OK;
                 // Load user groups
-                $this->groupsAllowed                    = $this->groupsAvailable
+                $this->groupsAllowed                    = $this->groupsAvailable;
             }
             else {
                 if ($this->object->token!=$auth['token']) {
