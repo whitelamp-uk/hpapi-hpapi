@@ -6,25 +6,25 @@ namespace Hpapi;
 
 class Hpapi {
 
-    public      $contentTypeRequested;       // Client declaration of content type
     public      $contentType;                // Interpretation of client contentheader for interpreting raw POST data
+    public      $contentTypeRequested;       // Client declaration of content type
     protected   $db;                         // Database object \Hpapi\HpapiDb
-    public      $token;                      // Token to be returned
-    public      $tokenExtend;                // Boolean - extend token on each authenticated request
-    public      $tokenExpiry;                // Expire time in seconds
-    public      $tokenDurationMinutes = 0;   // Length of "session"
-    public      $object;                     // The PHP object loaded from the input which is modified and returned
-    public      $remoteAddrPattern;          // REMOTE_ADDR matching pattern for the current key
-    public      $email;                      // Email contained in request
     public      $datetime;                   // DateTime of response (can be faked for matching time-based test data)
-    public      $logtime;                    // DateTime of response for logging (never faked)
-    public      $microtime;                  // Microtime of response (decimal fraction of a second)
-    public      $returnDiagnostic;           // Microtime of response (decimal fraction of a second)
-    public      $timestamp;                  // Timestamp (never faked)
-    protected   $privilege;                  // Privilege array for this vendor::package::class::method
-    public      $userId = 0;                 // User unique numeric identifier
+    public      $email;                      // Email contained in request
     public      $groupsAllowed   = array (); // Usergroups for this user
     public      $groupsAvailable = array (); // Usergroups for this user
+    public      $logtime;                    // DateTime of response for logging (never faked)
+    public      $microtime;                  // Microtime of response (decimal fraction of a second)
+    public      $object;                     // The PHP object loaded from the input which is modified and returned
+    protected   $privilege;                  // Privilege array for this vendor::package::class::method
+    public      $remoteAddrPattern;          // REMOTE_ADDR matching pattern for the current key
+    public      $returnDiagnostic;           // Microtime of response (decimal fraction of a second)
+    public      $timestamp;                  // Timestamp (never faked)
+    public      $token;                      // Token to be returned
+    public      $tokenDurationMinutes = 0;   // Length of "session"
+    public      $tokenExpiry;                // Expire time in seconds
+    public      $tokenExtend;                // Boolean - extend token on each authenticated request
+    public      $userId = 0;                 // User unique numeric identifier
 
     public function __construct ( ) {
         if (count(func_get_args())) {
@@ -160,10 +160,6 @@ class Hpapi {
     public function __destruct ( ) {
     }
 
-    public function addSplash ($message) {
-        array_push ($this->object->response->splash,$message);
-    }
-
     protected function access ($privilege,$key) {
         $method                                     = $this->object->method->vendor;
         $method                                    .= '::';
@@ -215,6 +211,10 @@ class Hpapi {
             $this->end ();
         }
         return $privilege;
+    }
+
+    public function addSplash ($message) {
+        array_push ($this->object->response->splash,$message);
     }
 
     protected function authenticate ( ) {
