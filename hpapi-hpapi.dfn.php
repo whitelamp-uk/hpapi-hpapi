@@ -168,6 +168,7 @@ define ( 'HPAPI_DG_PRIV_RESULTS',           'No privilege results'              
 define ( 'HPAPI_DG_BLACKLIST',              'Request blacklisted'                                                                   );
 define ( 'HPAPI_DG_USER_REM_ADDR',          'User remote address mismatch'                                                          );
 define ( 'HPAPI_DG_USER_ACTIVE',            'User inactive'                                                                         );
+define ( 'HPAPI_DG_PASSWORD',               'Password mismatch'                                                                     );
 define ( 'HPAPI_DG_TOKEN_MATCH',            'Token mismatch'                                                                        );
 define ( 'HPAPI_DG_TOKEN_EXPIRY',           'Token expired'                                                                         );
 define ( 'HPAPI_DG_REM_ADDR',               'Remote address mismatch'                                                               );
