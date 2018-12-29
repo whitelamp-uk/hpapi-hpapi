@@ -319,10 +319,6 @@ class Hpapi {
         }
         if (!$auth['verified']) {
             $this->object->response->authStatus     = HPAPI_STR_AUTH_VERIFY;
-            if (!HPAPI_ANON_ACCESS) {
-                $this->object->response->error      = HPAPI_STR_AUTH_DENIED;
-                $this->end ();
-            }
             $this->object->email                    = '';
         }
         // Define current user
