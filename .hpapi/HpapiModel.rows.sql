@@ -63,7 +63,6 @@ INSERT IGNORE INTO `hpapi_usergroup` (`usergroup`, `level`, `name`, `remote_addr
 ('agent',	10000,	'Client Agents',	'^.*$',	'Custom user group for users acting on behalf of a company client. They may or may not be operating via a third party agency organsiation (eg. a lottery provider).'),
 ('anon',	10000000,	'Unknown Users',	'^.*$',	'Users having no identity.'),
 ('field',	1000,	'Field staff',	'^.*$',	'Staff at off-site locations'),
-('linemanager',	1000,	'Line managers',	'^.*$',	'Line managers at off-site locations using doorstepper.js'),
 ('manager',	10,	'Managers',	'^.*$',	'Admin users with relatively high privileges'),
 ('staff',	100,	'Office staff',	'^.*$',	'Admin users with limited privileges'),
 ('sysadmin',	3,	'System Administrators',	'^.*$',	'Users performing high level administration of configuration data within the model.');
