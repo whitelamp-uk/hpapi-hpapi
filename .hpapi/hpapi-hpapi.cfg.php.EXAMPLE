@@ -12,7 +12,7 @@ define ( 'HPAPI_LOG_LAST_FILE',             HPAPI_DIR_LOG.'/hpapi-last-output.lo
 
 
 // BLACKLIST FILE
-define ('HPAPI_BLACKLIST_ARRAY',            HPAPI_DIR_LOG.'/hpapi-sec-blacklists.php.log'                                           );
+define ('HPAPI_BLACKLIST_ARRAY',            HPAPI_DIR_LOG.'/hpapi-sec-blacklist.php.log'                                            );
 
 
 // REDIRECTION (LEAVE EMPTY TO NOT REDIRECT)
