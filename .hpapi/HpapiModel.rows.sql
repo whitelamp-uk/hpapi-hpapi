@@ -42,6 +42,7 @@ INSERT IGNORE INTO `hpapi_pattern` (`pattern`, `constraints`, `expression`, `inp
 ('package',	'HPAPI_PATTERN_DESC_PACKAGE',	'^[a-z][a-z\\-]*[a-z]$',	'text',	'',	2,	64,	'',	''),
 ('password-1',	'HPAPI_PATTERN_DESC_PASSWORD_1',	'^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\\s).*$',	'password',	'',	8,	255,	'',	''),
 ('path-hpapi',	'HPAPI_PATTERN_DESC_URI_PATH',	'/[a-z0-9\\-_/]+\\.[a-z]+',	'text',	'',	4,	255,	'',	''),
+('phone',	'HPAPI_PATTERN_DESC_PHONE',	'/^[\\+0-9\\(][ 0-9\\)]+$',	'text',	'',	8,	16,	'',	''),
 ('uuid-v4',	'HPAPI_PATTERN_DESC_UUIDV4',	'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$',	'text',	'',	36,	36,	'',	''),
 ('varchar-140',	'HPAPI_PATTERN_DESC_VARCHAR_140',	'',	'text',	'',	1,	140,	'',	''),
 ('varchar-16',	'HPAPI_PATTERN_DESC_VARCHAR_16',	'',	'text',	'',	1,	16,	'',	''),
