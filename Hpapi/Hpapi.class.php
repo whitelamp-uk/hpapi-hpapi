@@ -338,6 +338,7 @@ class Hpapi {
         }
         else {
             $this->diagnostic (HPAPI_DG_BLACKLIST_ARRAY.': '.HPAPI_BLACKLIST_ARRAY);
+            return false;
         }
         foreach ($blacklist as $item) {
             if ($item[2]<$this->timestamp) {
