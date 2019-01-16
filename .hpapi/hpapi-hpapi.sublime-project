@@ -1,0 +1,20 @@
+{
+    "folders":
+    [
+        {
+            "path": "~/hpapi/whitelamp-uk/hpapi-hpapi",
+            "file_include_patterns": ["LICENSE","*.EXAMPLE","*.md","*.php","*.sql"],
+            "file_exclude_patterns": [".git*","*.sublime-*"]
+        },
+        {
+            "path": "~/hpapi/.hpapi-config",
+            "folder_exclude_patterns": ["*"],
+            "file_include_patterns": ["hpapi-models.cfg.json","hpapi-pdo.dfn.json","hpapi-privileges.array.php"]
+        },
+        {
+            "path": "~/hpapi/.hpapi-config/whitelamp-uk",
+            "folder_exclude_patterns": ["*"],
+            "file_include_patterns": ["hpapi-hpapi.cfg.php"]
+        }
+    ]
+}
