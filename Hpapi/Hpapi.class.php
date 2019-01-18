@@ -169,7 +169,7 @@ class Hpapi {
         $method                                    .= '::';
         $method                                    .= $this->object->method->method;
         if (!array_key_exists($method,$privilege)) {
-             $this->object->response->error         = HPAPI_STR_ACCESS_MTD;
+             $this->object->response->error         = HPAPI_STR_METHOD_PRIV;
             $this->end ();
         }
         $privilege                                  = $privilege[$method];

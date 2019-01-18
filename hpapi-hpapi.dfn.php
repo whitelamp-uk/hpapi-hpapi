@@ -111,14 +111,15 @@ define ( 'HPAPI_STR_METHOD_CLS_INC',        '095 500 Could not include class fil
 define ( 'HPAPI_STR_METHOD_CLS_GOT',        '096 500 Class file included but class does not exist'                                  );
 define ( 'HPAPI_STR_METHOD_CLS_NEW',        '097 500 Class exists but could not be instantiated'                                    );
 define ( 'HPAPI_STR_METHOD_MTD_GOT',        '098 500 Method not in instantiated class'                                              );
+define ( 'HPAPI_STR_METHOD_PRIV',           '099 403 Method not allowed'                                                            );
 
 // Running method
-define ( 'HPAPI_STR_DB_MTD_ARGS',           '101 400 Incorrect argument count for method'                                           );
-define ( 'HPAPI_STR_DB_MTD_ARG_VAL',        '102 400 Invalid method argument'                                                       );
-define ( 'HPAPI_STR_DB_SPR_MODEL',          '103 500 No database for data model'                                                    );
-define ( 'HPAPI_STR_DB_Z',                  '104 500 Empty arguments to database function'                                          );
-define ( 'HPAPI_STR_DB_MTD_ACCESS',         '105 403 Method is not available'                                                       );
-define ( 'HPAPI_STR_DB_MTD_REMOTE_ADDR',    '106 403 Remote address not allowed for user group(s)'                                  );
+define ( 'HPAPI_STR_DB_MTD_ARGS',           '102 400 Incorrect argument count for method'                                           );
+define ( 'HPAPI_STR_DB_MTD_ARG_VAL',        '103 400 Invalid method argument'                                                       );
+define ( 'HPAPI_STR_DB_SPR_MODEL',          '104 500 No database for data model'                                                    );
+define ( 'HPAPI_STR_DB_Z',                  '105 500 Empty arguments to database function'                                          );
+define ( 'HPAPI_STR_DB_MTD_ACCESS',         '106 403 Method is not available'                                                       );
+define ( 'HPAPI_STR_DB_MTD_REMOTE_ADDR',    '107 403 Remote address not allowed for user group(s)'                                  );
 
 // Calling stored procedures
 define ( 'HPAPI_STR_DB_SPR_NO_SPR',         '201 500 Method did not give stored procedure'                                          );
@@ -135,8 +136,6 @@ define ( 'HPAPI_STR_PLAIN',                 'WARNING - UNENCRYPTED CONNECTION'  
 define ( 'HPAPI_STR_DECODE_NOTHING',        '\Hpapi\Hpapi::decodePost(): nothing was posted'                                        );
 define ( 'HPAPI_STR_DECODE_LENGTH',         '\Hpapi\Hpapi::decodePost(): posted data is too long'                                   );
 define ( 'HPAPI_STR_DB_EMPTY',              '\Hpapi\Db::call(): empty argument(s)'                                                  );
-define ( 'HPAPI_STR_ACCESS_METHOD',         '\Hpapi\Hpapi::access(): No privileges for method'                                      );
-define ( 'HPAPI_STR_ACCESS_MTD',            '\Hpapi\Hpapi::access(): Method not allowed'                                            );
 
 define ( 'HPAPI_STR_2D_ARRAY',              '\Hpapi\Utility::parse2D(): a 2-D array was not given'                                  );
 define ( 'HPAPI_STR_EXPORT_ARRAY_FILE',     '\Hpapi\Hpapi::exportArray(): file is not writable'                                     );
